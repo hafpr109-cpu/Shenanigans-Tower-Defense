@@ -460,8 +460,26 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 </button>
                 <div class="flex items-center gap-1 bg-slate-900/95 border border-indigo-500/40 rounded-xl px-2 py-1">
                     <i class="fa-solid fa-music text-cyan-400 text-[11px]"></i>
-                    <span id="bgm-track-label" class="text-[10px] font-bold text-purple-200 max-w-[82px] truncate" title="Aktualnie odtwarzany utwór">Menu</span>
-                    <button id="btn-bgm-track" title="Pomiń utwór (⏭ następna losowa piosenka z playlisty)" class="px-1.5 py-0.5 rounded-lg bg-indigo-800 hover:bg-indigo-700 text-[11px] font-black text-white transition active:scale-95">
+                    <span id="bgm-track-label" class="text-[10px] font-bold text-purple-200 max-w-[68px] truncate hidden xl:inline" title="Aktualnie odtwarzany utwór">LOBBY</span>
+                    <select id="bgm-track-select" title="Wybierz dowolną muzykę (Lobby / JJK / FNAF / GD)" class="bg-slate-800 hover:bg-slate-700 border border-indigo-500/40 rounded-lg px-1 py-0.5 text-[10px] font-bold text-cyan-200 max-w-[105px] cursor-pointer outline-none">
+                        <option value="lobby.mp3">🏠 Lobby</option>
+                        <option value="jjk1.mp3">⛩️ JJK 1</option>
+                        <option value="jjk2.mp3">⛩️ JJK 2</option>
+                        <option value="jjk3.mp3">⛩️ JJK 3</option>
+                        <option value="jjk4.mp3">⛩️ JJK 4</option>
+                        <option value="fnaf1.mp3">🐻 FNAF 1</option>
+                        <option value="fnaf2.mp3">🐻 FNAF 2</option>
+                        <option value="fnaf3.mp3">🐻 FNAF 3</option>
+                        <option value="fnaf4.mp3">🐻 FNAF 4</option>
+                        <option value="fnaf5.mp3">🐻 FNAF 5</option>
+                        <option value="fnaf6.mp3">🐻 FNAF 6</option>
+                        <option value="gd1.mp3">🟨 GD 1</option>
+                        <option value="gd2.mp3">🟨 GD 2</option>
+                        <option value="gd3.mp3">🟨 GD 3</option>
+                        <option value="gd4.mp3">🟨 GD 4</option>
+                        <option value="gd5.mp3">🟨 GD 5</option>
+                    </select>
+                    <button id="btn-bgm-track" title="Pomiń / Zmień utwór (⏭ w Lobby wszystkie utwory, w rundzie playlista mapy)" class="px-1.5 py-0.5 rounded-lg bg-indigo-800 hover:bg-indigo-700 text-[11px] font-black text-white transition active:scale-95">
                         ⏭
                     </button>
                     <button id="btn-sound" title="Wycisz / Odcisz (Mute)" class="px-1.5 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-cyan-300 transition active:scale-95">
@@ -540,6 +558,28 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                     <button id="btn-lobby-next-dance" class="px-2 py-0.5 rounded bg-indigo-700 hover:bg-indigo-600 text-white text-[9px]">Zmień Taniec</button>
                                 </div>
                                 <canvas id="lobby-team-dance-canvas" width="380" height="105" class="w-full max-w-[380px] h-[100px] rounded-lg bg-[#060811] border border-white/10"></canvas>
+                                <div class="w-full flex items-center justify-between gap-1.5 mt-1.5 px-1 pt-1.5 border-t border-indigo-500/30">
+                                    <span class="text-[9px] font-black text-amber-300 uppercase shrink-0"><i class="fa-solid fa-compact-disc mr-1 text-cyan-300"></i>Muzyka Lobby:</span>
+                                    <select id="lobby-jukebox-select" class="flex-1 min-w-0 bg-slate-950 hover:bg-slate-900 border border-cyan-500/40 rounded-lg px-1.5 py-0.5 text-[10px] font-bold text-cyan-200 cursor-pointer outline-none">
+                                        <option value="lobby.mp3">🏠 Lobby (lobby.mp3)</option>
+                                        <option value="jjk1.mp3">⛩️ Jujutsu Kaisen — JJK 1</option>
+                                        <option value="jjk2.mp3">⛩️ Jujutsu Kaisen — JJK 2</option>
+                                        <option value="jjk3.mp3">⛩️ Jujutsu Kaisen — JJK 3</option>
+                                        <option value="jjk4.mp3">⛩️ Jujutsu Kaisen — JJK 4</option>
+                                        <option value="fnaf1.mp3">🐻 FNAF — Utwór 1</option>
+                                        <option value="fnaf2.mp3">🐻 FNAF — Utwór 2</option>
+                                        <option value="fnaf3.mp3">🐻 FNAF — Utwór 3</option>
+                                        <option value="fnaf4.mp3">🐻 FNAF — Utwór 4</option>
+                                        <option value="fnaf5.mp3">🐻 FNAF — Utwór 5</option>
+                                        <option value="fnaf6.mp3">🐻 FNAF — Utwór 6</option>
+                                        <option value="gd1.mp3">🟨 Geometry Dash — GD 1</option>
+                                        <option value="gd2.mp3">🟨 Geometry Dash — GD 2</option>
+                                        <option value="gd3.mp3">🟨 Geometry Dash — GD 3</option>
+                                        <option value="gd4.mp3">🟨 Geometry Dash — GD 4</option>
+                                        <option value="gd5.mp3">🟨 Geometry Dash — GD 5</option>
+                                    </select>
+                                    <button id="btn-lobby-next-music" title="Następny utwór w Lobby (wszystkie światy)" class="px-2 py-0.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-[10px] font-black shrink-0 transition active:scale-95">⏭ Zmień</button>
+                                </div>
                             </div>
 
                             <div class="flex-1 w-full grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
@@ -2565,12 +2605,15 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         BGM_PLAYLISTS.all = [...BGM_PLAYLISTS.jjk, ...BGM_PLAYLISTS.fnaf, ...BGM_PLAYLISTS.gd];
 
         const AUDIO_PREFS_KEY = 'jjk_fnaf_audio_prefs_v1';
+        const LOBBY_MP3_FILE = 'lobby.mp3';
         const MAP_MP3_PLAYLISTS = {
+            lobby: [LOBBY_MP3_FILE],
             fnaf: ['fnaf1.mp3', 'fnaf2.mp3', 'fnaf3.mp3', 'fnaf4.mp3', 'fnaf5.mp3', 'fnaf6.mp3'],
             gd:   ['gd1.mp3', 'gd2.mp3', 'gd3.mp3', 'gd4.mp3', 'gd5.mp3'],
             jjk:  ['jjk1.mp3', 'jjk2.mp3', 'jjk3.mp3', 'jjk4.mp3']
         };
         MAP_MP3_PLAYLISTS.all = [...MAP_MP3_PLAYLISTS.fnaf, ...MAP_MP3_PLAYLISTS.gd, ...MAP_MP3_PLAYLISTS.jjk];
+        const ALL_JUKEBOX_TRACKS = [LOBBY_MP3_FILE, ...MAP_MP3_PLAYLISTS.jjk, ...MAP_MP3_PLAYLISTS.fnaf, ...MAP_MP3_PLAYLISTS.gd];
 
         class SoundEngine {
             constructor() {
@@ -2721,6 +2764,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             }
             stopMapMusic() {
                 this.mapMusicActive = false;
+                this.isLobbyMusic = false;
                 this.pendingAutoplay = false;
                 this.activePlaylist = null;
                 this.currentMp3File = null;
@@ -2728,16 +2772,76 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     try {
                         this.mapAudio.pause();
                         this.mapAudio.currentTime = 0;
+                        this.mapAudio.loop = false;
                     } catch (e) {}
                 }
                 this.updateTrackLabel();
             }
+            startLobbyMusic() {
+                // Uruchamia muzykę lobby.mp3 w tle w Lobby (zatrzyma się i zmieni przy wejściu do rundy lub ręcznej zmianie utworu)
+                this.stopMapMusic();
+                this.clearCustomAudio();
+                this.isLobbyMusic = true;
+                this.mapMusicActive = true;
+                this.activePlaylist = null;
+                this.currentMp3File = LOBBY_MP3_FILE;
+                this.mapAudio.loop = true;
+                this.mapAudio.src = LOBBY_MP3_FILE;
+                this.applyAudioVolume();
+                this.updateTrackLabel();
+                if (this.enabled) {
+                    const playPromise = this.mapAudio.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.catch((err) => {
+                            if (err && (err.name === 'NotAllowedError' || err.message?.includes('interact'))) {
+                                this.pendingAutoplay = true;
+                            }
+                        });
+                    }
+                } else {
+                    this.pendingAutoplay = true;
+                }
+            }
+            playSpecificTrack(mp3File) {
+                if (!mp3File) return;
+                this.init();
+                this.clearCustomAudio();
+                try {
+                    this.mapAudio.pause();
+                    this.mapAudio.currentTime = 0;
+                } catch (e) {}
+                const inRound = typeof state !== 'undefined' && !!state.running;
+                this.isLobbyMusic = (!inRound && mp3File === LOBBY_MP3_FILE);
+                this.mapMusicActive = true;
+                this.currentMp3File = mp3File;
+                // lobby.mp3 w Lobby zapętla się w tle; inne utwory przechodzą dalej po zakończeniu
+                this.mapAudio.loop = this.isLobbyMusic;
+                this.activePlaylist = this.isLobbyMusic
+                    ? null
+                    : inRound
+                        ? this.getPlaylistForMap(state.map?.world || state.selectedMapId, state.diff?.id || 'normal')
+                        : ALL_JUKEBOX_TRACKS;
+                this.mapAudio.src = mp3File;
+                this.applyAudioVolume();
+                this.updateTrackLabel();
+                if (this.enabled) {
+                    const playPromise = this.mapAudio.play();
+                    if (playPromise && typeof playPromise.catch === 'function') {
+                        playPromise.catch((err) => {
+                            if (err && (err.name === 'NotAllowedError' || err.message?.includes('interact'))) {
+                                this.pendingAutoplay = true;
+                            }
+                        });
+                    }
+                }
+            }
             startMapPlaylist(worldId, diffId) {
-                // Przy zmianie mapy natychmiast zatrzymaj poprzedni utwór i wylosuj nowy!
+                // Przy wejściu do rundy lub zmianie mapy natychmiast zatrzymaj lobby.mp3 / poprzedni utwór i wylosuj utwór mapy!
                 this.stopMapMusic();
                 this.clearCustomAudio();
                 const list = this.getPlaylistForMap(worldId, diffId);
                 this.activePlaylist = list;
+                this.isLobbyMusic = false;
                 this.mapMusicActive = true;
                 this.playRandomFromActivePlaylist(false);
             }
@@ -2800,24 +2904,29 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 if (this.customAudio) {
                     this.clearCustomAudio();
                 }
-                if (this.mapMusicActive && this.activePlaylist && this.activePlaylist.length > 0) {
+                const inRound = typeof state !== 'undefined' && !!state.running;
+                if (inRound && this.mapMusicActive && this.activePlaylist && this.activePlaylist.length > 0) {
                     this.playRandomFromActivePlaylist(true);
                     return;
                 }
-                // Gdy gracz kliknie Pomiń w menu, uruchom podgląd z wybranego świata
-                const previewList = this.getPlaylistForMap(state.selectedMapId || this.bgmWorld, 'normal');
-                this.activePlaylist = previewList;
-                this.mapMusicActive = true;
-                this.playRandomFromActivePlaylist(true);
+                // W Lobby przycisk zmiany utworu pozwala słuchać KAŻDEJ muzyki w grze (Lobby + JJK + FNAF + GD), nie tylko z JJK!
+                const curIdx = ALL_JUKEBOX_TRACKS.indexOf(this.currentMp3File);
+                const nextFile = ALL_JUKEBOX_TRACKS[(curIdx + 1) % ALL_JUKEBOX_TRACKS.length];
+                this.playSpecificTrack(nextFile);
             }
             getCurrentTrack() {
-                return { title: this.customTitle || (this.currentMp3File ? this.currentMp3File.replace('.mp3', '').toUpperCase() : 'Menu') };
+                return { title: this.customTitle || (this.currentMp3File ? this.currentMp3File.replace('.mp3', '').toUpperCase() : 'LOBBY') };
             }
             updateTrackLabel() {
                 const el = document.getElementById('bgm-track-label');
                 if (el) {
-                    el.textContent = this.customTitle || (this.currentMp3File ? this.currentMp3File.replace('.mp3', '').toUpperCase() : 'Menu');
+                    el.textContent = this.customTitle || (this.currentMp3File ? this.currentMp3File.replace('.mp3', '').toUpperCase() : 'LOBBY');
                 }
+                const curFile = this.currentMp3File || LOBBY_MP3_FILE;
+                const topSel = document.getElementById('bgm-track-select');
+                if (topSel && !this.customAudio && topSel.value !== curFile) topSel.value = curFile;
+                const lobSel = document.getElementById('lobby-jukebox-select');
+                if (lobSel && !this.customAudio && lobSel.value !== curFile) lobSel.value = curFile;
                 this.syncVolumeUI();
             }
             triggerDrum(kind, now) {
@@ -16042,7 +16151,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             state.running = false;
             state.gameOver = !isVictory;
             state.victory = isVictory;
-            sfx.stopMapMusic();
+            sfx.startLobbyMusic();
 
             const overlay = document.getElementById('overlay-screen');
             const title = document.getElementById('overlay-title');
@@ -16428,6 +16537,18 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             sfx.nextTrack();
             showBanner(`⏭ Odtwarzanie: ${sfx.getCurrentTrack().title}`);
         });
+        document.getElementById('btn-lobby-next-music')?.addEventListener('click', () => {
+            sfx.nextTrack();
+            showBanner(`🎵 Muzyka w Lobby: ${sfx.getCurrentTrack().title}`);
+        });
+        document.getElementById('bgm-track-select')?.addEventListener('change', (e) => {
+            sfx.playSpecificTrack(e.target.value);
+            showBanner(`🎵 Odtwarzanie: ${sfx.getCurrentTrack().title}`);
+        });
+        document.getElementById('lobby-jukebox-select')?.addEventListener('change', (e) => {
+            sfx.playSpecificTrack(e.target.value);
+            showBanner(`🎵 Muzyka w Lobby: ${sfx.getCurrentTrack().title}`);
+        });
         document.getElementById('bgm-volume-slider')?.addEventListener('input', (e) => {
             sfx.setVolumePercent(e.target.value);
         });
@@ -16467,7 +16588,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
         document.getElementById('btn-menu').addEventListener('click', () => {
             if (state.mapExpanded) toggleMapExpand();
-            sfx.stopMapMusic();
+            state.running = false;
+            sfx.startLobbyMusic();
             document.getElementById('overlay-title').textContent = 'WYBIERZ ŚWIAT I MAPĘ POZIOMU';
             document.getElementById('overlay-stats').classList.add('hidden');
             document.getElementById('overlay-screen').classList.remove('hidden');
@@ -18244,7 +18366,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         window.onload = function () {
             if (!_multiverseSaveLoaded) loadMultiverseSave();
             syncPerfModeUI();
-            sfx.updateTrackLabel();
+            sfx.startLobbyMusic();
             updateDifficultyMapLabels();
             resizeCanvas();
             buildShop();
