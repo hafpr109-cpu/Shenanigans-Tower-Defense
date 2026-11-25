@@ -4192,6 +4192,22 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     { cost: 1620, dmg: 1233, cd: 0.12, rng: 330, text: 'LVL 5: 1233 DMG / 0.12s (10 275 DPS!) — LVL 6 MAX: 17 510 DPS!' }
                 ]
             },
+            baldi: {
+                id: 'baldi', universe: 'mdt', rarity: 'Mysterious', name: 'Baldi', cost: 750,
+                color: '#22c55e', accent: '#3b82f6',
+                damage: 245, cooldown: 0.26, range: 260, armorPierce: 1.00,
+                technique: 'Ruler Slap & Math Domain (55% Slow)',
+                desc: 'MYSTERIOUS (0.005% MDT Crate): Pasywka — Co 30s automatycznie otwiera Math Domain na 10s (spowalnia o 55% i razi równaniami)!',
+                skill1: { name: 'Rzut Linijką (Ruler Throw)', cd: 9, unlockLvl: 1, desc: 'Rzuca potężną drewnianą linijką przebijającą każdego wroga na drodze (500% DMG)!' },
+                skill2: { name: 'Domena: You Can Think Pad! (55% Slow)', cd: 24, unlockLvl: 3, desc: 'Otwiera Math Domain na 10s: spowalnia wrogów o 55% i zadaje gigantyczne obrażenia!' },
+                skill3: { name: 'DETENTION! (Szlaban)', cd: 35, unlockLvl: 4, desc: 'Wszyscy wrogi w ogromnym zasięgu dostają szlaban: 400% DMG + 3.5s ogłuszenia!' },
+                upgrades: [
+                    { cost: 620, dmg: 380, cd: 0.22, rng: 275, text: 'LVL 2: 380 DMG / 0.22s (1727 DPS!) — szybsze uderzenia linijką.' },
+                    { cost: 920, dmg: 580, cd: 0.18, rng: 295, text: 'LVL 3: 580 DMG / 0.18s (3222 DPS!) — Odblokowuje Math Domain!' },
+                    { cost: 1320, dmg: 860, cd: 0.14, rng: 315, text: 'LVL 4: 860 DMG / 0.14s (6143 DPS!) — nikt nie ucieknie przed matmą.' },
+                    { cost: 1850, dmg: 1250, cd: 0.11, rng: 345, text: 'LVL 5: 1250 DMG / 0.11s (11364 DPS!) — ABSOLUTNY MYSTERIOUS!' }
+                ]
+            },
             nightmare_freddy: {
                 id: 'nightmare_freddy', universe: 'fnaf', secret: true, rarity: 'Forbidden', name: 'Nightmare Freddy', cost: 540,
                 color: '#78350f', accent: '#ef4444',
@@ -5253,10 +5269,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 gd_demon500: { arm: '#9333ea', leg: '#6b21a8', shoe: '#09090b' },
                 gd_hard_demon: { arm: '#dc2626', leg: '#991b1b', shoe: '#09090b' },
                 gd_cp_ufo: { arm: '#991b1b', leg: '#450a0a', shoe: '#09090b' },
-                shadow_bonnie: { arm: '#050508', leg: '#050508', shoe: '#1e0938' },
-                shadow_freddy_hero: { arm: '#3b0764', leg: '#3b0764', shoe: '#1e1b4b' },
-                higuruma: { arm: '#0f172a', leg: '#0f172a', shoe: '#1c1917' },
-                gd_block: { arm: '#facc15', leg: '#eab308', shoe: '#22d3ee' },
+                shadow_bonnie: { arm: '#070410', leg: '#05030c', shoe: '#1e0938' },
+                shadow_freddy_hero: { arm: '#1e0836', leg: '#16052a', shoe: '#090314' },
+                higuruma: { arm: '#090d16', leg: '#090d16', shoe: '#1c1917' },
+                gd_block: { arm: '#22d3ee', leg: '#eab308', shoe: '#06b6d4' },
+                baldi:         getActiveSkinForHero('baldi')?.id === 'baldi_camper' ? { arm: '#166534', leg: '#78350f', shoe: '#451a03' } : { arm: '#22c55e', leg: '#2563eb', shoe: '#78350f' },
                 modulo:        { arm: '#f1f5f9', leg: '#0f172a', shoe: '#09090b' },
                 kusakabe:      { arm: '#b89b72', leg: '#18181b', shoe: '#09090b' },
                 miwa:          { arm: '#0f172a', leg: '#0f172a', shoe: '#1c1917' },
@@ -5492,7 +5509,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 return;
             }
             c.save();
-            if (HEROES[type] && HEROES[type].universe === 'gd') {
+            if (HEROES[type] && HEROES[type].universe === 'gd' && type !== 'gd_block') {
                 const tplGd = HEROES[type];
                 c.fillStyle = tplGd.color;
                 c.beginPath(); c.roundRect(-10, -7, 20, 22, 4); c.fill();
@@ -5918,6 +5935,33 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     c.fillRect(-3, 11, 13, 2.6);
                     c.fillStyle = '#dc2626';
                     c.beginPath(); c.arc(0, 3, 2.1, 0, Math.PI * 2); c.fill();
+                } else if (type === 'baldi') {
+                    if (getActiveSkinForHero('baldi')?.id === 'baldi_camper') {
+                        // Baldi Camper: leśnozielona koszula obozowa z kieszeniami i szelkami plecaka, brązowe szorty i kij z pianką marshmallow!
+                        c.fillStyle = '#166534';
+                        c.beginPath(); c.roundRect(-10.5, -7, 21, 18, 4); c.fill();
+                        c.strokeStyle = '#14532d'; c.lineWidth = 1; c.stroke();
+                        c.fillStyle = '#78350f';
+                        c.fillRect(-8.5, -7, 2.6, 18);
+                        c.fillRect(5.9, -7, 2.6, 18);
+                        c.fillStyle = '#facc15';
+                        c.beginPath(); c.arc(-4.2, -1.5, 1.8, 0, Math.PI * 2); c.fill();
+                        c.fillStyle = '#78350f';
+                        c.fillRect(-10.5, 11, 21, 6);
+                        c.strokeStyle = '#92400e'; c.lineWidth = 2.0;
+                        c.beginPath(); c.moveTo(12, 9); c.lineTo(18, -7); c.stroke();
+                        c.fillStyle = '#fef3c7';
+                        c.beginPath(); c.roundRect(16, -9.5, 4.5, 4.5, 1.5); c.fill();
+                        c.strokeStyle = '#d97706'; c.lineWidth = 0.8; c.stroke();
+                    } else {
+                        // Baldi: zielona koszulka, niebieskie spodnie i drewniana linijka w dłoni
+                        c.fillStyle = '#22c55e';
+                        c.beginPath(); c.roundRect(-10, -7, 20, 18, 4); c.fill();
+                        c.fillStyle = '#2563eb';
+                        c.fillRect(-10, 11, 20, 6);
+                        c.strokeStyle = '#d97706'; c.lineWidth = 2.2;
+                        c.beginPath(); c.moveTo(11, 8); c.lineTo(18, -7); c.stroke();
+                    }
                 } else if (type === 'locust') {
                     // The Locust (pełny model 1:1 ze zdjęcia): długa czarna szyja, blado-beżowa klatka piersiowa z czarną wyrwą w środku, czarna miednica, segmentowane kończyny i długie czarne igły-ostrza u dłoni!
                     const sporeGrad = c.createRadialGradient(0, 6, 3, 0, 6, 22);
@@ -6066,86 +6110,232 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     // Iskra Black Flash (czarno-czerwona błyskawica)
                     c.strokeStyle = '#ef4444'; c.lineWidth = 1.4;
                     c.beginPath(); c.moveTo(-7, 4); c.lineTo(-2, 7); c.lineTo(4, 3); c.lineTo(8, 8); c.stroke();
+                } else if (type === 'higuruma') {
+                    // Hiromi Higuruma: perfekcyjnie skrojony czarny garnitur adwokata z białą koszulą, krawatem, złotą odznaka adwokacką w klapie oraz Młotem Sędziowskim (Gavel) otoczonym złotą/przeklętą energią!
+                    const SuitGrad = c.createLinearGradient(-11, -8, 11, 17);
+                    SuitGrad.addColorStop(0, '#111827');
+                    SuitGrad.addColorStop(0.5, '#090d16');
+                    SuitGrad.addColorStop(1, '#030509');
+                    c.fillStyle = SuitGrad;
+                    c.beginPath(); c.roundRect(-11.2, -7.8, 22.4, 25.0, 3.6); c.fill();
+                    c.strokeStyle = '#334155'; c.lineWidth = 1.15; c.stroke();
+                    // Delikatne prążki garnituru i biała poszetka w kieszonce piersiowej
+                    c.strokeStyle = 'rgba(148, 163, 184, 0.14)'; c.lineWidth = 0.75;
+                    for (const px of [-8.0, -5.2, 5.2, 8.0]) { c.beginPath(); c.moveTo(px, -6.5); c.lineTo(px, 16); c.stroke(); }
+                    c.fillStyle = '#f8fafc';
+                    c.beginPath(); c.moveTo(4.6, 0.8); c.lineTo(8.2, 0.8); c.lineTo(7.4, -1.0); c.lineTo(5.4, -0.4); c.closePath(); c.fill();
+                    // Śnieżnobiała koszula z kołnierzykiem pod szyją
+                    c.fillStyle = '#f8fafc';
+                    c.beginPath(); c.moveTo(-4.8, -7.8); c.lineTo(4.8, -7.8); c.lineTo(0, 6.4); c.closePath(); c.fill();
+                    c.strokeStyle = '#cbd5e1'; c.lineWidth = 0.8;
+                    c.beginPath(); c.moveTo(-4.4, -7.6); c.lineTo(-1.8, -4.6); c.moveTo(4.4, -7.6); c.lineTo(1.8, -4.6); c.stroke();
+                    // Krawat adwokata (ciemnozłoto-brązowy w ukośne złote prążki + węzeł)
+                    c.fillStyle = '#78350f';
+                    c.beginPath(); c.moveTo(-1.6, -7.2); c.lineTo(1.6, -7.2); c.lineTo(1.1, -4.6); c.lineTo(-1.1, -4.6); c.closePath(); c.fill();
+                    const tieG = c.createLinearGradient(0, -5, 0, 6.5);
+                    tieG.addColorStop(0, '#b45309'); tieG.addColorStop(1, '#78350f');
+                    c.fillStyle = tieG;
+                    c.beginPath(); c.moveTo(-1.1, -4.6); c.lineTo(1.1, -4.6); c.lineTo(1.9, 4.4); c.lineTo(0, 6.8); c.lineTo(-1.9, 4.4); c.closePath(); c.fill();
+                    c.strokeStyle = '#facc15'; c.lineWidth = 0.7;
+                    c.beginPath(); c.moveTo(-1.2, -2.0); c.lineTo(1.3, -0.6); c.moveTo(-1.5, 1.2); c.lineTo(1.5, 2.6); c.stroke();
+                    // Ostre wyłogi czarnej marynarki + guziki
+                    c.strokeStyle = '#475569'; c.lineWidth = 1.15;
+                    c.beginPath();
+                    c.moveTo(-4.8, -7.8); c.lineTo(-7.8, 0.2); c.lineTo(0, 6.6);
+                    c.moveTo(4.8, -7.8);  c.lineTo(7.8, 0.2);  c.lineTo(0, 6.6);
+                    c.stroke();
+                    c.fillStyle = '#1e293b';
+                    c.beginPath(); c.arc(0, 9.2, 1.1, 0, Math.PI * 2); c.arc(0, 13.0, 1.1, 0, Math.PI * 2); c.fill();
+                    // Złota Odznaka Adwokacka (słonecznik z wagą — 弁護士記章) na lewej klapie!
+                    c.save();
+                    c.shadowColor = '#facc15'; c.shadowBlur = 4;
+                    c.fillStyle = '#fde047';
+                    c.beginPath(); c.arc(-5.8, -1.2, 2.15, 0, Math.PI * 2); c.fill();
+                    c.shadowBlur = 0;
+                    c.strokeStyle = '#ca8a04'; c.lineWidth = 0.7; c.stroke();
+                    c.fillStyle = '#78350f';
+                    c.beginPath(); c.arc(-5.8, -1.2, 0.85, 0, Math.PI * 2); c.fill();
+                    c.restore();
+                    // MŁOT SĘDZIOWSKI (GAVEL) w dłoni z efektem ZŁOTEJ / PRZEKLĘTEJ ENERGII wokół młota!
+                    c.save();
+                    const gavelAura = c.createRadialGradient(18.5, -5.5, 1.5, 18.5, -5.5, 11.5);
+                    gavelAura.addColorStop(0, 'rgba(254, 240, 138, 0.75)');
+                    gavelAura.addColorStop(0.55, 'rgba(234, 179, 8, 0.38)');
+                    gavelAura.addColorStop(1, 'rgba(234, 179, 8, 0)');
+                    c.fillStyle = gavelAura;
+                    c.beginPath(); c.arc(18.5, -5.5, 11.5, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#fde047'; c.lineWidth = 1.15;
+                    c.beginPath();
+                    c.moveTo(11.5, -9.5); c.lineTo(14.5, -11.8); c.lineTo(17.5, -10.2);
+                    c.moveTo(22.5, -10.5); c.lineTo(25.2, -7.2); c.lineTo(23.5, -3.2);
+                    c.moveTo(14.0, -0.5); c.lineTo(17.8, 1.5); c.lineTo(21.5, -0.8);
+                    c.stroke();
+                    c.strokeStyle = '#451a03'; c.lineWidth = 3.0;
+                    c.beginPath(); c.moveTo(9.5, 9.0); c.lineTo(18.5, -5.5); c.stroke();
+                    c.strokeStyle = '#92400e'; c.lineWidth = 1.5;
+                    c.beginPath(); c.moveTo(9.5, 9.0); c.lineTo(18.5, -5.5); c.stroke();
+                    c.translate(18.5, -5.5);
+                    c.rotate(-0.56);
+                    c.shadowColor = '#facc15'; c.shadowBlur = 8;
+                    const gavGrad = c.createLinearGradient(-6, -3.5, 6, 3.5);
+                    gavGrad.addColorStop(0, '#92400e');
+                    gavGrad.addColorStop(0.5, '#78350f');
+                    gavGrad.addColorStop(1, '#451a03');
+                    c.fillStyle = gavGrad;
+                    c.strokeStyle = '#fde047'; c.lineWidth = 1.25;
+                    c.beginPath(); c.roundRect(-6.0, -3.2, 12.0, 6.4, 1.5); c.fill(); c.stroke();
+                    c.fillStyle = '#facc15';
+                    c.fillRect(-4.6, -3.2, 1.5, 6.4);
+                    c.fillRect(3.1, -3.2, 1.5, 6.4);
+                    c.fillRect(-1.1, -3.4, 2.2, 6.8);
+                    c.shadowBlur = 0;
+                    c.restore();
+                } else if (type === 'gd_block') {
+                    // GD Block (Geometry Dash Cube): bogato zdobiony neonowy korpus ikony GD z geometrycznymi narożnikami, wewnętrznym cieniowaniem, świecącym obramowaniem, rdzeniem Cyan Jump Orb i zielonym kryształem Practice Checkpoint!
+                    const gdGlow = c.createRadialGradient(0, 3, 2, 0, 3, 22);
+                    gdGlow.addColorStop(0, 'rgba(34, 211, 238, 0.36)');
+                    gdGlow.addColorStop(1, 'rgba(34, 211, 238, 0)');
+                    c.fillStyle = gdGlow;
+                    c.beginPath(); c.arc(0, 3, 22, 0, Math.PI * 2); c.fill();
+                    const gbGrad = c.createLinearGradient(-11, -7.5, 11, 15.5);
+                    gbGrad.addColorStop(0, '#fef08a');
+                    gbGrad.addColorStop(0.5, '#facc15');
+                    gbGrad.addColorStop(1, '#d97706');
+                    c.fillStyle = gbGrad;
+                    c.strokeStyle = '#050508'; c.lineWidth = 2.2;
+                    c.beginPath(); c.roundRect(-11, -7.5, 22, 23, 2.0); c.fill(); c.stroke();
+                    c.shadowColor = '#22d3ee'; c.shadowBlur = 6;
+                    c.strokeStyle = '#22d3ee'; c.lineWidth = 1.7;
+                    c.strokeRect(-8.6, -5.1, 17.2, 18.2);
+                    c.shadowBlur = 0;
+                    c.fillStyle = 'rgba(255, 255, 255, 0.28)';
+                    c.beginPath(); c.moveTo(-8.2, -4.8); c.lineTo(1.5, -4.8); c.lineTo(-8.2, 6.5); c.closePath(); c.fill();
+                    c.fillStyle = '#09090b';
+                    c.fillRect(-7.4, -3.9, 3.2, 1.4); c.fillRect(-7.4, -3.9, 1.4, 3.2);
+                    c.fillRect(4.2, -3.9, 3.2, 1.4);  c.fillRect(6.0, -3.9, 1.4, 3.2);
+                    c.fillRect(-7.4, 10.5, 3.2, 1.4); c.fillRect(-7.4, 8.7, 1.4, 3.2);
+                    c.fillRect(4.2, 10.5, 3.2, 1.4);  c.fillRect(6.0, 8.7, 1.4, 3.2);
+                    c.fillStyle = '#083344';
+                    c.beginPath(); c.arc(0, 4.0, 5.2, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#22d3ee'; c.lineWidth = 1.5; c.stroke();
+                    c.fillStyle = '#67e8f9';
+                    c.beginPath(); c.arc(0, 4.0, 2.7, 0, Math.PI * 2); c.fill();
+                    c.fillStyle = '#ffffff';
+                    c.beginPath(); c.arc(-0.7, 3.3, 1.0, 0, Math.PI * 2); c.fill();
+                    c.save();
+                    c.translate(15.2, -1.5);
+                    c.fillStyle = '#22c55e'; c.strokeStyle = '#052e16'; c.lineWidth = 1.1;
+                    c.beginPath(); c.moveTo(0, -4.2); c.lineTo(3.2, 0); c.lineTo(0, 4.2); c.lineTo(-3.2, 0); c.closePath(); c.fill(); c.stroke();
+                    c.fillStyle = '#bbf7d0';
+                    c.beginPath(); c.moveTo(0, -3.2); c.lineTo(1.8, -0.3); c.lineTo(0, 0.5); c.lineTo(-1.8, -0.3); c.closePath(); c.fill();
+                    c.restore();
                 }
             } else {
                 // KANONICZNE CIAŁA FNAF 1 & FNAF 2 + ULEPSZONE POSTACIE QUEST/FORBIDDEN
                 if (type === 'shadow_bonnie') {
-                    // Shadow Bonnie (RWQFSFASXC): smolisto-czarny korpus Toy Bonniego z fioletową poświatą Remnantu, cieniowaną muszką, świecącymi białymi guzikami i paskami zakłóceń!
-                    const sbGrad = c.createRadialGradient(0, 4, 2, 0, 4, 18);
-                    sbGrad.addColorStop(0, '#1e0938'); sbGrad.addColorStop(1, '#030306');
-                    c.fillStyle = sbGrad;
-                    c.beginPath(); c.roundRect(-10.5, -7.5, 21, 24, 5.5); c.fill();
-                    c.strokeStyle = '#a855f7'; c.lineWidth = 1.4; c.stroke();
-                    // Jaśniejszy fioletowo-cienisty brzuch Toy Bonniego
-                    c.fillStyle = 'rgba(88, 28, 135, 0.45)';
-                    c.beginPath(); c.ellipse(0, 5.5, 6.6, 8.8, 0, 0, Math.PI * 2); c.fill();
-                    // Muszka pod szyją (fioletowo-czarna z białym rdzeniem)
-                    c.fillStyle = '#581c87';
-                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(-5.2, -7.0); c.lineTo(-5.2, -2.6); c.closePath(); c.fill();
-                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(5.2, -7.0);  c.lineTo(5.2, -2.6);  c.closePath(); c.fill();
-                    c.fillStyle = '#ffffff';
-                    c.beginPath(); c.arc(0, -4.8, 1.3, 0, Math.PI * 2); c.arc(0, 2.2, 1.5, 0, Math.PI * 2); c.arc(0, 7.2, 1.5, 0, Math.PI * 2); c.fill();
-                    // Poziome linie glitchu
-                    c.fillStyle = 'rgba(192, 132, 252, 0.55)';
-                    c.fillRect(-12, -1, 7, 1.2); c.fillRect(5, 9, 8, 1.2);
-                    c.restore();
-                    return;
-                }
-                if (type === 'shadow_freddy_hero') {
+                    // Shadow Bonnie (RWQFSFASXC): półprzezroczysta cienista sylwetka Toy Bonniego z fioletowo-czarną aurą cienia, smużącymi pasmami dymu, cienistą muszką i świecącymi białymi guzikami!
+                    const sbAura = c.createRadialGradient(0, 4, 2, 0, 4, 24);
+                    sbAura.addColorStop(0, 'rgba(147, 51, 234, 0.52)');
+                    sbAura.addColorStop(0.55, 'rgba(59, 7, 100, 0.30)');
+                    sbAura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    c.fillStyle = sbAura;
+                    c.beginPath(); c.arc(0, 4, 24, 0, Math.PI * 2); c.fill();
+                    // Cieniste kosmyki dymu unoszące się z boków sylwetki
+                    c.strokeStyle = 'rgba(168, 85, 247, 0.45)'; c.lineWidth = 1.6;
+                    c.beginPath();
+                    c.moveTo(-11, 2); c.quadraticCurveTo(-16, -2, -13, -7);
+                    c.moveTo(11, 5);  c.quadraticCurveTo(16, 1, 14, -5);
+                    c.moveTo(-9, 13); c.quadraticCurveTo(-15, 11, -14, 6);
+                    c.stroke();
+                    // Półprzezroczysty smolisto-cienisty korpus Toy Bonniego
+                    const sbBody = c.createLinearGradient(0, -8, 0, 17);
+                    sbBody.addColorStop(0, 'rgba(20, 8, 38, 0.90)');
+                    sbBody.addColorStop(0.5, 'rgba(6, 3, 14, 0.92)');
+                    sbBody.addColorStop(1, 'rgba(3, 1, 8, 0.95)');
+                    c.fillStyle = sbBody;
+                    c.shadowColor = '#9333ea'; c.shadowBlur = 7;
+                    c.beginPath(); c.roundRect(-10.8, -7.5, 21.6, 24.5, 6); c.fill();
+                    c.shadowBlur = 0;
+                    c.strokeStyle = 'rgba(192, 132, 252, 0.72)'; c.lineWidth = 1.25; c.stroke();
+                    // Cienista fioletowa płyta brzucha Toy Bonniego
+                    const bellyG = c.createRadialGradient(0, 5.5, 1, 0, 5.5, 8.8);
+                    bellyG.addColorStop(0, 'rgba(107, 33, 168, 0.50)');
+                    bellyG.addColorStop(1, 'rgba(15, 5, 28, 0.25)');
+                    c.fillStyle = bellyG;
+                    c.beginPath(); c.ellipse(0, 5.8, 6.8, 8.8, 0, 0, Math.PI * 2); c.fill();
+                    // Cienista fioletowo-czarna muszka pod szyją
                     c.fillStyle = '#3b0764';
-                    c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 5); c.fill();
-                    c.fillStyle = '#6b21a8';
-                    c.beginPath(); c.ellipse(0, 4, 6.5, 8.5, 0, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#a855f7'; c.lineWidth = 0.85;
+                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(-5.8, -7.4); c.lineTo(-5.8, -2.2); c.closePath(); c.fill(); c.stroke();
+                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(5.8, -7.4);  c.lineTo(5.8, -2.2);  c.closePath(); c.fill(); c.stroke();
+                    // Świecące czysto-białe guziki i rdzeń muszki + paski glitchu RWQFSFASXC
+                    c.shadowColor = '#ffffff'; c.shadowBlur = 6;
                     c.fillStyle = '#ffffff';
-                    c.beginPath(); c.arc(0, 1, 1.4, 0, Math.PI * 2); c.arc(0, 6, 1.4, 0, Math.PI * 2); c.fill();
+                    c.beginPath();
+                    c.arc(0, -4.8, 1.35, 0, Math.PI * 2);
+                    c.arc(0, 2.2, 1.55, 0, Math.PI * 2);
+                    c.arc(0, 7.6, 1.55, 0, Math.PI * 2);
+                    c.fill();
+                    c.shadowBlur = 0;
+                    c.fillStyle = 'rgba(216, 180, 254, 0.52)';
+                    c.fillRect(-13, -1.2, 7.5, 1.1);
+                    c.fillRect(5.5, 9.2, 8.5, 1.1);
                     c.restore();
                     return;
                 }
-                if (type === 'higuruma') {
-                    // Hiromi Higuruma: elegancki ciemny garnitur w delikatne prążki, wyłogi marynarki, biała koszula, ciemnozłoty krawat, złota odznaka adwokacka i drewniany młotek sędziowski (Gavel) w dłoni!
-                    c.fillStyle = '#0f172a';
-                    c.beginPath(); c.roundRect(-11, -7.5, 22, 24.5, 3.8); c.fill();
-                    c.strokeStyle = '#334155'; c.lineWidth = 1.1; c.stroke();
-                    // Subtelne prążki garnituru prawniczego
-                    c.strokeStyle = 'rgba(148, 163, 184, 0.16)'; c.lineWidth = 0.8;
-                    for (const px of [-7.5, -4.5, 4.5, 7.5]) { c.beginPath(); c.moveTo(px, -6); c.lineTo(px, 16); c.stroke(); }
-                    // Biała koszula w szpic + krawat + wyłogi marynarki
-                    c.fillStyle = '#f8fafc';
-                    c.beginPath(); c.moveTo(-4.6, -7.5); c.lineTo(4.6, -7.5); c.lineTo(0, 5.5); c.closePath(); c.fill();
-                    c.fillStyle = '#92400e';
-                    c.beginPath(); c.moveTo(-1.3, -6.5); c.lineTo(1.3, -6.5); c.lineTo(1.8, 4.2); c.lineTo(0, 6.2); c.lineTo(-1.8, 4.2); c.closePath(); c.fill();
-                    c.strokeStyle = '#475569'; c.lineWidth = 1.1;
-                    c.beginPath(); c.moveTo(-4.6, -7.5); c.lineTo(-7.2, 0.5); c.lineTo(0, 5.8); c.moveTo(4.6, -7.5); c.lineTo(7.2, 0.5); c.lineTo(0, 5.8); c.stroke();
-                    // Złota odznaka japońskiego adwokata (słonecznik z wagą) na klapie!
-                    c.fillStyle = '#facc15';
-                    c.beginPath(); c.arc(-5.4, -1.2, 1.9, 0, Math.PI * 2); c.fill();
-                    c.fillStyle = '#78350f';
-                    c.beginPath(); c.arc(-5.4, -1.2, 0.8, 0, Math.PI * 2); c.fill();
-                    // Drewniany Młot Sędziowski (Judge's Gavel) ze złotymi okuciami!
-                    c.strokeStyle = '#78350f'; c.lineWidth = 2.2;
-                    c.beginPath(); c.moveTo(10, 8); c.lineTo(18.5, -5.5); c.stroke();
-                    c.save();
-                    c.translate(18.5, -5.5); c.rotate(-0.55);
-                    c.fillStyle = '#92400e'; c.strokeStyle = '#facc15'; c.lineWidth = 1.1;
-                    c.beginPath(); c.roundRect(-5.2, -2.8, 10.4, 5.6, 1.4); c.fill(); c.stroke();
-                    c.restore();
-                    c.restore();
-                    return;
-                }
-                if (type === 'gd_block') {
-                    // GD Block (Geometry Dash Cube): geometryczny korpus kostki ze świecącym cyjanowym rdzeniem, neonowymi ramkami i pierścieniem Cyan Jump Orb!
-                    const gbGrad = c.createLinearGradient(-10.5, -7.5, 10.5, 15.5);
-                    gbGrad.addColorStop(0, '#fde047'); gbGrad.addColorStop(1, '#eab308');
-                    c.fillStyle = gbGrad;
-                    c.strokeStyle = '#09090b'; c.lineWidth = 2.0;
-                    c.beginPath(); c.roundRect(-10.5, -7.5, 21, 22, 2.2); c.fill(); c.stroke();
-                    // Wewnętrzna cyjanowa ramka geometryczna i rdzeń
-                    c.strokeStyle = '#22d3ee'; c.lineWidth = 1.8;
-                    c.strokeRect(-7.2, -4.2, 14.4, 15.4);
-                    c.fillStyle = '#0891b2';
-                    c.fillRect(-4.2, -1.2, 8.4, 9.4);
-                    c.fillStyle = '#67e8f9';
-                    c.fillRect(-2.2, 0.8, 4.4, 5.4);
+                if (type === 'shadow_freddy_hero' || (type === 'golden_freddy' && window.__shadowGF)) {
+                    // Shadow Freddy: mroczny ciemnofioletowo-czarny korpus misia z cienistą poświatą, wyrazistą fioletową muszką, świecącymi białymi guzikami, przetarciami i mikrofonem!
+                    const sfAura = c.createRadialGradient(0, 4, 2, 0, 4, 24);
+                    sfAura.addColorStop(0, 'rgba(147, 51, 234, 0.48)');
+                    sfAura.addColorStop(0.6, 'rgba(46, 16, 101, 0.28)');
+                    sfAura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    c.fillStyle = sfAura;
+                    c.beginPath(); c.arc(0, 4, 24, 0, Math.PI * 2); c.fill();
+                    // Cieniste smugi po bokach
+                    c.strokeStyle = 'rgba(192, 132, 252, 0.40)'; c.lineWidth = 1.5;
+                    c.beginPath();
+                    c.moveTo(-11.5, 0); c.quadraticCurveTo(-16, -4, -13.5, -8.5);
+                    c.moveTo(11.5, 3);  c.quadraticCurveTo(16.5, -1, 14, -6.5);
+                    c.stroke();
+                    // Masywny ciemnofioletowo-czarny korpus misia
+                    const sfGrad = c.createLinearGradient(-11, -7.5, 11, 17);
+                    sfGrad.addColorStop(0, '#2e1065');
+                    sfGrad.addColorStop(0.5, '#17052e');
+                    sfGrad.addColorStop(1, '#070210');
+                    c.fillStyle = sfGrad;
+                    c.shadowColor = '#a855f7'; c.shadowBlur = 6;
+                    c.beginPath(); c.roundRect(-11.2, -7.5, 22.4, 24.5, 5.5); c.fill();
+                    c.shadowBlur = 0;
+                    c.strokeStyle = '#7e22ce'; c.lineWidth = 1.25; c.stroke();
+                    // Fioletowo-cienisty brzuch misia + przetarcie Withered z kabelkiem
+                    const sfBelly = c.createRadialGradient(0, 5.5, 1, 0, 5.5, 9);
+                    sfBelly.addColorStop(0, '#581c87');
+                    sfBelly.addColorStop(1, '#1e0838');
+                    c.fillStyle = sfBelly;
+                    c.beginPath(); c.ellipse(0, 5.8, 7.0, 8.8, 0, 0, Math.PI * 2); c.fill();
+                    c.fillStyle = '#05010a';
+                    c.beginPath(); c.ellipse(-6.2, 10.5, 2.2, 1.6, 0.3, 0, Math.PI * 2); c.fill();
+                    // Charakterystyczna FIOLETOWA MUSZKA Shadow Freddy'ego!
+                    const bowG = c.createLinearGradient(-6, -7.5, 6, -2);
+                    bowG.addColorStop(0, '#a855f7');
+                    bowG.addColorStop(1, '#6b21a8');
+                    c.fillStyle = bowG;
+                    c.strokeStyle = '#e9d5ff'; c.lineWidth = 0.9;
+                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(-6.0, -7.6); c.lineTo(-6.0, -2.0); c.closePath(); c.fill(); c.stroke();
+                    c.beginPath(); c.moveTo(0, -4.8); c.lineTo(6.0, -7.6);  c.lineTo(6.0, -2.0);  c.closePath(); c.fill(); c.stroke();
+                    c.fillStyle = '#d8b4fe';
+                    c.beginPath(); c.arc(0, -4.8, 1.7, 0, Math.PI * 2); c.fill();
+                    // Świecące białe guziki na piersi
+                    c.shadowColor = '#ffffff'; c.shadowBlur = 5;
+                    c.fillStyle = '#ffffff';
+                    c.beginPath(); c.arc(0, 1.8, 1.5, 0, Math.PI * 2); c.arc(0, 7.0, 1.5, 0, Math.PI * 2); c.fill();
+                    c.shadowBlur = 0;
+                    // Cienisty mikrofon Freddy'ego w prawej łapie
+                    c.strokeStyle = '#1e1b4b'; c.lineWidth = 2.2;
+                    c.beginPath(); c.moveTo(11, 7); c.lineTo(16, 1.5); c.stroke();
+                    c.fillStyle = '#c084fc';
+                    c.beginPath(); c.arc(16.8, 0.6, 2.5, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#3b0764'; c.lineWidth = 0.9; c.stroke();
                     c.restore();
                     return;
                 }
@@ -6366,7 +6556,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         : type === 'toy_freddy' ? '#fde68a'
                     : type === 'sparky' ? '#d6a36c'
                         : '#c68b59';
-                    const bowCol = (type === 'freddy' || type === 'golden_freddy' || type === 'toy_freddy') ? '#09090b' : '#dc2626';
+                    const bowCol = (type === 'golden_freddy' && window.__shadowGF) ? '#9333ea' : (type === 'freddy' || type === 'golden_freddy' || type === 'toy_freddy') ? '#09090b' : '#dc2626';
                     c.fillStyle = suitCol;
                     c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 5); c.fill();
                     c.fillStyle = bellyCol;
@@ -6780,7 +6970,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 return;
             }
             if (type === 'heian_sukuna') { drawHeianSukuna(c, level, withRing); return; }
-            if (HEROES[type] && HEROES[type].universe === 'gd') {
+            if (HEROES[type] && HEROES[type].universe === 'gd' && type !== 'gd_block') {
                 // 8 Kanonicznych Twarzy Poziomów Trudności Geometry Dash (1:1 ze zdjęcia!)
                 c.save();
                 const r = withRing ? 13.5 : 11.2;
@@ -6900,205 +7090,453 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 return;
             }
             if (type === 'shadow_bonnie') {
+                // SHADOW BONNIE (RWQFSFASXC) — przerobiony od podstaw: mroczna, półprzezroczysta cienista sylwetka Toy Bonniego z długimi zgiętymi uszami, świecącymi białymi pustymi oczami, świecącą białą szczęką pełną zębów i fioletowo-czarną aurą cienia!
                 c.save();
                 const tGlitch = (typeof state !== 'undefined' && state.time) ? state.time : (performance.now() / 1000);
-                const gShift = Math.sin(tGlitch * 27) > 0.88 ? (Math.sin(tGlitch * 63) * 1.4) : 0;
+                const gShift = Math.sin(tGlitch * 26) > 0.89 ? (Math.sin(tGlitch * 61) * 1.3) : 0;
                 if (withRing) {
-                    const rg = c.createRadialGradient(0, 0, 3, 0, 0, 17);
-                    rg.addColorStop(0, '#1e0b36'); rg.addColorStop(0.65, '#07030f'); rg.addColorStop(1, '#020105');
-                    c.fillStyle = rg; c.beginPath(); c.arc(0, 0, 16.5, 0, Math.PI * 2); c.fill();
-                    c.strokeStyle = '#a855f7'; c.lineWidth = 2.2;
-                    c.beginPath(); c.arc(0, 0, 19.0, 0, Math.PI * 2); c.stroke();
-                    // Fioletowe paski glitchu RWQFSFASXC w tle
-                    c.fillStyle = 'rgba(168, 85, 247, 0.32)';
-                    c.fillRect(-13, -8, 9, 1.3); c.fillRect(4, 5, 10, 1.3); c.fillRect(-11, 9, 7, 1.1);
+                    const rg = c.createRadialGradient(0, 0, 2, 0, 0, 17.5);
+                    rg.addColorStop(0, '#3b0764'); rg.addColorStop(0.55, '#0f041d'); rg.addColorStop(1, '#020105');
+                    c.fillStyle = rg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#a855f7'; c.lineWidth = 2.3;
+                    c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
+                    // Pasma zakłóceń cienia RWQFSFASXC
+                    c.fillStyle = 'rgba(192, 132, 252, 0.34)';
+                    c.fillRect(-13.5, -8.5, 9.5, 1.2); c.fillRect(3.5, 5.5, 10.5, 1.2); c.fillRect(-11.5, 9.5, 7.5, 1.0);
                 }
                 c.translate(gShift, 0);
-                // Fioletowa poświata Remnantu wokół sylwetki
+                // Fioletowo-czarna mglista aura cienia za głową
+                const auraG = c.createRadialGradient(0, -2, 2, 0, -2, 16);
+                auraG.addColorStop(0, 'rgba(147, 51, 234, 0.55)');
+                auraG.addColorStop(0.65, 'rgba(59, 7, 100, 0.25)');
+                auraG.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                c.fillStyle = auraG;
+                c.beginPath(); c.arc(0, -2, 16, 0, Math.PI * 2); c.fill();
+
+                // DŁUGIE ZGIĘTE USZY TOY BONNIEGO (dwuczłonowe ze stawami, lewe mocno zgięte, prawe lekko przechylone!)
+                c.save();
                 c.shadowColor = '#a855f7'; c.shadowBlur = 7;
-                c.fillStyle = '#030305';
-                // Segmentowane długie uszy Toy Bonniego (dolny + górny człon ucha!)
-                c.beginPath();
-                c.roundRect(-6.8, -12.8, 4.2, 5.2, 1.5); c.roundRect(-7.2, -18.6, 4.4, 5.2, 1.6);
-                c.roundRect(2.6, -12.8, 4.2, 5.2, 1.5);  c.roundRect(2.8, -18.6, 4.4, 5.2, 1.6);
-                c.fill();
+                // Lewe ucho — dolny człon + zgięty pod kątem górny człon!
+                c.fillStyle = 'rgba(7, 4, 14, 0.93)';
+                c.strokeStyle = '#9333ea'; c.lineWidth = 0.95;
+                c.beginPath(); c.roundRect(-6.8, -13.6, 4.4, 6.2, 1.8); c.fill(); c.stroke();
+                c.fillStyle = 'rgba(88, 28, 135, 0.55)';
+                c.fillRect(-5.5, -12.4, 1.8, 3.8);
+                // Staw lewego ucha
+                c.strokeStyle = '#c084fc'; c.lineWidth = 1.1;
+                c.beginPath(); c.moveTo(-4.6, -13.6); c.lineTo(-5.2, -14.8); c.stroke();
+                c.save();
+                c.translate(-5.0, -14.4);
+                c.rotate(-0.46); // charakterystyczne zgięcie długiego ucha Toy Bonniego!
+                c.fillStyle = 'rgba(7, 4, 14, 0.93)';
+                c.strokeStyle = '#a855f7'; c.lineWidth = 0.95;
+                c.beginPath(); c.roundRect(-2.2, -6.6, 4.4, 6.6, 1.9); c.fill(); c.stroke();
+                c.fillStyle = 'rgba(107, 33, 168, 0.60)';
+                c.beginPath(); c.roundRect(-1.0, -5.4, 2.0, 4.2, 0.8); c.fill();
+                c.restore();
+
+                // Prawe ucho — dolny człon + lekko zgięty górny człon!
+                c.fillStyle = 'rgba(7, 4, 14, 0.93)';
+                c.strokeStyle = '#9333ea'; c.lineWidth = 0.95;
+                c.beginPath(); c.roundRect(2.4, -13.6, 4.4, 6.2, 1.8); c.fill(); c.stroke();
+                c.fillStyle = 'rgba(88, 28, 135, 0.55)';
+                c.fillRect(3.7, -12.4, 1.8, 3.8);
+                c.strokeStyle = '#c084fc'; c.lineWidth = 1.1;
+                c.beginPath(); c.moveTo(4.6, -13.6); c.lineTo(5.0, -14.8); c.stroke();
+                c.save();
+                c.translate(4.8, -14.4);
+                c.rotate(0.26);
+                c.fillStyle = 'rgba(7, 4, 14, 0.93)';
+                c.strokeStyle = '#a855f7'; c.lineWidth = 0.95;
+                c.beginPath(); c.roundRect(-2.2, -6.6, 4.4, 6.6, 1.9); c.fill(); c.stroke();
+                c.fillStyle = 'rgba(107, 33, 168, 0.60)';
+                c.beginPath(); c.roundRect(-1.0, -5.4, 2.0, 4.2, 0.8); c.fill();
+                c.restore();
+                c.restore();
+
+                // GŁOWA I PUCOŁOWATE POLICZKI TOY BONNIEGO (półprzezroczysty cień z fioletową poświatą)
+                const headG = c.createRadialGradient(0, -2, 1.5, 0, -1, 10.5);
+                headG.addColorStop(0, 'rgba(24, 9, 44, 0.92)');
+                headG.addColorStop(0.65, 'rgba(6, 3, 13, 0.94)');
+                headG.addColorStop(1, 'rgba(2, 1, 6, 0.96)');
+                c.fillStyle = headG;
+                c.shadowColor = '#9333ea'; c.shadowBlur = 8;
+                c.beginPath(); c.arc(0, -2.0, 9.2, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.arc(-7.0, 0.8, 4.3, 0, Math.PI * 2); c.arc(7.0, 0.8, 4.3, 0, Math.PI * 2); c.fill();
+                // Dolna szczęka Toy Bonniego
+                c.beginPath(); c.roundRect(-6.4, 2.2, 12.8, 6.2, 2.6); c.fill();
                 c.shadowBlur = 0;
-                c.strokeStyle = '#7e22ce'; c.lineWidth = 0.85;
-                c.strokeRect(-6.8, -12.8, 4.2, 5.2); c.strokeRect(-7.2, -18.6, 4.4, 5.2);
-                c.strokeRect(2.6, -12.8, 4.2, 5.2);  c.strokeRect(2.8, -18.6, 4.4, 5.2);
-                // Wnętrza uszu w głębokim fiolecie cienia
-                c.fillStyle = '#1e0938';
-                c.fillRect(-5.7, -17.5, 2.0, 3.2); c.fillRect(4.0, -17.5, 2.0, 3.2);
-                // Głowa i policzki Toy Bonniego (kruczoczarna sylwetka z fioletowym konturem)
-                c.fillStyle = '#040407';
-                c.beginPath(); c.arc(0, -1.5, 9.2, 0, Math.PI * 2); c.fill();
-                c.beginPath(); c.arc(-6.8, 1.2, 4.2, 0, Math.PI * 2); c.arc(6.8, 1.2, 4.2, 0, Math.PI * 2); c.fill();
-                c.strokeStyle = '#9333ea'; c.lineWidth = 1.1;
-                c.beginPath(); c.arc(0, -1.5, 9.3, 0, Math.PI * 2); c.stroke();
-                // Pyszczek i czarny nos
-                c.fillStyle = '#0d0717';
-                c.beginPath(); c.ellipse(0, 2.0, 6.0, 3.6, 0, 0, Math.PI * 2); c.fill();
-                // Jaskrawo świecące czysto-białe oczy (znak rozpoznawczy Shadow Bonniego!)
-                c.shadowColor = '#ffffff'; c.shadowBlur = 8;
-                c.fillStyle = '#ffffff';
-                c.beginPath();
-                c.ellipse(-3.8, -2.6, 2.5, 2.9, 0, 0, Math.PI * 2);
-                c.ellipse(3.8, -2.6, 2.5, 2.9, 0, 0, Math.PI * 2);
-                c.fill();
-                // Świecące białe zęby Toy Bonniego (górny i dolny rząd w ciemnej paszczy!)
+                c.strokeStyle = 'rgba(168, 85, 247, 0.78)'; c.lineWidth = 1.05;
+                c.beginPath(); c.arc(0, -2.0, 9.3, Math.PI * 0.88, Math.PI * 2.12); c.stroke();
+
+                // Pyszczek i ciemny trójkątny nosek królika
+                c.fillStyle = 'rgba(30, 11, 54, 0.82)';
+                c.beginPath(); c.ellipse(0, 1.0, 5.8, 3.0, 0, 0, Math.PI * 2); c.fill();
                 c.fillStyle = '#020104';
-                c.beginPath(); c.roundRect(-5.6, 2.2, 11.2, 4.8, 1.6); c.fill();
+                c.beginPath(); c.moveTo(-1.7, -0.3); c.lineTo(1.7, -0.3); c.lineTo(0, 1.3); c.closePath(); c.fill();
+
+                // ŚWIECĄCE BIAŁE PUSTE OCZY (intensywny biały blask bez źrenic!)
+                c.save();
+                c.shadowColor = '#ffffff'; c.shadowBlur = 10;
                 c.fillStyle = '#ffffff';
-                for (let tx = -4.6; tx <= 3.2; tx += 2.4) {
-                    c.fillRect(tx, 2.3, 1.8, 1.9);
-                    c.fillRect(tx + 0.3, 4.9, 1.5, 1.7);
+                c.beginPath();
+                c.ellipse(-3.9, -2.8, 2.55, 3.0, -0.05, 0, Math.PI * 2);
+                c.ellipse(3.9, -2.8, 2.55, 3.0, 0.05, 0, Math.PI * 2);
+                c.fill();
+                c.restore();
+
+                // ŚWIECĄCE BIAŁE ZĘBY W SZCZĘCE (wyróżnione 2 przednie królicze siekacze Toy Bonniego + rząd górnych i dolnych zębów!)
+                c.fillStyle = '#010003';
+                c.beginPath(); c.roundRect(-5.6, 2.1, 11.2, 5.4, 1.8); c.fill();
+                c.save();
+                c.shadowColor = '#ffffff'; c.shadowBlur = 7;
+                c.fillStyle = '#ffffff';
+                // Górne zęby (2 dłuższe środkowe siekacze Toy Bonniego + boczne zęby)
+                c.fillRect(-4.8, 2.2, 1.45, 1.7);
+                c.fillRect(-2.9, 2.2, 1.45, 1.9);
+                c.fillRect(-1.3, 2.2, 1.2, 2.5);
+                c.fillRect(0.1,  2.2, 1.2, 2.5);
+                c.fillRect(1.45, 2.2, 1.45, 1.9);
+                c.fillRect(3.35, 2.2, 1.45, 1.7);
+                // Dolny rząd świecących białych zębów w szczęce
+                for (let tx = -4.5; tx <= 3.6; tx += 1.9) {
+                    c.fillRect(tx, 5.3, 1.35, 1.9);
                 }
-                c.shadowBlur = 0;
-                // Kontur muszki pod brodą
-                c.fillStyle = '#2e1065';
-                c.beginPath(); c.moveTo(0, 8.8); c.lineTo(-4.8, 6.8); c.lineTo(-4.8, 10.8); c.closePath(); c.fill();
-                c.beginPath(); c.moveTo(0, 8.8); c.lineTo(4.8, 6.8); c.lineTo(4.8, 10.8); c.closePath(); c.fill();
+                c.restore();
+
+                if (withRing) {
+                    c.fillStyle = '#3b0764';
+                    c.beginPath(); c.moveTo(0, 10.2); c.lineTo(-4.8, 8.4); c.lineTo(-4.8, 12.0); c.closePath(); c.fill();
+                    c.beginPath(); c.moveTo(0, 10.2); c.lineTo(4.8, 8.4);  c.lineTo(4.8, 12.0);  c.closePath(); c.fill();
+                }
                 c.restore();
                 return;
             }
-            if (type === 'shadow_freddy_hero') {
+            if (type === 'shadow_freddy_hero' || (type === 'golden_freddy' && window.__shadowGF)) {
+                // SHADOW FREDDY — przerobiony od podstaw: mroczna ciemnofioletowo-czarna sylwetka misia z FIOLETOWYM CYLINDREM i MUSZKĄ, świecącymi białymi oczami, świecącymi białymi zębami oraz cienistą poświatą!
                 c.save();
                 if (withRing) {
-                    c.strokeStyle = '#c084fc'; c.lineWidth = 2.2;
+                    const sfg = c.createRadialGradient(0, 0, 2, 0, 0, 17.5);
+                    sfg.addColorStop(0, '#3b0764'); sfg.addColorStop(0.6, '#140526'); sfg.addColorStop(1, '#04010a');
+                    c.fillStyle = sfg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#c084fc'; c.lineWidth = 2.3;
                     c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
-                    c.fillStyle = '#1e1038'; c.beginPath(); c.arc(0, 0, 16.2, 0, Math.PI * 2); c.fill();
                 }
-                c.fillStyle = '#3b0764';
-                c.beginPath(); c.arc(-7.5, -8, 3.5, 0, Math.PI * 2); c.arc(7.5, -8, 3.5, 0, Math.PI * 2); c.fill();
-                c.beginPath(); c.arc(0, -1, 9.4, 0, Math.PI * 2); c.fill();
-                c.fillStyle = '#09090b';
-                c.fillRect(-4.5, -15, 9, 5.5); c.fillRect(-6.5, -10.2, 13, 1.8);
+                // Cienista fioletowo-czarna poświata za głową misia
+                const sfHalo = c.createRadialGradient(0, -1, 2, 0, -1, 16);
+                sfHalo.addColorStop(0, 'rgba(168, 85, 247, 0.52)');
+                sfHalo.addColorStop(0.65, 'rgba(59, 7, 100, 0.24)');
+                sfHalo.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                c.fillStyle = sfHalo;
+                c.beginPath(); c.arc(0, -1, 16, 0, Math.PI * 2); c.fill();
+
+                // Okrągłe niedźwiedzie uszy na metalowych trzpieniach
+                c.strokeStyle = '#4c1d95'; c.lineWidth = 1.6;
+                c.beginPath(); c.moveTo(-6.2, -6.5); c.lineTo(-8.4, -9.2); c.moveTo(6.2, -6.5); c.lineTo(8.4, -9.2); c.stroke();
+                c.fillStyle = '#140428'; c.strokeStyle = '#9333ea'; c.lineWidth = 1.0;
+                c.beginPath(); c.arc(-8.6, -9.6, 3.7, 0, Math.PI * 2); c.fill(); c.stroke();
+                c.beginPath(); c.arc(8.6, -9.6, 3.7, 0, Math.PI * 2);  c.fill(); c.stroke();
+                c.fillStyle = '#4c1d95';
+                c.beginPath(); c.arc(-8.6, -9.6, 2.0, 0, Math.PI * 2); c.arc(8.6, -9.6, 2.0, 0, Math.PI * 2); c.fill();
+
+                // Głowa i szerokie policzki misia (ciemnofioletowo-czarny gradient z poświatą cienia)
+                const bearG = c.createRadialGradient(-2, -3, 1.5, 0, -1, 11);
+                bearG.addColorStop(0, '#3b0764');
+                bearG.addColorStop(0.55, '#190630');
+                bearG.addColorStop(1, '#06020d');
+                c.fillStyle = bearG;
+                c.shadowColor = '#9333ea'; c.shadowBlur = 7;
+                c.beginPath(); c.arc(0, -1.8, 9.4, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.ellipse(0, 1.5, 10.4, 5.6, 0, 0, Math.PI * 2); c.fill();
+                // Dolna szczęka animatronika
+                c.beginPath(); c.roundRect(-6.8, 2.8, 13.6, 5.6, 2.4); c.fill();
+                c.shadowBlur = 0;
+                c.strokeStyle = 'rgba(192, 132, 252, 0.72)'; c.lineWidth = 1.0;
+                c.beginPath(); c.arc(0, -1.8, 9.5, Math.PI * 0.9, Math.PI * 2.1); c.stroke();
+
+                // FIOLETOWY CYLINDER (Purple Top Hat) ze wstążką i połyskiem!
+                const hatG = c.createLinearGradient(-5, -18.5, 5, -10);
+                hatG.addColorStop(0, '#9333ea');
+                hatG.addColorStop(0.55, '#581c87');
+                hatG.addColorStop(1, '#2e1065');
+                c.fillStyle = hatG;
+                c.strokeStyle = '#d8b4fe'; c.lineWidth = 0.95;
+                c.beginPath(); c.roundRect(-4.8, -18.2, 9.6, 7.6, 1.4); c.fill(); c.stroke();
+                // Jasnofioletowa wstążka nad rondem cylindra
+                c.fillStyle = '#c084fc';
+                c.fillRect(-4.7, -12.6, 9.4, 1.7);
+                // Rondo fioletowego cylindra
+                c.fillStyle = '#4c1d95';
+                c.beginPath(); c.ellipse(0, -10.4, 7.4, 1.9, 0, 0, Math.PI * 2); c.fill();
+                c.strokeStyle = '#c084fc'; c.lineWidth = 0.9; c.stroke();
+
+                // Pyszczek misia, kropki wąsów i błyszczący czarny nos
+                c.fillStyle = '#2e1065';
+                c.beginPath(); c.ellipse(0, 1.4, 6.5, 3.2, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#05010a';
+                c.beginPath(); c.ellipse(0, -0.1, 2.4, 1.45, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#e9d5ff';
+                c.beginPath(); c.ellipse(-0.7, -0.4, 0.7, 0.35, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#140428';
+                c.beginPath();
+                c.arc(-3.6, 1.5, 0.55, 0, Math.PI * 2); c.arc(-4.7, 2.2, 0.55, 0, Math.PI * 2);
+                c.arc(3.6, 1.5, 0.55, 0, Math.PI * 2);  c.arc(4.7, 2.2, 0.55, 0, Math.PI * 2);
+                c.fill();
+
+                // Głębokie oczodoły, grube brwi i ŚWIECĄCE BIAŁE OCZY!
+                c.fillStyle = '#030108';
+                c.beginPath(); c.arc(-3.8, -3.0, 2.7, 0, Math.PI * 2); c.arc(3.8, -3.0, 2.7, 0, Math.PI * 2); c.fill();
+                c.strokeStyle = '#581c87'; c.lineWidth = 1.6;
+                c.beginPath(); c.moveTo(-6.5, -6.2); c.lineTo(-1.4, -5.6); c.moveTo(6.5, -6.2); c.lineTo(1.4, -5.6); c.stroke();
+                c.save();
+                c.shadowColor = '#ffffff'; c.shadowBlur = 9;
                 c.fillStyle = '#ffffff';
-                c.beginPath(); c.arc(-3.5, -2.5, 2.0, 0, Math.PI * 2); c.arc(3.5, -2.5, 2.0, 0, Math.PI * 2); c.fill();
-                c.fillRect(-4, 2.5, 8, 2.2);
+                c.beginPath(); c.arc(-3.8, -3.0, 1.85, 0, Math.PI * 2); c.arc(3.8, -3.0, 1.85, 0, Math.PI * 2); c.fill();
+                c.restore();
+
+                // Ciemne wnętrze paszczy i ŚWIECĄCE BIAŁE ZĘBY misia!
+                c.fillStyle = '#020006';
+                c.beginPath(); c.roundRect(-5.5, 3.6, 11.0, 3.7, 1.3); c.fill();
+                c.save();
+                c.shadowColor = '#ffffff'; c.shadowBlur = 6;
+                c.fillStyle = '#ffffff';
+                for (let tx = -4.6; tx <= 3.6; tx += 1.95) {
+                    c.fillRect(tx, 4.9, 1.45, 2.1);
+                }
+                c.restore();
+
+                // Fioletowa muszka widoczna pod brodą w portrecie (withRing)
+                if (withRing) {
+                    c.fillStyle = '#9333ea'; c.strokeStyle = '#e9d5ff'; c.lineWidth = 0.8;
+                    c.beginPath(); c.moveTo(0, 10.2); c.lineTo(-5.4, 8.1); c.lineTo(-5.4, 12.3); c.closePath(); c.fill(); c.stroke();
+                    c.beginPath(); c.moveTo(0, 10.2); c.lineTo(5.4, 8.1);  c.lineTo(5.4, 12.3);  c.closePath(); c.fill(); c.stroke();
+                    c.fillStyle = '#f3e8ff';
+                    c.beginPath(); c.arc(0, 10.2, 1.4, 0, Math.PI * 2); c.fill();
+                }
                 c.restore();
                 return;
             }
             if (type === 'higuruma') {
+                // HIROMI HIGURUMA — przerobiony od podstaw: czarny garnitur adwokata z białą koszulą i krawatem, złota odznaka adwokacka w klapie, potargane ciemne włosy, zmęczone oczy i Młot Sędziowski (Gavel) ze złotą przeklętą energią!
                 c.save();
                 if (withRing) {
-                    const hg = c.createRadialGradient(0, -3, 2, 0, 0, 17);
-                    hg.addColorStop(0, '#1e293b'); hg.addColorStop(1, '#050811');
-                    c.fillStyle = hg; c.beginPath(); c.arc(0, 0, 16.4, 0, Math.PI * 2); c.fill();
-                    c.strokeStyle = '#facc15'; c.lineWidth = 2.2;
+                    const hg = c.createRadialGradient(0, -2, 2, 0, 0, 17.5);
+                    hg.addColorStop(0, '#1e293b'); hg.addColorStop(0.65, '#090d16'); hg.addColorStop(1, '#03050a');
+                    c.fillStyle = hg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#facc15'; c.lineWidth = 2.3;
                     c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
-                    // Kołnierz garnituru prawniczego, biała koszula, krawat i złota odznaka adwokacka
-                    c.fillStyle = '#0f172a';
-                    c.beginPath(); c.roundRect(-10.5, 7.2, 21, 8.5, 3); c.fill();
+                    // Ramiona czarnego garnituru adwokata, śnieżnobiała koszula, krawat i złota odznaka w klapie!
+                    c.fillStyle = '#090d16';
+                    c.beginPath(); c.roundRect(-11.2, 6.8, 22.4, 9.2, 3.2); c.fill();
+                    c.strokeStyle = '#334155'; c.lineWidth = 0.9; c.stroke();
                     c.fillStyle = '#f8fafc';
-                    c.beginPath(); c.moveTo(-4.2, 7.2); c.lineTo(4.2, 7.2); c.lineTo(0, 14.5); c.closePath(); c.fill();
-                    c.fillStyle = '#b45309';
-                    c.beginPath(); c.moveTo(-1.3, 8.0); c.lineTo(1.3, 8.0); c.lineTo(1.8, 14.5); c.lineTo(-1.8, 14.5); c.closePath(); c.fill();
+                    c.beginPath(); c.moveTo(-4.4, 6.8); c.lineTo(4.4, 6.8); c.lineTo(0, 15.2); c.closePath(); c.fill();
+                    c.fillStyle = '#92400e';
+                    c.beginPath(); c.moveTo(-1.3, 7.4); c.lineTo(1.3, 7.4); c.lineTo(1.8, 15.0); c.lineTo(-1.8, 15.0); c.closePath(); c.fill();
+                    c.strokeStyle = '#facc15'; c.lineWidth = 0.7;
+                    c.beginPath(); c.moveTo(-1.2, 9.8); c.lineTo(1.3, 11.0); c.moveTo(-1.4, 12.4); c.lineTo(1.4, 13.6); c.stroke();
+                    // Złota Odznaka Adwokacka na klapie
+                    c.fillStyle = '#fde047';
+                    c.beginPath(); c.arc(-6.2, 10.4, 1.75, 0, Math.PI * 2); c.fill();
+                    c.fillStyle = '#78350f';
+                    c.beginPath(); c.arc(-6.2, 10.4, 0.7, 0, Math.PI * 2); c.fill();
+                    // Głowica Młota Sędziowskiego (Gavel) ze złotą energią w prawym dolnym rogu portretu!
+                    c.save();
+                    c.translate(9.8, 10.2);
+                    c.rotate(-0.52);
+                    c.shadowColor = '#facc15'; c.shadowBlur = 7;
+                    c.fillStyle = '#78350f'; c.strokeStyle = '#fde047'; c.lineWidth = 1.0;
+                    c.beginPath(); c.roundRect(-4.2, -2.3, 8.4, 4.6, 1.1); c.fill(); c.stroke();
                     c.fillStyle = '#facc15';
-                    c.beginPath(); c.arc(-6.0, 10.5, 1.4, 0, Math.PI * 2); c.fill();
+                    c.fillRect(-3.1, -2.3, 1.1, 4.6); c.fillRect(2.0, -2.3, 1.1, 4.6);
+                    c.restore();
                 }
-                // Uszy i smukła, zmęczona twarz Hiromiego Higurumy
-                c.fillStyle = '#f5d5be';
-                c.beginPath(); c.ellipse(-8.8, -0.5, 1.8, 2.8, 0, 0, Math.PI * 2); c.ellipse(8.8, -0.5, 1.8, 2.8, 0, 0, Math.PI * 2); c.fill();
+
+                // Szyja, uszy i smukła, poważna twarz Higurumy z cieniowaniem policzków
+                c.fillStyle = '#e5bfa6';
+                c.fillRect(-2.8, 5.2, 5.6, 3.2);
+                const skinG = c.createLinearGradient(0, -9, 0, 8);
+                skinG.addColorStop(0, '#f7dac6');
+                skinG.addColorStop(1, '#e2b89d');
+                c.fillStyle = skinG;
+                c.beginPath(); c.ellipse(-8.9, -0.6, 1.7, 2.8, 0, 0, Math.PI * 2); c.ellipse(8.9, -0.6, 1.7, 2.8, 0, 0, Math.PI * 2); c.fill();
                 c.beginPath();
-                c.moveTo(-8.4, -5.5); c.quadraticCurveTo(-8.6, 4.5, 0, 8.2); c.quadraticCurveTo(8.6, 4.5, 8.4, -5.5);
-                c.arc(0, -3.5, 8.4, 0, Math.PI, true);
+                c.moveTo(-8.5, -5.8);
+                c.quadraticCurveTo(-8.6, 3.8, -3.2, 7.2);
+                c.quadraticCurveTo(0, 8.6, 3.2, 7.2);
+                c.quadraticCurveTo(8.6, 3.8, 8.5, -5.8);
+                c.arc(0, -3.8, 8.5, 0, Math.PI, true);
                 c.closePath(); c.fill();
-                c.strokeStyle = '#c2997f'; c.lineWidth = 0.8; c.stroke();
-                // Zaczesane do tyłu ciemnobrązowo-czarne włosy z 2 charakterystycznymi opadającymi kosmykami na czole!
-                c.fillStyle = '#171412';
+                c.strokeStyle = '#b98d72'; c.lineWidth = 0.85; c.stroke();
+
+                // POTARGANE CIEMNE WŁOSY (zaczesane do tyłu w nieładzie z postrzępionymi kosmykami po bokach i opadającymi pasmami na czoło!)
+                c.fillStyle = '#14110f';
                 c.beginPath();
-                c.moveTo(-9.2, -1.5);
-                c.quadraticCurveTo(-10.5, -10.5, -4.5, -13.2);
-                c.lineTo(0, -14.2);
-                c.lineTo(5.2, -13.0);
-                c.quadraticCurveTo(10.5, -10.2, 9.2, -1.5);
-                c.lineTo(7.8, -5.8);
-                c.lineTo(3.5, -7.8);
-                c.lineTo(0, -7.2);
-                c.lineTo(-4.0, -7.8);
-                c.lineTo(-7.8, -5.8);
+                c.moveTo(-9.3, -0.8);
+                c.lineTo(-10.8, -4.8);
+                c.lineTo(-9.6, -7.2);
+                c.lineTo(-10.6, -10.6);
+                c.lineTo(-7.2, -11.8);
+                c.lineTo(-6.2, -14.2);
+                c.lineTo(-2.4, -13.4);
+                c.lineTo(0.4, -15.0);
+                c.lineTo(3.6, -13.5);
+                c.lineTo(7.0, -14.0);
+                c.lineTo(8.2, -11.4);
+                c.lineTo(10.8, -9.8);
+                c.lineTo(9.6, -6.8);
+                c.lineTo(10.6, -4.2);
+                c.lineTo(9.3, -0.8);
+                c.lineTo(8.0, -5.8);
+                c.lineTo(4.6, -8.2);
+                c.lineTo(0, -7.6);
+                c.lineTo(-4.6, -8.2);
+                c.lineTo(-8.0, -5.8);
                 c.closePath(); c.fill();
-                // Pasma zaczesania i 2 cienkie kosmyki grzywki Higurumy
-                c.strokeStyle = '#292524'; c.lineWidth = 0.9;
-                c.beginPath(); c.moveTo(-4, -12.5); c.lineTo(-2, -8); c.moveTo(1, -13.2); c.lineTo(2, -8); c.moveTo(5, -12); c.lineTo(5.5, -7.5); c.stroke();
-                c.strokeStyle = '#171412'; c.lineWidth = 1.25;
+                // Tekstura pasm włosów + charakterystyczne potargane kosmyki opadające na czoło i między oczy!
+                c.strokeStyle = '#2c2623'; c.lineWidth = 0.9;
                 c.beginPath();
-                c.moveTo(-1.8, -7.6); c.quadraticCurveTo(-3.6, -4.0, -2.4, -1.2);
-                c.moveTo(1.6, -7.6); c.quadraticCurveTo(3.2, -4.2, 2.0, -1.6);
+                c.moveTo(-5.2, -13.0); c.lineTo(-3.2, -8.4);
+                c.moveTo(0.4, -14.2);  c.lineTo(1.2, -8.2);
+                c.moveTo(5.6, -12.6);  c.lineTo(4.4, -8.2);
                 c.stroke();
-                // Zmęczone półprzymknięte oczy prawnika + worki pod oczami + surowo zmarszczone brwi
-                c.fillStyle = '#ffffff';
-                c.beginPath(); c.ellipse(-4.0, -2.0, 2.3, 1.25, 0, 0, Math.PI * 2); c.ellipse(4.0, -2.0, 2.3, 1.25, 0, 0, Math.PI * 2); c.fill();
-                c.fillStyle = '#1e293b';
-                c.beginPath(); c.arc(-4.0, -2.0, 1.15, 0, Math.PI * 2); c.arc(4.0, -2.0, 1.15, 0, Math.PI * 2); c.fill();
-                c.strokeStyle = '#0f172a'; c.lineWidth = 1.3;
+                c.strokeStyle = '#14110f'; c.lineWidth = 1.35; c.lineCap = 'round';
                 c.beginPath();
-                c.moveTo(-6.6, -2.6); c.lineTo(-1.5, -2.3);
-                c.moveTo(6.6, -2.6);  c.lineTo(1.5, -2.3);
-                c.moveTo(-6.5, -4.4); c.lineTo(-1.8, -3.6);
-                c.moveTo(6.5, -4.4);  c.lineTo(1.8, -3.6);
+                c.moveTo(-4.8, -8.0); c.quadraticCurveTo(-6.4, -5.2, -5.4, -3.2);
+                c.moveTo(-1.4, -8.0); c.quadraticCurveTo(-3.2, -4.2, -1.9, -0.8);
+                c.moveTo(1.5, -8.0);  c.quadraticCurveTo(3.4, -4.4, 2.2, -1.2);
+                c.moveTo(5.0, -7.8);  c.quadraticCurveTo(6.6, -5.0, 5.6, -3.2);
                 c.stroke();
-                // Cienie zmęczenia pod oczami i charakterystyczny garbaty nos Higurumy
-                c.strokeStyle = 'rgba(100, 116, 139, 0.75)'; c.lineWidth = 0.85;
+
+                // ZMĘCZONE, CIĘŻKIE OCZY PRAWNIKA + wyraźne cienie/worki pod oczami + zmarszczone brwi!
+                // Cienie pod oczami
+                c.fillStyle = 'rgba(71, 85, 105, 0.36)';
+                c.beginPath(); c.ellipse(-4.1, -0.9, 2.5, 1.0, 0.08, 0, Math.PI * 2); c.ellipse(4.1, -0.9, 2.5, 1.0, -0.08, 0, Math.PI * 2); c.fill();
+                // Białka oczu i ciemne tęczówki ze złotym błyskiem Deadly Sentencing
+                c.fillStyle = '#f8fafc';
+                c.beginPath(); c.ellipse(-4.1, -2.0, 2.35, 1.2, 0, 0, Math.PI * 2); c.ellipse(4.1, -2.0, 2.35, 1.2, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#1c1917';
+                c.beginPath(); c.arc(-4.1, -1.95, 1.1, 0, Math.PI * 2); c.arc(4.1, -1.95, 1.1, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#fde047';
+                c.beginPath(); c.arc(-4.3, -2.15, 0.38, 0, Math.PI * 2); c.arc(3.9, -2.15, 0.38, 0, Math.PI * 2); c.fill();
+                // Przymknięte ciężkie górne powieki + zmarszczone brwi + linie zmęczenia
+                c.fillStyle = '#e5bfa6';
+                c.fillRect(-6.6, -3.3, 5.0, 1.0); c.fillRect(1.6, -3.3, 5.0, 1.0);
+                c.strokeStyle = '#0f172a'; c.lineWidth = 1.25;
                 c.beginPath();
-                c.moveTo(-5.8, -0.4); c.quadraticCurveTo(-4.0, 0.3, -2.2, -0.5);
-                c.moveTo(2.2, -0.5);  c.quadraticCurveTo(4.0, 0.3, 5.8, -0.4);
-                c.moveTo(0, -2.4); c.lineTo(-0.8, 1.2); c.lineTo(0.5, 1.8);
+                c.moveTo(-6.6, -2.3); c.lineTo(-1.6, -2.1);
+                c.moveTo(6.6, -2.3);  c.lineTo(1.6, -2.1);
+                c.moveTo(-6.6, -4.3); c.lineTo(-1.7, -3.5);
+                c.moveTo(6.6, -4.3);  c.lineTo(1.7, -3.5);
                 c.stroke();
-                // Poważne, lekko opadające usta
-                c.strokeStyle = '#7c2d12'; c.lineWidth = 1.1;
-                c.beginPath(); c.moveTo(-2.8, 4.4); c.quadraticCurveTo(0, 3.8, 2.8, 4.4); c.stroke();
+                c.strokeStyle = 'rgba(71, 85, 105, 0.85)'; c.lineWidth = 0.8;
+                c.beginPath();
+                c.moveTo(-6.0, -0.4); c.quadraticCurveTo(-4.1, 0.4, -2.2, -0.5);
+                c.moveTo(2.2, -0.5);  c.quadraticCurveTo(4.1, 0.4, 6.0, -0.4);
+                c.stroke();
+
+                // Charakterystyczny wyrazisty grzbiet nosa Higurumy i poważne usta
+                c.strokeStyle = '#9a7058'; c.lineWidth = 0.95;
+                c.beginPath(); c.moveTo(-0.2, -2.4); c.lineTo(-0.9, 1.4); c.lineTo(0.6, 1.9); c.stroke();
+                c.strokeStyle = '#6b2f1a'; c.lineWidth = 1.1;
+                c.beginPath(); c.moveTo(-2.9, 4.5); c.quadraticCurveTo(0, 3.8, 2.9, 4.5); c.stroke();
                 c.restore();
                 return;
             }
             if (type === 'gd_block') {
+                // GD BLOCK (Geometry Dash Icon Cube) — przerobiony od podstaw: kultowa kostka GD z neonowym obramowaniem, wewnętrznym geometrycznym wzorem/cieniowaniem w stylu Icon Kitu, kwadratowymi oczami i charakterystycznym geometrycznym uśmiechem!
                 c.save();
                 if (withRing) {
-                    const gg = c.createRadialGradient(0, 0, 2, 0, 0, 17);
-                    gg.addColorStop(0, '#0e7490'); gg.addColorStop(1, '#041324');
-                    c.fillStyle = gg; c.beginPath(); c.arc(0, 0, 16.4, 0, Math.PI * 2); c.fill();
-                    c.strokeStyle = '#22d3ee'; c.lineWidth = 2.3;
+                    const gg = c.createRadialGradient(0, 0, 2, 0, 0, 17.5);
+                    gg.addColorStop(0, '#0e7490'); gg.addColorStop(0.6, '#082f49'); gg.addColorStop(1, '#020617');
+                    c.fillStyle = gg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    // Siatka tła w stylu poziomu Geometry Dash
+                    c.strokeStyle = 'rgba(34, 211, 238, 0.22)'; c.lineWidth = 0.7;
+                    c.beginPath();
+                    c.moveTo(-15, -7); c.lineTo(15, -7); c.moveTo(-15, 7); c.lineTo(15, 7);
+                    c.moveTo(-7, -15); c.lineTo(-7, 15); c.moveTo(7, -15); c.lineTo(7, 15);
+                    c.stroke();
+                    c.strokeStyle = '#22d3ee'; c.lineWidth = 2.4;
                     c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
                 }
-                // Kultowy domyślny kwadrat Geometry Dash (Player Cube 1): żółto-złoty gradient z fazowaniem 3D i czarnym obrysem!
-                const cubeGrad = c.createLinearGradient(-11, -11, 11, 11);
-                cubeGrad.addColorStop(0, '#fde047');
-                cubeGrad.addColorStop(0.55, '#facc15');
-                cubeGrad.addColorStop(1, '#eab308');
-                c.fillStyle = cubeGrad;
-                c.strokeStyle = '#09090b'; c.lineWidth = 2.0;
-                c.beginPath(); c.roundRect(-11, -11, 22, 22, 1.8); c.fill(); c.stroke();
-                // Fazowanie krawędzi (jasny błysk u góry/lewej + głębszy złoty cień u dołu/prawej)
-                c.fillStyle = 'rgba(254, 249, 195, 0.65)';
-                c.fillRect(-9.8, -9.8, 19.6, 2.0);
-                c.fillRect(-9.8, -9.8, 2.0, 19.6);
-                c.fillStyle = 'rgba(161, 98, 7, 0.45)';
-                c.fillRect(-9.8, 7.8, 19.6, 2.0);
-                c.fillRect(7.8, -9.8, 2.0, 19.6);
-                // Świecące cyjanowe kwadratowe oczy z czarną ramką i białym pikselowym połyskiem!
-                c.shadowColor = '#22d3ee'; c.shadowBlur = 5;
-                for (const ex of [-7.4, 2.2]) {
-                    c.fillStyle = '#09090b';
-                    c.fillRect(ex - 0.8, -6.6, 6.8, 6.8);
-                    c.fillStyle = '#22d3ee';
-                    c.fillRect(ex, -5.8, 5.2, 5.2);
-                    c.fillStyle = '#ecfeff';
-                    c.fillRect(ex + 0.7, -5.1, 2.0, 2.0);
-                }
-                // Kultowy szeroki cyjanowy geometryczny uśmiech (schodkowe rogi ust + czarna obwódka!)
-                c.fillStyle = '#09090b';
-                c.beginPath();
-                c.moveTo(-8.4, 1.4); c.lineTo(-4.4, 1.4); c.lineTo(-4.4, 3.0);
-                c.lineTo(4.4, 3.0);  c.lineTo(4.4, 1.4);  c.lineTo(8.4, 1.4);
-                c.lineTo(8.4, 7.2);  c.lineTo(-8.4, 7.2); c.closePath(); c.fill();
-                c.fillStyle = '#22d3ee';
-                c.fillRect(-7.4, 2.3, 2.2, 3.9);
-                c.fillRect(5.2, 2.3, 2.2, 3.9);
-                c.fillRect(-7.4, 3.9, 14.8, 2.4);
-                c.fillStyle = '#a5f3fc';
-                c.fillRect(-6.8, 4.2, 13.6, 0.9);
+
+                // Neonowa poświata obramowania całej kostki GD
+                c.shadowColor = '#22d3ee'; c.shadowBlur = 8;
+                c.strokeStyle = '#22d3ee'; c.lineWidth = 3.2;
+                c.beginPath(); c.roundRect(-11.4, -11.4, 22.8, 22.8, 2.0); c.stroke();
                 c.shadowBlur = 0;
+
+                // Złoto-żółta bryła kostki Geometry Dash z grubym czarnym konturem
+                const cubeGrad = c.createLinearGradient(-11.2, -11.2, 11.2, 11.2);
+                cubeGrad.addColorStop(0, '#fef9c3');
+                cubeGrad.addColorStop(0.28, '#fde047');
+                cubeGrad.addColorStop(0.72, '#facc15');
+                cubeGrad.addColorStop(1, '#ca8a04');
+                c.fillStyle = cubeGrad;
+                c.strokeStyle = '#050508'; c.lineWidth = 2.2;
+                c.beginPath(); c.roundRect(-11.2, -11.2, 22.4, 22.4, 1.8); c.fill(); c.stroke();
+
+                // Wewnętrzne fazowanie 3D, ukośny połysk oraz geometryczne narożne wzory w stylu ikon z GD!
+                c.fillStyle = 'rgba(255, 255, 255, 0.55)';
+                c.fillRect(-9.9, -9.9, 19.8, 2.0);
+                c.fillRect(-9.9, -9.9, 2.0, 19.8);
+                c.fillStyle = 'rgba(161, 98, 7, 0.50)';
+                c.fillRect(-9.9, 7.9, 19.8, 2.0);
+                c.fillRect(7.9, -9.9, 2.0, 19.8);
+                // Ukośny pas świetlny na powierzchni kostki
+                c.fillStyle = 'rgba(255, 255, 255, 0.24)';
+                c.beginPath(); c.moveTo(-9.8, -3.5); c.lineTo(-3.5, -9.8); c.lineTo(2.8, -9.8); c.lineTo(-9.8, 2.8); c.closePath(); c.fill();
+                // Wewnętrzna neonowa mikro-ramka i geometryczne akcenty narożne
+                c.strokeStyle = 'rgba(6, 182, 212, 0.75)'; c.lineWidth = 0.95;
+                c.strokeRect(-9.2, -9.2, 18.4, 18.4);
+                c.fillStyle = '#0891b2';
+                c.fillRect(-9.2, -9.2, 2.6, 1.2); c.fillRect(-9.2, -9.2, 1.2, 2.6);
+                c.fillRect(6.6, -9.2, 2.6, 1.2);  c.fillRect(8.0, -9.2, 1.2, 2.6);
+                c.fillRect(-9.2, 8.0, 2.6, 1.2);  c.fillRect(-9.2, 6.6, 1.2, 2.6);
+                c.fillRect(6.6, 8.0, 2.6, 1.2);   c.fillRect(8.0, 6.6, 1.2, 2.6);
+
+                // WYRAŹNE KWADRATOWE OCZY GEOMETRY DASH (czarna ramka, neonowy cyjan, dolne cieniowanie i pikselowy błysk!)
+                c.save();
+                c.shadowColor = '#22d3ee'; c.shadowBlur = 5;
+                for (const ex of [-7.8, 1.8]) {
+                    c.fillStyle = '#050508';
+                    c.fillRect(ex - 0.9, -7.2, 7.8, 7.2);
+                    const eyeG = c.createLinearGradient(ex, -6.3, ex, -0.9);
+                    eyeG.addColorStop(0, '#67e8f9');
+                    eyeG.addColorStop(0.65, '#22d3ee');
+                    eyeG.addColorStop(1, '#0891b2');
+                    c.fillStyle = eyeG;
+                    c.fillRect(ex, -6.3, 6.0, 5.4);
+                    // Pikselowy biały połysk w górnym lewym rogu oka
+                    c.fillStyle = '#ffffff';
+                    c.fillRect(ex + 0.7, -5.7, 2.1, 2.1);
+                    c.fillStyle = '#0e7490';
+                    c.fillRect(ex + 3.4, -2.7, 2.0, 1.4);
+                }
+
+                // CHARAKTERYSTYCZNY GEOMETRYCZNY UŚMIECH / GRYMAS Z GD (schodkowe narożniki ust + wewnętrzne segmenty zębów!)
+                c.fillStyle = '#050508';
+                c.beginPath();
+                c.moveTo(-8.8, 1.2); c.lineTo(-4.8, 1.2); c.lineTo(-4.8, 2.7);
+                c.lineTo(4.8, 2.7);  c.lineTo(4.8, 1.2);  c.lineTo(8.8, 1.2);
+                c.lineTo(8.8, 7.6);  c.lineTo(-8.8, 7.6); c.closePath(); c.fill();
+                // Neonowe cyjanowe wnętrze geometrycznego uśmiechu
+                const grinG = c.createLinearGradient(0, 2.1, 0, 6.7);
+                grinG.addColorStop(0, '#67e8f9');
+                grinG.addColorStop(0.5, '#22d3ee');
+                grinG.addColorStop(1, '#06b6d4');
+                c.fillStyle = grinG;
+                c.fillRect(-7.8, 2.1, 2.1, 4.6);
+                c.fillRect(5.7, 2.1, 2.1, 4.6);
+                c.fillRect(-7.8, 3.6, 15.6, 3.1);
+                // Geometryczne przedziałki zębów w stylu ikon GD + jasny neonowy pasek
+                c.fillStyle = '#ecfeff';
+                c.fillRect(-7.2, 3.8, 14.4, 0.9);
+                c.fillStyle = '#083344';
+                for (const gx of [-3.6, 0, 3.6]) {
+                    c.fillRect(gx - 0.45, 3.6, 0.9, 3.1);
+                }
+                c.restore();
                 c.restore();
                 return;
             }
@@ -7465,7 +7903,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
             // Głowa (kanoniczne odcienie skóry, futra i plastiku)
             const headGrad = c.createRadialGradient(-3, -4, 1.5, 0, -1.5, 11);
-            if (type === 'puppet' || type === 'panda' || type === 'mangle' || type === 'ennard') {
+            if (type === 'puppet' || type === 'panda' || type === 'mangle' || type === 'ennard' || type === 'baldi') {
                 headGrad.addColorStop(0, '#ffffff');
                 headGrad.addColorStop(1, '#e2e8f0');
             } else if (type === 'dyle') {
@@ -8126,6 +8564,25 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 c.beginPath(); c.arc(0, 0.6, 2.6, 0, Math.PI * 2); c.fill();
                 c.strokeStyle = '#09090b'; c.lineWidth = 1.4;
                 c.beginPath(); c.arc(0, 3.5, 3.8, 0.1 * Math.PI, 0.9 * Math.PI); c.stroke();
+            } else if (type === 'baldi') {
+                const isCamper = getActiveSkinForHero('baldi')?.id === 'baldi_camper';
+                if (isCamper) {
+                    c.fillStyle = '#15803d';
+                    c.beginPath(); c.arc(0, -6.5, 10.2, Math.PI, 0); c.fill();
+                    c.fillStyle = '#78350f';
+                    c.fillRect(-11.5, -7.2, 23, 2.4);
+                    c.fillStyle = '#facc15';
+                    c.beginPath(); c.arc(0, -10.2, 2.0, 0, Math.PI * 2); c.fill();
+                } else {
+                    c.strokeStyle = '#451a03'; c.lineWidth = 1.6;
+                    c.beginPath(); c.moveTo(0, -11.5); c.quadraticCurveTo(2, -16.5, 4.5, -17.5); c.stroke();
+                }
+                c.strokeStyle = '#451a03'; c.lineWidth = 1.6;
+                c.beginPath(); c.moveTo(-5.5, -5.2); c.lineTo(-2.0, -4.5); c.moveTo(5.5, -5.2); c.lineTo(2.0, -4.5); c.stroke();
+                c.fillStyle = '#09090b';
+                c.beginPath(); c.arc(-3.5, -2.2, 1.5, 0, Math.PI * 2); c.arc(3.5, -2.2, 1.5, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#dc2626';
+                c.beginPath(); c.ellipse(0, 3.4, 3.2, 1.6, 0, 0, Math.PI * 2); c.fill();
             } else if (type === 'locust') {
                 // The Locust (ulepszony model 1:1 ze zdjęć): dzikie splątane czarne druciki/macki wokół głowy, blada wąska twarz, głębokie czarne oczodoły, długa smuga nosa i ciemna otwarta szczęka
                 c.strokeStyle = '#050507'; c.lineWidth = 1.2;
@@ -9478,6 +9935,21 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     }
                 } else if (tower.type === 'ennard') {
                     state.skillBeams.push({ kind: 'guitar_laser', tower, dps: dmg * 3.6, width: 26, life: 3.2, tickTimer: 0.1 });
+                } else if (tower.type === 'baldi') {
+                    // Rzut Linijką (Ruler Throw)
+                    state.projectiles.push({
+                        kind: 'hollow_purple_skill',
+                        tower,
+                        x: tower.x,
+                        y: tower.y,
+                        vx: Math.cos(aimAngle) * 460,
+                        vy: Math.sin(aimAngle) * 460,
+                        radius: 34,
+                        damage: dmg * 5.0,
+                        life: 3.0,
+                        hitCooldowns: new Map()
+                    });
+                    spawnFloatingText(tower.x, tower.y - 46, 'RZUT LINIJKĄ!', '#22c55e', 1.2);
                 } else if (tower.type === 'endo01') {
                     const wps = state.map.waypoints;
                     for (let m = 0; m < 8; m++) {
@@ -10180,6 +10652,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else if (tower.type === 'ennard') {
                     // Summonuje Endo Funtime Freddy\'ego z bazy
                     spawnTenShadowShikigami('endo_funtime', tower);
+                } else if (tower.type === 'baldi') {
+                    // Math Domain na 10s spowalniająca o 55%
+                    state.skillZones.push({ kind: 'math_domain', tower, x: tx, y: ty, radius: 185, dps: dmg * 1.8, life: 10.0, tickTimer: 0.1 });
+                    spawnFloatingText(tx, ty - 28, 'MATH DOMAIN (10s, 55% SLOW)!', '#22c55e', 1.25);
                 } else if (tower.type === 'locust') {
                     // Respi Chmurę Donene na 10s (CD 30s)
                     state.skillZones.push({ kind: 'donene_cloud', tower, x: tx, y: ty, radius: 145, dps: dmg * 1.6, life: 10.0, tickTimer: 0.1 });
@@ -11403,7 +11879,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 t.range = hasShinjukuYuji ? Math.round(rawRng * 1.05) : rawRng;
 
                 if (t.passiveTimer === undefined) {
-                    t.passiveTimer = t.type === 'dyle' ? 10 : t.type === 'gold_guy' ? 7 : t.type === 'boiled_one' ? 5 : t.type === 'yuta' ? 5.0 : t.type === 'purple_guy' ? 4.0 : t.type === 'locust' ? 2.0 : t.type === 'megumi' ? 13.0 : t.type === 'megumi_potential' ? 15.0 : t.type === 'nightmare_freddy' ? 15.0 : t.type === 'modulo' ? 60.0 : 0;
+                    t.passiveTimer = t.type === 'dyle' ? 10 : t.type === 'gold_guy' ? 7 : t.type === 'boiled_one' ? 5 : t.type === 'baldi' ? 30 : t.type === 'yuta' ? 5.0 : t.type === 'purple_guy' ? 4.0 : t.type === 'locust' ? 2.0 : t.type === 'megumi' ? 13.0 : t.type === 'megumi_potential' ? 15.0 : t.type === 'nightmare_freddy' ? 15.0 : t.type === 'modulo' ? 60.0 : 0;
                 }
                 if (t.rikaActiveTimer > 0) {
                     t.rikaActiveTimer = Math.max(0, t.rikaActiveTimer - dt);
@@ -11447,6 +11923,13 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                 damageEnemy(victim, victim.hp + 999, t, { pierce: 1, critText: 'BOILED ONE-SHOT!', critColor: '#ef4444' });
                                 spawnParticles(victim.x, victim.y, '#dc2626', 20, 150, 4.2);
                             }
+                        } else if (t.type === 'baldi') {
+                            t.passiveTimer = 30.0;
+                            const tgt = findTarget(t) || state.enemies.find(e => e.hp > 0);
+                            const zx = tgt ? tgt.x : t.x;
+                            const zy = tgt ? tgt.y : t.y;
+                            state.skillZones.push({ kind: 'math_domain', tower: t, x: zx, y: zy, radius: 175, dps: getEffectiveDamage(t) * 1.4, life: 10.0, tickTimer: 0.1 });
+                            spawnFloatingText(t.x, t.y - 38, 'BALDI: MATH DOMAIN (10s, 55% SLOW)!', '#22c55e', 1.15);
                         } else if (t.type === 'megumi') {
                             t.passiveTimer = 13.0;
                             spawnTenShadowShikigami('divine_dog', t);
@@ -13790,7 +14273,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                 { kind: 'hero', id: 'gold_guy', label: 'Gold Guy', rarity: 'EPIC', color: '#a855f7', weight: 40.0 },
                                 { kind: 'hero', id: 'boiled_one', label: 'The Boiled One (PHEN-228)', rarity: 'LEGENDARY', color: '#22c55e', weight: 7.420 },
                                 { kind: 'hero', id: 'john_doe', label: 'John Doe (Corrupted)', rarity: 'MYTHIC', color: '#ef4444', weight: 0.5 },
-                                { kind: 'hero', id: 'ennard', label: 'Ennard', rarity: 'SECRET', color: '#22d3ee', weight: 0.080 }
+                                { kind: 'hero', id: 'ennard', label: 'Ennard', rarity: 'SECRET', color: '#22d3ee', weight: 0.075 },
+                                { kind: 'hero', id: 'baldi', label: 'Baldi', rarity: 'MYSTERIOUS', color: '#84cc16', weight: 0.005 }
                             ]
                             : [
                                 { kind: 'hero', id: 'toy_freddy', label: 'Toy Freddy', rarity: 'RARE', color: '#38bdf8', weight: 62 },
@@ -14196,6 +14680,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 heroId: 'golden_freddy',
                 name: 'Golden Freddy (Shadow Freddy)'
             },
+            baldi_camper: {
+                id: 'baldi_camper',
+                heroId: 'baldi',
+                name: 'Baldi (Camper)'
+            },
             meguna_battle_suit: {
                 id: 'meguna_battle_suit',
                 heroId: 'meguna',
@@ -14324,6 +14813,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 { id: 'sukuna_thukuna', heroId: 'sukuna', label: 'Skin: Sukuna — Thukuna', color: '#ef4444' },
                 { id: 'choso_full_red', heroId: 'choso', label: 'Skin: Choso — Wing King', color: '#dc2626' },
                 { id: 'gojo_rct_red', heroId: 'gojo', label: 'Skin: Gojo — Krwawe Przebudzenie', color: '#38bdf8' },
+                { id: 'baldi_camper', heroId: 'baldi', label: 'Skin: Baldi — Camper', color: '#22c55e' },
                 { id: 'meguna_battle_suit', heroId: 'meguna', label: 'Skin: Meguna — Battle Suit', color: '#f8fafc' },
                 { id: 'hakari_shirtless_purple', heroId: 'hakari', label: 'Skin: Hakari — Bez Koszulki (Fiolet)', color: '#c084fc' },
                 { id: 'withered_bonnie_ignited', heroId: 'withered_bonnie', label: 'Skin: Ignited Bonnie', color: '#f97316' },
@@ -16808,6 +17298,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 hitAll(7.8, 2.6, '#38bdf8', 'HAZY MOON!', 190);
                 ring(tower.x, tower.y, tower.range + 110);
                 spawnParticles(tower.x, tower.y, '#38bdf8', 36, 210, 4.5);
+            } else if (t === 'baldi') {
+                hitAll(4, 3.5, '#22c55e', 'DETENTION!', 400);
             } else if (t === 'shinjuku_yuji') {
                 // Shinjuku Yuji Moc 3: Piercing Blood (Weak)
                 const tgt = findTarget(tower) || state.enemies.find(e => e.hp > 0);
