@@ -443,7 +443,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     <i class="fa-solid fa-gauge-high"></i>
                     <span id="perf-mode-label">Perf: OFF</span>
                 </button>
-                <button id="btn-auto-vows" title="Auto-Skip kart Binding Vow co 10 fal (idealne do AFK)" class="px-2 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-xs font-extrabold text-purple-300 transition active:scale-95 flex items-center gap-1">
+                <button id="btn-auto-vows" title="Auto-Skip kart Binding Vow co 10 fal w Endless i Boss Rush (idealne do AFK)" class="px-2 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-xs font-extrabold text-purple-300 transition active:scale-95 flex items-center gap-1">
                     <i class="fa-solid fa-scroll"></i>
                     <span id="auto-vows-label">Vows: ON</span>
                 </button>
@@ -608,7 +608,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                     <i class="fa-solid fa-hammer text-lg text-amber-200"></i>
                                     <div class="mt-1">
                                         <div class="font-jjk font-black text-xs">CRAFTING</div>
-                                        <div class="text-[9px] text-amber-100">Shinjuku Yuji, Heian & Megumi</div>
+                                        <div class="text-[9px] text-amber-100">1x1x1x1x1, Shinjuku & Inni</div>
                                     </div>
                                 </button>
                                 <button id="overlay-btn-enchants" class="p-2.5 rounded-xl bg-gradient-to-br from-teal-600 to-cyan-700 hover:brightness-110 border border-teal-300/60 text-white shadow-lg transition active:scale-95 flex flex-col justify-between">
@@ -1494,8 +1494,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                 <div class="flex justify-between items-center text-violet-300"><span>• Gold Guy (Golden Wings) <span class="text-[9px] px-1.5 rounded bg-violet-950 font-bold">EPIC</span></span><span class="font-bold">40%</span></div>
                                 <div class="flex justify-between items-center text-amber-300"><span>• The Boiled One (PHEN-228) <span class="text-[9px] px-1.5 rounded bg-amber-950 font-bold">LEGENDARY</span></span><span class="font-bold">7.42%</span></div>
                                 <div class="flex justify-between items-center text-rose-400 font-bold"><span>• John Doe (Corrupted) <span class="text-[9px] px-1.5 rounded bg-rose-950 font-bold">MYTHIC</span></span><span>0.5%</span></div>
-                                <div class="flex justify-between items-center text-cyan-300 font-extrabold"><span>• Ennard (Sister Location) <span class="text-[9px] px-1.5 rounded bg-cyan-950 font-bold">SECRET</span></span><span>0.075%</span></div>
-                                <div class="flex justify-between items-center text-lime-300 font-black"><span>• Baldi (Math Domain) <span class="text-[9px] px-1.5 rounded bg-lime-950 text-lime-200 border border-lime-400/50 font-bold">MYSTERIOUS</span></span><span>0.005%</span></div>
+                                <div class="flex justify-between items-center text-cyan-300 font-extrabold"><span>• Ennard (Sister Location) <span class="text-[9px] px-1.5 rounded bg-cyan-950 font-bold">SECRET</span></span><span>0.07%</span></div>
+                                <div class="flex justify-between items-center text-lime-300 font-black"><span>• Baldi (Math Domain) <span class="text-[9px] px-1.5 rounded bg-lime-950 text-lime-200 border border-lime-400/50 font-bold">MYSTERIOUS</span></span><span>0.01%</span></div>
                             </div>
                         </div>
 
@@ -3270,11 +3270,13 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 modulo: false,
                 kusakabe: false,
                 miwa: false,
-                shinjuku_yuji: false
+                shinjuku_yuji: false,
+                calamity_1x1: false,
+                nightmare_bonnie: false
             },
             shadowFreddySlotHeroId: null,
             extraSlotHeroId: null,
-            craftItems: { sukuna_finger: 0, sukuna_arm: 0, potential_orb: 0 },
+            craftItems: { sukuna_finger: 0, sukuna_arm: 0, potential_orb: 0, virus_sword: 0, green_crown: 0, red_guitar: 0 },
             equipped: ['yuji'],
             equippedP2: ['yuji'],
             fnafQuest: {
@@ -3318,7 +3320,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 withered_bonnie: null,
                 john_doe: null
             },
-            baldi_wiped_v1: false
+            baldi_wiped_v1: false,
+            baldi_wiped_v2: false
         };
 
         function normalizeQuestProgress(q) {
@@ -3338,20 +3341,28 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             };
         }
 
-        const BALDI_WIPE_FLAG_KEY = 'baldi_wiped_v1';
+        const BALDI_WIPE_FLAG_KEY = 'baldi_wiped_v2';
+        function sanitizeActiveSkinsForLockedHeroes() {
+            if (!multiverseSave.activeSkins || !multiverseSave.unlocked) return;
+            for (const hKey of Object.keys(multiverseSave.activeSkins)) {
+                if (!multiverseSave.unlocked[hKey]) {
+                    multiverseSave.activeSkins[hKey] = null;
+                }
+            }
+        }
         function wipeLegacyBaldiOnce() {
             let flagInStorage = false;
             try { flagInStorage = localStorage.getItem(BALDI_WIPE_FLAG_KEY) === 'true'; } catch (e) {}
-            if (multiverseSave.baldi_wiped_v1 || flagInStorage) {
+            if (multiverseSave.baldi_wiped_v2 || flagInStorage) {
                 multiverseSave.baldi_wiped_v1 = true;
+                multiverseSave.baldi_wiped_v2 = true;
                 try { localStorage.setItem(BALDI_WIPE_FLAG_KEY, 'true'); } catch (e) {}
                 return;
             }
-            // Jednorazowe wyczyszczenie starych egzemplarzy Baldiego z zapisu sprzed aktualizacji:
+            // Jednorazowe wyczyszczenie Baldiego z EQ i zapisu (bez usuwania postaci z gry):
             if (multiverseSave.unlocked) multiverseSave.unlocked.baldi = false;
             if (multiverseSave.stars) delete multiverseSave.stars.baldi;
             if (multiverseSave.enchants) delete multiverseSave.enchants.baldi;
-            if (multiverseSave.unlockedSkins) multiverseSave.unlockedSkins.baldi_camper = false;
             if (multiverseSave.activeSkins) multiverseSave.activeSkins.baldi = null;
             if (Array.isArray(multiverseSave.equipped)) {
                 multiverseSave.equipped = multiverseSave.equipped.filter(id => id !== 'baldi');
@@ -3362,6 +3373,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (multiverseSave.shadowFreddySlotHeroId === 'baldi') multiverseSave.shadowFreddySlotHeroId = null;
             if (multiverseSave.extraSlotHeroId === 'baldi') multiverseSave.extraSlotHeroId = null;
             multiverseSave.baldi_wiped_v1 = true;
+            multiverseSave.baldi_wiped_v2 = true;
             try { localStorage.setItem(BALDI_WIPE_FLAG_KEY, 'true'); } catch (e) {}
         }
 
@@ -3446,7 +3458,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         multiverseSave.craftItems = {
                             sukuna_finger: Math.max(0, Math.floor(parsed.craftItems.sukuna_finger || 0)),
                             sukuna_arm: Math.max(0, Math.floor(parsed.craftItems.sukuna_arm || 0)),
-                            potential_orb: Math.max(0, Math.floor(parsed.craftItems.potential_orb || 0))
+                            potential_orb: Math.max(0, Math.floor(parsed.craftItems.potential_orb || 0)),
+                            virus_sword: Math.max(0, Math.floor(parsed.craftItems.virus_sword || 0)),
+                            green_crown: Math.max(0, Math.floor(parsed.craftItems.green_crown || 0)),
+                            red_guitar: Math.max(0, Math.floor(parsed.craftItems.red_guitar || 0))
                         };
                     }
                     if (Array.isArray(parsed.equipped)) {
@@ -3458,12 +3473,16 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     if (parsed.baldi_wiped_v1) {
                         multiverseSave.baldi_wiped_v1 = true;
                     }
+                    if (parsed.baldi_wiped_v2) {
+                        multiverseSave.baldi_wiped_v2 = true;
+                    }
                     if (parsed.fnafQuest && typeof parsed.fnafQuest === 'object') {
                         multiverseSave.fnafQuest = normalizeQuestProgress(parsed.fnafQuest);
                     }
                 }
             } catch (e) {}
             wipeLegacyBaldiOnce();
+            sanitizeActiveSkinsForLockedHeroes();
             multiverseSave.fnafQuest = normalizeQuestProgress(multiverseSave.fnafQuest);
             try {
                 const qBackupRaw = localStorage.getItem('jjk_fnaf_quest_backup');
@@ -3596,6 +3615,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     megumi_divine_dogs: !!(parsed.boosts && parsed.boosts.megumi_divine_dogs)
                 };
                 multiverseSave.baldi_wiped_v1 = !!parsed.baldi_wiped_v1;
+                multiverseSave.baldi_wiped_v2 = !!parsed.baldi_wiped_v2;
                 multiverseSave.equipped = Array.isArray(parsed.equipped)
                     ? parsed.equipped.filter(id => multiverseSave.unlocked[id] && HEROES[id]).slice(0, 6)
                     : ['yuji'];
@@ -3604,10 +3624,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     multiverseSave.unlockedSkins[sk] = !!(parsed.unlockedSkins && parsed.unlockedSkins[sk]);
                 }
                 multiverseSave.activeSkins = (parsed.activeSkins && typeof parsed.activeSkins === 'object') ? { sukuna: null, choso: null, gojo: null, golden_freddy: null, baldi: null, meguna: null, hakari: null, withered_bonnie: null, john_doe: null, ...parsed.activeSkins } : { sukuna: null, choso: null, gojo: null, golden_freddy: null, baldi: null, meguna: null, hakari: null, withered_bonnie: null, john_doe: null };
-                if (!multiverseSave.baldi_wiped_v1) wipeLegacyBaldiOnce();
+                if (!multiverseSave.baldi_wiped_v2) wipeLegacyBaldiOnce();
+                sanitizeActiveSkinsForLockedHeroes();
                 multiverseSave.craftItems = (parsed.craftItems && typeof parsed.craftItems === 'object')
-                    ? { sukuna_finger: Math.max(0, Math.floor(parsed.craftItems.sukuna_finger || 0)), sukuna_arm: Math.max(0, Math.floor(parsed.craftItems.sukuna_arm || 0)), potential_orb: Math.max(0, Math.floor(parsed.craftItems.potential_orb || 0)) }
-                    : { sukuna_finger: 0, sukuna_arm: 0, potential_orb: 0 };
+                    ? { sukuna_finger: Math.max(0, Math.floor(parsed.craftItems.sukuna_finger || 0)), sukuna_arm: Math.max(0, Math.floor(parsed.craftItems.sukuna_arm || 0)), potential_orb: Math.max(0, Math.floor(parsed.craftItems.potential_orb || 0)), virus_sword: Math.max(0, Math.floor(parsed.craftItems.virus_sword || 0)), green_crown: Math.max(0, Math.floor(parsed.craftItems.green_crown || 0)), red_guitar: Math.max(0, Math.floor(parsed.craftItems.red_guitar || 0)) }
+                    : { sukuna_finger: 0, sukuna_arm: 0, potential_orb: 0, virus_sword: 0, green_crown: 0, red_guitar: 0 };
                 multiverseSave.fnafQuest = normalizeQuestProgress(parsed.fnafQuest);
                 saveMultiverseData();
                 buildShop();
@@ -4306,7 +4327,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 color: '#22c55e', accent: '#3b82f6',
                 damage: 245, cooldown: 0.26, range: 260, armorPierce: 1.00,
                 technique: 'Ruler Slap & Math Domain (55% Slow)',
-                desc: 'MYSTERIOUS (0.005% MDT Crate): Pasywka — Co 30s automatycznie otwiera Math Domain na 10s (spowalnia o 55% i razi równaniami)!',
+                desc: 'MYSTERIOUS (0.01% MDT Crate): Pasywka — Co 30s automatycznie otwiera Math Domain na 10s (spowalnia o 55% i razi równaniami)!',
                 skill1: { name: 'Rzut Linijką (Ruler Throw)', cd: 9, unlockLvl: 1, desc: 'Rzuca potężną drewnianą linijką przebijającą każdego wroga na drodze (500% DMG)!' },
                 skill2: { name: 'Domena: You Can Think Pad! (55% Slow)', cd: 24, unlockLvl: 3, desc: 'Otwiera Math Domain na 10s: spowalnia wrogów o 55% i zadaje gigantyczne obrażenia!' },
                 skill3: { name: 'DETENTION! (Szlaban)', cd: 35, unlockLvl: 4, desc: 'Wszyscy wrogi w ogromnym zasięgu dostają szlaban: 400% DMG + 3.5s ogłuszenia!' },
@@ -4413,28 +4434,28 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 id: 'gd_doggie', universe: 'gd', exclusive: true, rarity: 'Rare', name: 'Doggie (GD Pro)', cost: 270,
                 color: '#d946ef', accent: '#facc15',
                 damage: 52, cooldown: 0.45, range: 210, armorPierce: 0.90,
-                technique: 'Slaughterhouse Wave & Neon Ring',
-                desc: 'RARE (GD Crate 20 💎 • 60%): Kultowa neonowa różowo-żółta ikona Doggiego! Błyskawiczne fale i wysoka precyzja.',
-                skill1: { name: 'Neon Ring Pulse', cd: 9, unlockLvl: 1, desc: 'Neonowa fala różowo-żółta rani grupę (320% DMG + stun 1.8s)!' },
-                skill2: { name: 'Grief Verification Rush', cd: 19, unlockLvl: 3, desc: 'Podwaja szybkość ataku na 6s i przebija 100% pancerza!' },
+                technique: 'Get back on grief doggie ("Bro") • Slaungerhouse • Grief 97%',
+                desc: 'RARE (GD Crate 20 💎 • 60%) — REMODEL: Pasywka — atakuje słowami „Get back on grief doggie”, które po wybuchnięciu strzelają mało zadającym słowem „Bro”!',
+                skill1: { name: 'Slaungerhouse', cd: 20, unlockLvl: 1, desc: 'Atakuje szarym nożem, który nakłada bleed na cel, zjadając mu 0.5% HP na sekundę!' },
+                skill2: { name: 'Grief 97%', cd: 50, unlockLvl: 3, desc: 'Koło niego wirują 4 słowa „Grief”, które dają mu +5% DMG boosta na 10s!' },
                 upgrades: [
                     { cost: 260, dmg: 84,  cd: 0.39, rng: 225, text: 'LVL 2: 84 DMG / 0.39s (215 DPS).' },
-                    { cost: 430, dmg: 130, cd: 0.34, rng: 240, text: 'LVL 3: 130 DMG / 0.34s (382 DPS) — Odblokowuje Verification Rush!' },
+                    { cost: 430, dmg: 130, cd: 0.34, rng: 240, text: 'LVL 3: 130 DMG / 0.34s (382 DPS) — Odblokowuje Grief 97%!' },
                     { cost: 680, dmg: 195, cd: 0.28, rng: 255, text: 'LVL 4: 195 DMG / 0.28s (696 DPS!).' },
                     { cost: 1020, dmg: 290, cd: 0.23, rng: 275, text: 'LVL 5: 290 DMG / 0.23s (1261 DPS!) — Mistrz Demonlisty!' }
                 ]
             },
             gd_hover: {
-                id: 'gd_hover', universe: 'gd', exclusive: true, rarity: 'Epic', name: 'Hover (GD Pro)', cost: 360,
+                id: 'gd_hover', universe: 'gd', exclusive: true, rarity: 'Epic', name: 'Hover (GD Pro)', cost: 222,
                 color: '#2dd4bf', accent: '#f472b6',
                 damage: 94, cooldown: 0.40, range: 225, armorPierce: 0.95,
-                technique: 'Octagon Prism & Crimson Slash',
-                desc: 'EPIC (GD Crate 20 💎 • 37.25%): Turkusowo-różowy oktagonalny rdzeń Hovera! Precyzyjne wiązki pryzmatyczne.',
-                skill1: { name: 'Prism Shatter', cd: 10, unlockLvl: 1, desc: 'Rozbija pryzmat na odłamki zadające 380% DMG obszarowo!' },
-                skill2: { name: 'Hover Overdrive', cd: 19, unlockLvl: 3, desc: 'Wiązka pryzmatu spowalnia wrogów o 55% i zadaje ciągły DMG!' },
+                technique: 'Liczba 4 (Pierce) & 7 (Splash) • Nullscapes ## • Silent Acropolis',
+                desc: 'EPIC (GD Crate 20 💎 • 37.25%) — REMODEL (222 CE): Pasywka — na przemian atakuje liczbą 4 (pierce) oraz drugą liczbą 7 (splash)!',
+                skill1: { name: 'Nullscapes ##', cd: 30, unlockLvl: 1, desc: 'Nakłada czarną dziurę na losową jednostkę ze składu na 10s, dając jej +10% DMG i +10% RNG!' },
+                skill2: { name: 'Silent Acropolis', cd: 25, unlockLvl: 3, desc: 'Strzela kolcem, który wybucha i ma 10% szansy na wystrzelenie Mini Koła przyczepiającego się do sojusznika (+15% DMG)!' },
                 upgrades: [
                     { cost: 350, dmg: 150, cd: 0.35, rng: 240, text: 'LVL 2: 150 DMG / 0.35s (429 DPS).' },
-                    { cost: 560, dmg: 235, cd: 0.30, rng: 255, text: 'LVL 3: 235 DMG / 0.30s (783 DPS!).' },
+                    { cost: 560, dmg: 235, cd: 0.30, rng: 255, text: 'LVL 3: 235 DMG / 0.30s (783 DPS!) — Odblokowuje Silent Acropolis!' },
                     { cost: 860, dmg: 355, cd: 0.25, rng: 275, text: 'LVL 4: 355 DMG / 0.25s (1420 DPS!).' },
                     { cost: 1280, dmg: 525, cd: 0.21, rng: 295, text: 'LVL 5: 525 DMG / 0.21s (2500 DPS!) — Kryształowy Snajper!' }
                 ]
@@ -4443,45 +4464,45 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 id: 'gd_trick', universe: 'gd', exclusive: true, rarity: 'Legendary', name: 'Trick (GD Pro)', cost: 470,
                 color: '#a855f7', accent: '#ffffff',
                 damage: 165, cooldown: 0.34, range: 245, armorPierce: 1.0,
-                technique: 'Cosmic Void Tunnel & Firework',
-                desc: 'LEGENDARY (GD Crate 20 💎 • 2.75%): Kosmiczny fioletowo-biały tunel Tricka! Nieskończona moc przebicia.',
-                skill1: { name: 'Void Tunnel Beam', cd: 10, unlockLvl: 1, desc: 'Wystrzeliwuje biało-fioletowy promień przez 4s!' },
-                skill2: { name: 'Firework Supernova', cd: 20, unlockLvl: 3, desc: 'Wybuch fajerwerków w próżni: 650% DMG i stun 2.6s!' },
+                technique: 'Głowa Boomerang • TIDAL WAVE (100 HP) • Firework (+0.05% DMG)',
+                desc: 'LEGENDARY (GD Crate 20 💎 • 2.58%) — REMODEL: Pasywka — wystrzeliwuje własną głowę, która działa jak boomerang!',
+                skill1: { name: 'TIDAL WAVE', cd: 30, unlockLvl: 1, desc: 'Strzela niebieskim kolcem na drogę (100 HP) — gdy się zniszczy, nakłada bleeding na 5 wrogów!' },
+                skill2: { name: 'Firework', cd: 60, unlockLvl: 3, desc: 'Strzela czerwono-białymi fajerwerkami (splash), a użycie i ataki kumulują mu boost +0.05% DMG!' },
                 upgrades: [
                     { cost: 450, dmg: 265, cd: 0.30, rng: 260, text: 'LVL 2: 265 DMG / 0.30s (883 DPS!).' },
-                    { cost: 720, dmg: 410, cd: 0.26, rng: 275, text: 'LVL 3: 410 DMG / 0.26s (1577 DPS!).' },
+                    { cost: 720, dmg: 410, cd: 0.26, rng: 275, text: 'LVL 3: 410 DMG / 0.26s (1577 DPS!) — Odblokowuje Firework!' },
                     { cost: 1100, dmg: 615, cd: 0.22, rng: 295, text: 'LVL 4: 615 DMG / 0.22s (2795 DPS!).' },
                     { cost: 1640, dmg: 910, cd: 0.18, rng: 320, text: 'LVL 5: 910 DMG / 0.18s (5056 DPS!) — Legenda Firework!' }
                 ]
             },
             gd_wpopoff: {
-                id: 'gd_wpopoff', universe: 'gd', exclusive: true, rarity: 'Mythic', name: 'wPopoff (GD Mythic)', cost: 600,
+                id: 'gd_wpopoff', universe: 'gd', exclusive: true, rarity: 'Mythic', name: 'wPopoff (GD Mythic)', cost: 1777,
                 color: '#f5d0fe', accent: '#09090b',
-                damage: 255, cooldown: 0.28, range: 260, armorPierce: 1.0,
-                technique: 'Shades of Amethyst & 360Hz Clutch',
-                desc: 'MYTHIC (GD Crate 20 💎 • 0.125%): Kultowa biało-różowa kostka wPopoffa w czarnych okularach! Kosmiczny DPS i stuny.',
-                skill1: { name: '360Hz Frame-Perfect', cd: 9, unlockLvl: 1, desc: 'Błyskawiczny frame-perfect cios (520% DMG + stun 2.5s)!' },
-                skill2: { name: 'Amethyst Overclock', cd: 19, unlockLvl: 3, desc: 'Podwaja szybkość ataku i +35% DMG przez 7s + fala AoE!' },
+                damage: 430, cooldown: 0.52, range: 260, armorPierce: 1.0,
+                technique: '"Dubble W Popoff" (Pierce) • Amethyst Wall • Society (-10% CD)',
+                desc: 'MYTHIC (GD Crate 20 💎 • 0.14%) — REMODEL (1777 CE • 9 797 DPS MAX): Pasywka — strzela słowami „Dubble W Popoff”, które przebijają (pierce) wszystkich w linii!',
+                skill1: { name: 'Amethyst', cd: 20, unlockLvl: 1, desc: 'Strzela fioletowo-purpurowymi kryształami, które zostają na drodze jako ściana z HP blokująca wrogów!' },
+                skill2: { name: 'Society', cd: 75, unlockLvl: 3, desc: 'Wysyła białe oko z czerwoną soczewką jako drona, dając sojusznikom boost -10% CD na 10s!' },
                 upgrades: [
-                    { cost: 580, dmg: 405, cd: 0.25, rng: 275, text: 'LVL 2: 405 DMG / 0.25s (1620 DPS!).' },
-                    { cost: 920, dmg: 620, cd: 0.22, rng: 290, text: 'LVL 3: 620 DMG / 0.22s (2818 DPS!).' },
-                    { cost: 1420, dmg: 930, cd: 0.19, rng: 310, text: 'LVL 4: 930 DMG / 0.19s (4895 DPS!).' },
-                    { cost: 2100, dmg: 1360, cd: 0.16, rng: 335, text: 'LVL 5: 1360 DMG / 0.16s (8500 DPS!) — Top 1 Prodigy!' }
+                    { cost: 1500, dmg: 760,  cd: 0.46, rng: 275, text: 'LVL 2: 760 DMG / 0.46s (1652 DPS!).' },
+                    { cost: 2300, dmg: 1180, cd: 0.42, rng: 290, text: 'LVL 3: 1180 DMG / 0.42s (2810 DPS!) — Odblokowuje Society!' },
+                    { cost: 3400, dmg: 1560, cd: 0.38, rng: 310, text: 'LVL 4: 1560 DMG / 0.38s (4105 DPS!).' },
+                    { cost: 4800, dmg: 2001, cd: 0.34, rng: 335, text: 'LVL 5: 2001 DMG / 0.34s (5885 DPS!) — LVL 6 MAX: 9 797 DPS!' }
                 ]
             },
             gd_zoink: {
-                id: 'gd_zoink', universe: 'gd', exclusive: true, rarity: 'Mythic', name: 'Zoink (GD Mythic)', cost: 620,
+                id: 'gd_zoink', universe: 'gd', exclusive: true, rarity: 'Mythic', name: 'Zoink (GD Mythic)', cost: 2000, maxPlace: 3,
                 color: '#2dd4bf', accent: '#0f172a',
-                damage: 265, cooldown: 0.27, range: 265, armorPierce: 1.0,
-                technique: 'Tidal Wave Verifier & Avernus Slash',
-                desc: 'MYTHIC (GD Crate 20 💎 • 0.125%): Legendarna cyjanowa kostka Zoinka z ukośnym cięciem! Absolutny niszczyciel bossów.',
-                skill1: { name: 'Tidal Wave Slash', cd: 9, unlockLvl: 1, desc: 'Potężna cyjanowa fala przecina wszystkich w zasięgu (550% DMG)!' },
-                skill2: { name: 'Top 1 Verification Beam', cd: 20, unlockLvl: 3, desc: 'Ciągły cyjanowy laser weryfikacji przez 5s (550% DPS)!' },
+                damage: 300, cooldown: 0.40, range: 265, armorPierce: 1.0,
+                technique: 'Biało-Zielony Laser (co 5s) • Orbit • Heliopolis (+30% DMG GD)',
+                desc: 'MYTHIC (GD Crate 20 💎 • 0.03%) — REMODEL (2000 CE • 7 774 DPS MAX • limit 3 na mapie): Pasywka — co 5s strzela potężnym biało-zielonym laserem!',
+                skill1: { name: 'Orbit', cd: 20, unlockLvl: 1, desc: 'Strzela żółtymi, niebieskimi, różowymi i zielonymi orbami zadającymi obrażenia obszarowe (splash)!' },
+                skill2: { name: 'Heliopolis', cd: 90, unlockLvl: 3, desc: 'Tworzy zieloną mgłę nad głową Zoinka, dającą buff +30% DMG dla Wpopoffa, Tricka, Hovera i Doggiego na 30s!' },
                 upgrades: [
-                    { cost: 600, dmg: 420, cd: 0.24, rng: 280, text: 'LVL 2: 420 DMG / 0.24s (1750 DPS!).' },
-                    { cost: 950, dmg: 645, cd: 0.21, rng: 295, text: 'LVL 3: 645 DMG / 0.21s (3071 DPS!).' },
-                    { cost: 1460, dmg: 965, cd: 0.18, rng: 315, text: 'LVL 4: 965 DMG / 0.18s (5361 DPS!).' },
-                    { cost: 2180, dmg: 1410, cd: 0.16, rng: 340, text: 'LVL 5: 1410 DMG / 0.16s (8813 DPS!) — Król Demonlisty!' }
+                    { cost: 1700, dmg: 480,  cd: 0.36, rng: 280, text: 'LVL 2: 480 DMG / 0.36s (1333 DPS!).' },
+                    { cost: 2600, dmg: 690,  cd: 0.31, rng: 295, text: 'LVL 3: 690 DMG / 0.31s (2226 DPS!) — Odblokowuje Heliopolis!' },
+                    { cost: 3800, dmg: 880,  cd: 0.26, rng: 315, text: 'LVL 4: 880 DMG / 0.26s (3385 DPS!).' },
+                    { cost: 5200, dmg: 1040, cd: 0.22, rng: 340, text: 'LVL 5: 1040 DMG / 0.22s (4727 DPS!) — LVL 6 MAX: 7 774 DPS!' }
                 ]
             },
             mahito_calamity: {
@@ -4877,6 +4898,37 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     { cost: 1150, dmg: 730,  cd: 0.27, rng: 262, text: 'LVL 4: 730 DMG / 0.27s (2704 DPS!) — Odblokowuje Piercing Blood (Weak)!' },
                     { cost: 1650, dmg: 1064, cd: 0.24, rng: 280, text: 'LVL 5: 1064 DMG / 0.24s (4433 DPS!) — LVL 6 MAX: 7 555 DPS!' }
                 ]
+            },
+            calamity_1x1: {
+                id: 'calamity_1x1', universe: 'mdt', craftOnly: true, rarity: 'Calamity', name: '1x1x1x1x1', cost: 1010,
+                color: '#22c55e', accent: '#052e16',
+                damage: 700, cooldown: 1.15, range: 250, armorPierce: 1.0,
+                technique: '2 Zielone Miecze (Bleed) • Green Crushing • Sword Slash • g1x1en1x V1xus',
+                desc: 'CALAMITY CRAFTING (1010 CE • 10 101 DPS MAX): Legendarny haker wymiaru 4D! Pasywka: Atakuje 2 zielonymi mieczami nakładającymi silny bleeding!',
+                skill1: { name: 'Green Crushing', cd: 45, unlockLvl: 1, desc: 'Wysyła ukośną zieloną zglitchowaną falę, która przeszywa wszystkich przeciwników na drodze!' },
+                skill2: { name: 'Sword Slash', cd: 50, unlockLvl: 3, desc: 'Krzyżuje miecze i wypuszcza zielonego X, który stunuje przeciwników i cofa ich o 1s drogi!' },
+                skill3: { name: 'g1x1en1x V1xus', cd: 120, unlockLvl: 4, desc: 'Zaznacza wszystkich przeciwników na zielono, permanentnie nerfując ich życie o 4.1%!' },
+                upgrades: [
+                    { cost: 950,  dmg: 1500, cd: 1.05, rng: 265, text: 'LVL 2: 1500 DMG / 1.05s (1429 DPS) — mocniejsze krwawienie z mieczy.' },
+                    { cost: 1500, dmg: 2400, cd: 0.95, rng: 280, text: 'LVL 3: 2400 DMG / 0.95s (2526 DPS!) — Odblokowuje Sword Slash (zielony X)!' },
+                    { cost: 2200, dmg: 3500, cd: 0.87, rng: 298, text: 'LVL 4: 3500 DMG / 0.87s (4023 DPS!) — Odblokowuje g1x1en1x V1xus (-4.1% HP)!' },
+                    { cost: 3100, dmg: 4766, cd: 0.79, rng: 318, text: 'LVL 5: 4766 DMG / 0.79s (6033 DPS!) — LVL 6 MAX: 10 101 DPS!' }
+                ]
+            },
+            nightmare_bonnie: {
+                id: 'nightmare_bonnie', universe: 'fnaf', craftOnly: true, rarity: 'Calamity', name: 'Nightmare Bonnie', cost: 800, maxPlace: 1, maxLevel: 5,
+                color: '#4f46e5', accent: '#dc2626',
+                damage: 500, cooldown: 0.50, range: 265, armorPierce: 1.0,
+                technique: 'Tylko Laser (Brak Pasywki) • Guitar Sonic Boom • Upgrade (+1% DMG / -1% CD)',
+                desc: 'CALAMITY CRAFTING (800 CE • Limit 1 • LVL 5 MAX: 3000 DMG / 0.20s = 15 000 DPS): Atakuje wyłącznie potężnym laserem — nie posiada pasywki!',
+                skill1: { name: 'Guitar Sonic Boom', cd: 25, unlockLvl: 1, desc: 'Wysyła biało-szary łukowy Slash, który spowalnia przeciwników o 75% na 3s!' },
+                skill2: { name: 'Upgrade', cd: 120, unlockLvl: 3, desc: 'Gdy używa mocy, dodaje sobie na stałe +1% DMG oraz -1% CD na całą rundę!' },
+                upgrades: [
+                    { cost: 680,  dmg: 700,  cd: 0.40, rng: 280, text: 'LVL 2: 700 DMG / 0.40s (1750 DPS) — silniejszy laser z Red Guitar.' },
+                    { cost: 1150, dmg: 1200, cd: 0.35, rng: 295, text: 'LVL 3: 1200 DMG / 0.35s (3429 DPS!) — Odblokowuje Upgrade (+1% DMG / -1% CD na całą rundę)!' },
+                    { cost: 1950, dmg: 2250, cd: 0.25, rng: 315, text: 'LVL 4: 2250 DMG / 0.25s (9000 DPS!) — niszczycielski promień koszmaru.' },
+                    { cost: 2900, dmg: 3000, cd: 0.20, rng: 340, text: 'LVL 5 MAX: 3000 DMG / 0.20s (15 000 DPS!) — Maksymalny poziom Nightmare Bonnie!' }
+                ]
             }
         };
         // ==========================================
@@ -4887,165 +4939,183 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
         const WORLD_STAGE_MAPS = {
             shibuya: {
-                easy: {
-                    id: 'jjk_school', world: 'jjk', name: 'Jujutsu High School', shortName: 'JUJUTSU HIGH',
-                    waypoints: [
-                        { x: 0, y: 140 }, { x: 240, y: 140 }, { x: 240, y: 410 },
-                        { x: 520, y: 410 }, { x: 520, y: 150 }, { x: 760, y: 150 },
-                        { x: 760, y: 340 }, { x: 930, y: 340 }
-                    ]
-                },
-                normal: {
-                    id: 'finger_school', world: 'jjk', name: 'Poprawczak Eishu (Finger Bearer)', shortName: 'EISHU SCHOOL',
-                    waypoints: [
-                        { x: 0, y: 270 }, { x: 180, y: 270 }, { x: 180, y: 110 },
-                        { x: 430, y: 110 }, { x: 430, y: 430 }, { x: 690, y: 430 },
-                        { x: 690, y: 230 }, { x: 930, y: 230 }
-                    ]
-                },
-                hard: {
-                    id: 'yasohachi_bridge', world: 'jjk', name: 'Most Yasohachi', shortName: 'YASOHACHI',
-                    waypoints: [
-                        { x: 0, y: 105 }, { x: 320, y: 105 }, { x: 320, y: 270 },
-                        { x: 140, y: 270 }, { x: 140, y: 445 }, { x: 620, y: 445 },
-                        { x: 620, y: 170 }, { x: 930, y: 170 }
-                    ]
-                },
-                extreme: {
-                    id: 'shibuya', world: 'jjk', name: 'Stacja Shibuya (B5F)', shortName: 'SHIBUYA B5F',
-                    waypoints: [
-                        { x: 0, y: 420 }, { x: 220, y: 420 }, { x: 220, y: 150 },
-                        { x: 480, y: 150 }, { x: 480, y: 360 }, { x: 740, y: 360 },
-                        { x: 740, y: 180 }, { x: 930, y: 180 }
-                    ]
-                }
+                easy: (() => {
+                    // Koło na środku (rondo dziedzińca Jujutsu High wokół centralnej wyspy!)
+                    const loop = [
+                        { x: 0, y: 270 }, { x: 320, y: 270 },
+                        { x: 355, y: 155 }, { x: 480, y: 115 }, { x: 605, y: 155 },
+                        { x: 640, y: 270 }, { x: 605, y: 385 }, { x: 480, y: 425 },
+                        { x: 355, y: 385 }, { x: 320, y: 270 }, { x: 640, y: 270 },
+                        { x: 930, y: 270 }
+                    ];
+                    return { id: 'jjk_school', world: 'jjk', name: 'Jujutsu High (Koło na Środku)', shortName: 'JUJUTSU HIGH', waypoints: loop, lanes: [loop] };
+                })(),
+                normal: (() => {
+                    // 2 Drogi (górny i dolny korytarz Poprawczaka Eishu)
+                    const l1 = [{ x: 0, y: 115 }, { x: 290, y: 115 }, { x: 440, y: 215 }, { x: 700, y: 140 }, { x: 930, y: 270 }];
+                    const l2 = [{ x: 0, y: 425 }, { x: 290, y: 425 }, { x: 440, y: 325 }, { x: 700, y: 400 }, { x: 930, y: 270 }];
+                    return { id: 'finger_school', world: 'jjk', name: 'Poprawczak Eishu (2 Drogi)', shortName: 'EISHU (2 DROGI)', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                hard: (() => {
+                    // 2 Drogi i 2 Osobne Wyjścia (Most Yasohachi z rozwidleniem na 2 Bariery!)
+                    const l1 = [{ x: 0, y: 120 }, { x: 310, y: 120 }, { x: 480, y: 270 }, { x: 680, y: 135 }, { x: 930, y: 135 }];
+                    const l2 = [{ x: 0, y: 420 }, { x: 310, y: 420 }, { x: 480, y: 270 }, { x: 680, y: 405 }, { x: 930, y: 405 }];
+                    return { id: 'yasohachi_bridge', world: 'jjk', name: 'Most Yasohachi (2 Wyjścia)', shortName: 'YASOHACHI (2 WYJ.)', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                extreme: (() => {
+                    // 4 Drogi (Oblężenie Stacji Shibuya B5F z 4 peronów!)
+                    const l1 = [{ x: 0, y: 95 },  { x: 360, y: 95 },  { x: 640, y: 195 }, { x: 930, y: 270 }];
+                    const l2 = [{ x: 0, y: 225 }, { x: 260, y: 225 }, { x: 520, y: 270 }, { x: 930, y: 270 }];
+                    const l3 = [{ x: 0, y: 335 }, { x: 260, y: 335 }, { x: 520, y: 270 }, { x: 930, y: 270 }];
+                    const l4 = [{ x: 0, y: 450 }, { x: 360, y: 450 }, { x: 640, y: 345 }, { x: 930, y: 270 }];
+                    return { id: 'shibuya', world: 'jjk', name: 'Stacja Shibuya B5F (4 Drogi)', shortName: 'SHIBUYA (4 DROGI)', waypoints: l1, lanes: [l1, l2, l3, l4] };
+                })()
             },
             fnaf: {
-                easy: {
-                    id: 'fnaf_stage', world: 'fnaf', name: 'Freddy Show Stage & Dining', shortName: 'SHOW STAGE',
-                    waypoints: [
-                        { x: 0, y: 135 }, { x: 240, y: 135 }, { x: 240, y: 415 },
-                        { x: 490, y: 415 }, { x: 490, y: 145 }, { x: 730, y: 145 },
-                        { x: 730, y: 365 }, { x: 930, y: 365 }
-                    ]
-                },
-                normal: {
-                    id: 'fnaf_pizzeria', world: 'fnaf', name: 'Pirate Cove & Kitchen', shortName: 'PIRATE COVE',
-                    waypoints: [
-                        { x: 0, y: 410 }, { x: 195, y: 410 }, { x: 195, y: 125 },
-                        { x: 455, y: 125 }, { x: 455, y: 415 }, { x: 710, y: 415 },
-                        { x: 710, y: 225 }, { x: 930, y: 225 }
-                    ]
-                },
-                hard: {
-                    id: 'fnaf_west_hall', world: 'fnaf', name: 'FNAF 1 West & East Hall', shortName: 'WEST HALL',
-                    waypoints: [
-                        { x: 0, y: 115 }, { x: 330, y: 115 }, { x: 330, y: 280 },
-                        { x: 145, y: 280 }, { x: 145, y: 445 }, { x: 635, y: 445 },
-                        { x: 635, y: 185 }, { x: 930, y: 185 }
-                    ]
-                },
-                extreme: {
-                    id: 'fnaf3_fright', world: 'fnaf', name: "Fazbear's Security Office", shortName: 'SECURITY OFFICE',
-                    waypoints: [
-                        { x: 0, y: 270 }, { x: 220, y: 270 }, { x: 220, y: 105 },
-                        { x: 510, y: 105 }, { x: 510, y: 430 }, { x: 750, y: 430 },
-                        { x: 750, y: 260 }, { x: 930, y: 260 }
-                    ]
-                }
+                easy: (() => {
+                    // Koło na środku wokół stolików Show Stage
+                    const loop = [
+                        { x: 0, y: 185 }, { x: 290, y: 185 },
+                        { x: 360, y: 110 }, { x: 580, y: 110 }, { x: 650, y: 270 },
+                        { x: 580, y: 430 }, { x: 360, y: 430 }, { x: 290, y: 295 },
+                        { x: 650, y: 295 }, { x: 930, y: 295 }
+                    ];
+                    return { id: 'fnaf_stage', world: 'fnaf', name: 'Show Stage (Koło na Środku)', shortName: 'SHOW STAGE', waypoints: loop, lanes: [loop] };
+                })(),
+                normal: (() => {
+                    // 2 Drogi: Pirate Cove + Kuchnia
+                    const l1 = [{ x: 0, y: 135 }, { x: 260, y: 135 }, { x: 260, y: 225 }, { x: 630, y: 145 }, { x: 930, y: 265 }];
+                    const l2 = [{ x: 0, y: 415 }, { x: 260, y: 415 }, { x: 260, y: 320 }, { x: 630, y: 400 }, { x: 930, y: 265 }];
+                    return { id: 'fnaf_pizzeria', world: 'fnaf', name: 'Pirate Cove & Kitchen (2 Drogi)', shortName: 'PIRATE COVE', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                hard: (() => {
+                    // 2 Drogi i 2 Wyjścia: West Hall & East Hall (2 osobne drzwi Biura!)
+                    const l1 = [{ x: 0, y: 105 }, { x: 420, y: 105 }, { x: 420, y: 210 }, { x: 720, y: 140 }, { x: 930, y: 140 }];
+                    const l2 = [{ x: 0, y: 435 }, { x: 420, y: 435 }, { x: 420, y: 330 }, { x: 720, y: 400 }, { x: 930, y: 400 }];
+                    return { id: 'fnaf_west_hall', world: 'fnaf', name: 'West & East Hall (2 Wyjścia)', shortName: 'WEST & EAST HALL', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                extreme: (() => {
+                    // Krótka Mapa: błyskawiczny szturm głównym korytarzem do Biura!
+                    const shortPath = [{ x: 0, y: 270 }, { x: 430, y: 270 }, { x: 540, y: 195 }, { x: 930, y: 195 }];
+                    return { id: 'fnaf3_fright', world: 'fnaf', name: "Fazbear's Office (Krótka Mapa!)", shortName: 'KRÓTKA MAPA', waypoints: shortPath, lanes: [shortPath] };
+                })()
             },
             fnaf2: {
-                easy: {
-                    id: 'fnaf2_party', world: 'fnaf2', name: 'FNAF 2 Party Rooms (Harder)', shortName: 'PARTY ROOMS',
-                    waypoints: [
-                        { x: 0, y: 165 }, { x: 320, y: 165 }, { x: 320, y: 385 },
-                        { x: 620, y: 385 }, { x: 620, y: 180 }, { x: 930, y: 180 }
-                    ]
-                },
-                normal: {
-                    id: 'fnaf2_pizzeria', world: 'fnaf2', name: 'Main Hall & Kids Cove (Harder)', shortName: 'KIDS COVE',
-                    waypoints: [
-                        { x: 0, y: 385 }, { x: 280, y: 385 }, { x: 280, y: 155 },
-                        { x: 580, y: 155 }, { x: 580, y: 360 }, { x: 930, y: 360 }
-                    ]
-                },
-                hard: {
-                    id: 'fnaf2_vents', world: 'fnaf2', name: 'FNAF 2 Air Vents (Short Path)', shortName: 'AIR VENTS',
-                    waypoints: [
-                        { x: 0, y: 140 }, { x: 380, y: 140 }, { x: 380, y: 390 },
-                        { x: 680, y: 390 }, { x: 680, y: 210 }, { x: 930, y: 210 }
-                    ]
-                },
-                extreme: {
-                    id: 'fnaf2_prize', world: 'fnaf2', name: 'Prize Corner Assault (Extreme)', shortName: 'PRIZE CORNER',
-                    waypoints: [
-                        { x: 0, y: 270 }, { x: 310, y: 270 }, { x: 310, y: 135 },
-                        { x: 630, y: 135 }, { x: 630, y: 340 }, { x: 930, y: 340 }
-                    ]
-                }
+                easy: (() => {
+                    // 2 Drogi przez Party Rooms
+                    const l1 = [{ x: 0, y: 145 }, { x: 330, y: 145 }, { x: 560, y: 220 }, { x: 930, y: 270 }];
+                    const l2 = [{ x: 0, y: 395 }, { x: 330, y: 395 }, { x: 560, y: 320 }, { x: 930, y: 270 }];
+                    return { id: 'fnaf2_party', world: 'fnaf2', name: 'FNAF 2 Party Rooms (2 Drogi)', shortName: 'PARTY (2 DROGI)', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                normal: (() => {
+                    // Koło na środku + 2 Wyjścia!
+                    const l1 = [{ x: 0, y: 270 }, { x: 310, y: 270 }, { x: 390, y: 130 }, { x: 570, y: 130 }, { x: 650, y: 270 }, { x: 930, y: 150 }];
+                    const l2 = [{ x: 0, y: 270 }, { x: 310, y: 270 }, { x: 390, y: 410 }, { x: 570, y: 410 }, { x: 650, y: 270 }, { x: 930, y: 390 }];
+                    return { id: 'fnaf2_pizzeria', world: 'fnaf2', name: 'Kids Cove (Koło + 2 Wyjścia)', shortName: 'KIDS COVE', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                hard: (() => {
+                    // Krótka Mapa + 2 Szyby Wentylacyjne
+                    const l1 = [{ x: 180, y: 35 },  { x: 520, y: 135 }, { x: 930, y: 245 }];
+                    const l2 = [{ x: 180, y: 505 }, { x: 520, y: 405 }, { x: 930, y: 295 }];
+                    return { id: 'fnaf2_vents', world: 'fnaf2', name: 'Air Vents (Krótka • 2 Wenty)', shortName: 'AIR VENTS', waypoints: l1, lanes: [l1, l2] };
+                })(),
+                extreme: (() => {
+                    // 5 Wejść! Szturm z 5 stron naraz na Biuro FNAF 2!
+                    const l1 = [{ x: 0, y: 85 },    { x: 340, y: 120 }, { x: 660, y: 210 }, { x: 930, y: 270 }];
+                    const l2 = [{ x: 0, y: 270 },   { x: 520, y: 270 }, { x: 930, y: 270 }];
+                    const l3 = [{ x: 0, y: 455 },   { x: 340, y: 420 }, { x: 660, y: 330 }, { x: 930, y: 270 }];
+                    const l4 = [{ x: 420, y: 25 },  { x: 560, y: 165 }, { x: 740, y: 240 }, { x: 930, y: 270 }];
+                    const l5 = [{ x: 420, y: 515 }, { x: 560, y: 375 }, { x: 740, y: 300 }, { x: 930, y: 270 }];
+                    return { id: 'fnaf2_prize', world: 'fnaf2', name: 'Prize Corner (5 Wejść!)', shortName: 'PRIZE (5 WEJŚĆ)', waypoints: l1, lanes: [l1, l2, l3, l4, l5] };
+                })()
             }
         };
         WORLD_STAGE_MAPS.gd = {
-            easy: {
-                id: 'gd_stereo', world: 'gd', name: 'Stereo Madness (GD)', shortName: 'STEREO MADNESS',
-                waypoints: [
-                    { x: 0, y: 150 }, { x: 260, y: 150 }, { x: 260, y: 400 },
-                    { x: 540, y: 400 }, { x: 540, y: 150 }, { x: 780, y: 150 },
-                    { x: 780, y: 340 }, { x: 930, y: 340 }
-                ]
-            },
-            normal: {
-                id: 'gd_electro', world: 'gd', name: 'Electrodynamix (GD)', shortName: 'ELECTRODYNAMIX',
-                waypoints: [
-                    { x: 0, y: 270 }, { x: 210, y: 270 }, { x: 210, y: 110 },
-                    { x: 470, y: 110 }, { x: 470, y: 430 }, { x: 720, y: 430 },
-                    { x: 720, y: 220 }, { x: 930, y: 220 }
-                ]
-            },
-            hard: {
-                id: 'gd_deadlocked', world: 'gd', name: 'Deadlocked (GD Demon)', shortName: 'DEADLOCKED',
-                waypoints: [
-                    { x: 0, y: 110 }, { x: 350, y: 110 }, { x: 350, y: 275 },
-                    { x: 150, y: 275 }, { x: 150, y: 445 }, { x: 640, y: 445 },
-                    { x: 640, y: 175 }, { x: 930, y: 175 }
-                ]
-            },
-            extreme: {
-                id: 'gd_bloodbath', world: 'gd', name: 'Bloodbath (Extreme Demon)', shortName: 'BLOODBATH',
-                waypoints: [
-                    { x: 0, y: 420 }, { x: 240, y: 420 }, { x: 240, y: 130 },
-                    { x: 520, y: 130 }, { x: 520, y: 380 }, { x: 760, y: 380 },
-                    { x: 760, y: 190 }, { x: 930, y: 190 }
-                ]
-            },
-            endless: {
-                id: 'gd_tidal', world: 'gd', name: 'Tidal Wave (GD Endless)', shortName: 'TIDAL WAVE',
-                waypoints: [
-                    { x: 0, y: 155 }, { x: 250, y: 155 }, { x: 250, y: 405 },
-                    { x: 500, y: 405 }, { x: 500, y: 140 }, { x: 750, y: 140 },
-                    { x: 750, y: 355 }, { x: 930, y: 355 }
-                ]
-            }
+            easy: (() => {
+                // Dual Portal: 2 lustrzane geometryczne drogi
+                const l1 = [{ x: 0, y: 135 }, { x: 260, y: 135 }, { x: 380, y: 225 }, { x: 640, y: 135 }, { x: 930, y: 270 }];
+                const l2 = [{ x: 0, y: 405 }, { x: 260, y: 405 }, { x: 380, y: 315 }, { x: 640, y: 405 }, { x: 930, y: 270 }];
+                return { id: 'gd_stereo', world: 'gd', name: 'Stereo Madness (Dual • 2 Drogi)', shortName: 'STEREO (2 DROGI)', waypoints: l1, lanes: [l1, l2] };
+            })(),
+            normal: (() => {
+                // Koło Zębate na środku + 2 Wyjścia
+                const l1 = [{ x: 0, y: 270 }, { x: 310, y: 270 }, { x: 380, y: 125 }, { x: 580, y: 125 }, { x: 650, y: 270 }, { x: 930, y: 145 }];
+                const l2 = [{ x: 0, y: 270 }, { x: 310, y: 270 }, { x: 380, y: 415 }, { x: 580, y: 415 }, { x: 650, y: 270 }, { x: 930, y: 395 }];
+                return { id: 'gd_electro', world: 'gd', name: 'Electrodynamix (Koło + 2 Wyjścia)', shortName: 'ELECTRODYNAMIX', waypoints: l1, lanes: [l1, l2] };
+            })(),
+            hard: (() => {
+                // Deadlocked Wave 45° — dynamiczna krótka fala zygzakiem!
+                const wave = [{ x: 0, y: 430 }, { x: 220, y: 110 }, { x: 460, y: 430 }, { x: 700, y: 110 }, { x: 930, y: 330 }];
+                return { id: 'gd_deadlocked', world: 'gd', name: 'Deadlocked (Wave Zig-Zag)', shortName: 'DEADLOCKED WAVE', waypoints: wave, lanes: [wave] };
+            })(),
+            extreme: (() => {
+                // 4 Drogi i 2 Wyjścia (Bloodbath Demon!)
+                const l1 = [{ x: 0, y: 85 },  { x: 330, y: 85 },  { x: 560, y: 195 }, { x: 930, y: 150 }];
+                const l2 = [{ x: 0, y: 215 }, { x: 300, y: 215 }, { x: 560, y: 195 }, { x: 930, y: 150 }];
+                const l3 = [{ x: 0, y: 325 }, { x: 300, y: 325 }, { x: 560, y: 345 }, { x: 930, y: 390 }];
+                const l4 = [{ x: 0, y: 455 }, { x: 330, y: 455 }, { x: 560, y: 345 }, { x: 930, y: 390 }];
+                return { id: 'gd_bloodbath', world: 'gd', name: 'Bloodbath (4 Drogi • 2 Wyjścia)', shortName: 'BLOODBATH (4 DR.)', waypoints: l1, lanes: [l1, l2, l3, l4] };
+            })(),
+            endless: (() => {
+                // 5 Wejść wpadających w Koło na Środku (Tidal Wave Endless!)
+                const ringTail = [{ x: 380, y: 145 }, { x: 580, y: 145 }, { x: 640, y: 270 }, { x: 580, y: 395 }, { x: 380, y: 395 }, { x: 320, y: 270 }, { x: 930, y: 270 }];
+                const l1 = [{ x: 0, y: 90 },    { x: 320, y: 270 }, ...ringTail];
+                const l2 = [{ x: 0, y: 270 },   { x: 320, y: 270 }, ...ringTail];
+                const l3 = [{ x: 0, y: 450 },   { x: 320, y: 270 }, ...ringTail];
+                const l4 = [{ x: 260, y: 25 },  { x: 380, y: 145 }, ...ringTail.slice(1)];
+                const l5 = [{ x: 260, y: 515 }, { x: 380, y: 395 }, { x: 320, y: 270 }, { x: 930, y: 270 }];
+                return { id: 'gd_tidal', world: 'gd', name: 'Tidal Wave (5 Wejść + Koło)', shortName: 'TIDAL WAVE', waypoints: l1, lanes: [l1, l2, l3, l4, l5] };
+            })()
         };
-        const BOSS_RUSH_MAP = {
-            id: 'boss_rush_arena', world: 'all', name: 'Multiverse Boss Rush Arena', shortName: 'BOSS RUSH',
-            waypoints: [
-                { x: 0, y: 115 }, { x: 260, y: 115 }, { x: 260, y: 425 },
-                { x: 520, y: 425 }, { x: 520, y: 115 }, { x: 770, y: 115 },
-                { x: 770, y: 380 }, { x: 930, y: 380 }
-            ]
-        };
+        const BOSS_RUSH_MAP = (() => {
+            // 4 Drogi + Koło Rytualne na środku + 2 Wyjścia!
+            const l1 = [{ x: 0, y: 100 }, { x: 310, y: 170 }, { x: 480, y: 115 }, { x: 650, y: 190 }, { x: 930, y: 155 }];
+            const l2 = [{ x: 0, y: 225 }, { x: 330, y: 270 }, { x: 480, y: 425 }, { x: 650, y: 350 }, { x: 930, y: 385 }];
+            const l3 = [{ x: 0, y: 315 }, { x: 330, y: 270 }, { x: 480, y: 115 }, { x: 650, y: 190 }, { x: 930, y: 155 }];
+            const l4 = [{ x: 0, y: 440 }, { x: 310, y: 370 }, { x: 480, y: 425 }, { x: 650, y: 350 }, { x: 930, y: 385 }];
+            return { id: 'boss_rush_arena', world: 'all', name: 'Boss Rush Arena (4 Drogi + Koło)', shortName: 'BOSS RUSH', waypoints: l1, lanes: [l1, l2, l3, l4] };
+        })();
         WORLD_STAGE_MAPS.mystery = (() => {
-            const m = {
-                id: 'mystery_void', world: 'jjk', name: '??? (Pustka Nieznanego)', shortName: '???',
-                waypoints: [
-                    { x: 0, y: 60 }, { x: 830, y: 60 }, { x: 830, y: 170 }, { x: 120, y: 170 },
-                    { x: 120, y: 280 }, { x: 830, y: 280 }, { x: 830, y: 390 }, { x: 120, y: 390 },
-                    { x: 120, y: 490 }, { x: 930, y: 490 }
-                ]
-            };
+            // 5 Wejść Pustki + Koło Osobliwości na środku + 2 Wyjścia!
+            const l1 = [{ x: 0, y: 80 },    { x: 340, y: 140 }, { x: 580, y: 140 }, { x: 640, y: 270 }, { x: 930, y: 155 }];
+            const l2 = [{ x: 0, y: 270 },   { x: 320, y: 270 }, { x: 480, y: 120 }, { x: 640, y: 270 }, { x: 480, y: 420 }, { x: 930, y: 385 }];
+            const l3 = [{ x: 0, y: 460 },   { x: 340, y: 400 }, { x: 580, y: 400 }, { x: 640, y: 270 }, { x: 930, y: 385 }];
+            const l4 = [{ x: 480, y: 25 },  { x: 480, y: 120 }, { x: 320, y: 270 }, { x: 640, y: 270 }, { x: 930, y: 155 }];
+            const l5 = [{ x: 480, y: 515 }, { x: 480, y: 420 }, { x: 320, y: 270 }, { x: 640, y: 270 }, { x: 930, y: 385 }];
+            const m = { id: 'mystery_void', world: 'jjk', name: '??? Pustka (5 Wejść + Koło)', shortName: '???', waypoints: l1, lanes: [l1, l2, l3, l4, l5] };
             return { easy: m, normal: m, hard: m, extreme: m };
         })();
+
+        function getMapLanes(mapObj = state.map) {
+            if (mapObj && Array.isArray(mapObj.lanes) && mapObj.lanes.length > 0) return mapObj.lanes;
+            return (mapObj && mapObj.waypoints) ? [mapObj.waypoints] : [[{ x: 0, y: 270 }, { x: 930, y: 270 }]];
+        }
+        function getUniqueLaneStarts(mapObj = state.map) {
+            const out = [];
+            for (const ln of getMapLanes(mapObj)) {
+                const p = ln[0];
+                if (p && !out.some(u => Math.hypot(u.x - p.x, u.y - p.y) < 18)) out.push(p);
+            }
+            return out;
+        }
+        function getUniqueLaneEnds(mapObj = state.map) {
+            const out = [];
+            for (const ln of getMapLanes(mapObj)) {
+                const p = ln[ln.length - 1];
+                if (p && !out.some(u => Math.hypot(u.x - p.x, u.y - p.y) < 18)) out.push(p);
+            }
+            return out;
+        }
+        function pickActiveLaneForSummon() {
+            const lanes = getMapLanes();
+            const activeLanes = [];
+            for (const e of state.enemies) {
+                if (e.hp > 0 && e.lane && !activeLanes.includes(e.lane)) activeLanes.push(e.lane);
+            }
+            const pool = activeLanes.length > 0 ? activeLanes : lanes;
+            state.nextSummonLaneIdx = ((state.nextSummonLaneIdx || 0) + 1) % pool.length;
+            return pool[state.nextSummonLaneIdx];
+        }
 
         // ==========================================
         // 6. CANVAS I GŁÓWNY STAN GRY
@@ -5091,6 +5161,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             skillBeams: [],
             shikigami: [],
             megumiSpawnTimer: 15.0,
+            moduloRoadBuffTimer: 0,
+            societyDroneTimer: 0,
+            heliopolisBuffTimer: 0,
             activeVows: [],
             pendingVowChoices: null,
             vowBonusPlacements: 0,
@@ -5145,12 +5218,16 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
         function isValidPlacement(x, y) {
             if (x < 24 || x > MAP_W - 24 || y < 24 || y > MAP_H - 24) return false;
-            const wps = state.map.waypoints;
-            for (let i = 0; i < wps.length - 1; i++) {
-                if (distToSegment(x, y, wps[i].x, wps[i].y, wps[i + 1].x, wps[i + 1].y) < 42) return false;
+            const lanes = getMapLanes();
+            const roadClear = lanes.length >= 4 ? 30 : lanes.length >= 2 ? 35 : 40;
+            for (const wps of lanes) {
+                for (let i = 0; i < wps.length - 1; i++) {
+                    if (distToSegment(x, y, wps[i].x, wps[i].y, wps[i + 1].x, wps[i + 1].y) < roadClear) return false;
+                }
             }
-            const endPt = wps[wps.length - 1];
-            if (Math.hypot(x - (endPt.x - 42), y - endPt.y) < 50) return false;
+            for (const endPt of getUniqueLaneEnds()) {
+                if (Math.hypot(x - (endPt.x - 42), y - endPt.y) < 46) return false;
+            }
             for (const t of state.towers) {
                 if (Math.hypot(x - t.x, y - t.y) < 36) return false;
             }
@@ -5195,6 +5272,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (lvl <= 1) {
                 return { lvl: 1, cost: tpl.cost, dmg: tpl.damage, cd: tpl.cooldown, rng: tpl.range, text: tpl.desc };
             }
+            if (tpl.maxLevel && lvl >= tpl.maxLevel) {
+                const capIdx = Math.max(0, Math.min(tpl.upgrades.length - 1, tpl.maxLevel - 2));
+                const uCap = tpl.upgrades[capIdx];
+                return { lvl: tpl.maxLevel, cost: Math.round(uCap.cost * costDisc), dmg: uCap.dmg, cd: uCap.cd, rng: uCap.rng, text: uCap.text };
+            }
             if (lvl <= 5 && tpl.upgrades[lvl - 2]) {
                 const u = tpl.upgrades[lvl - 2];
                 return { lvl, cost: Math.round(u.cost * costDisc), dmg: u.dmg, cd: u.cd, rng: u.rng, text: u.text };
@@ -5220,6 +5302,14 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (tower.overtimeTimer > 0) mult *= 1.35;
             if (tower.heianRage > 0) mult *= 1.30;
             if (tower.shinjukuBfTimer > 0) mult *= 4.0; // Shinjuku Yuji Moc 1: 4x DMG przez 3s!
+            if (tower.griefSpinTimer > 0) mult *= 1.05; // Doggie Grief 97%: +5% DMG na 10s!
+            if (tower.nullscapesTimer > 0) mult *= 1.10; // Hover Nullscapes ##: +10% DMG na 10s!
+            if (tower.acropolisMiniOrb) mult *= 1.15; // Hover Silent Acropolis Mini Koło: +15% DMG!
+            if (tower.fireworkDmgStacks > 0) mult *= (1 + tower.fireworkDmgStacks * 0.0005); // Trick Firework: +0.05% DMG za ładunek!
+            if (tower.nbUpgradeStacks > 0) mult *= (1 + tower.nbUpgradeStacks * 0.01); // Nightmare Bonnie Upgrade: +1% DMG na całą rundę!
+            if (state.heliopolisBuffTimer > 0 && (tower.type === 'gd_wpopoff' || tower.type === 'gd_trick' || tower.type === 'gd_hover' || tower.type === 'gd_doggie')) {
+                mult *= 1.30; // Zoink Heliopolis: +30% DMG dla Wpopoff, Trick, Hover i Doggie na 30s!
+            }
             if (tower.type === 'yuta' && tower.rikaActiveTimer > 0) mult *= 1.45;
             if (state.moduloRoadBuffTimer > 0) mult *= 2.0; // Pasywka Modulo: przerywana linia na drodze daje 2x DMG wszystkim jednostkom przez 15s!
             if (state.towers.some(a => a.type === 'shinjuku_yuji')) mult *= 1.05; // Pasywka Shinjuku Yuji: +5% do wszystkich statystyk sojuszników!
@@ -5259,6 +5349,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (tower.heianRage > 0) cd *= 0.55;
             if (tower.type === 'yuta' && tower.rikaActiveTimer > 0) cd *= 0.78;
             if (tower.cdBoostWavesLeft > 0) cd *= 0.90; // -10% cooldown od Hakari Heal Others
+            if (state.societyDroneTimer > 0) cd *= 0.90; // Wpopoff Society Dron: -10% CD na 10s!
+            if (tower.nbUpgradeStacks > 0) cd *= Math.max(0.25, 1 - tower.nbUpgradeStacks * 0.01); // Nightmare Bonnie Upgrade: -1% CD na całą rundę!
             if (state.towers.some(a => a.type === 'shinjuku_yuji')) cd *= 0.95; // Pasywka Shinjuku Yuji: +5% szybkości (-5% CD) dla sojuszników!
             for (const z of (state.skillZones || [])) {
                 if (z.kind === 'shinjuku_cd_aura' && z.life > 0 && Math.hypot(z.x - tower.x, z.y - tower.y) <= z.radius) {
@@ -5386,7 +5478,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 modulo:        { arm: '#f1f5f9', leg: '#0f172a', shoe: '#09090b' },
                 kusakabe:      { arm: '#b89b72', leg: '#18181b', shoe: '#09090b' },
                 miwa:          { arm: '#0f172a', leg: '#0f172a', shoe: '#1c1917' },
-                shinjuku_yuji: { arm: '#b91c1c', leg: '#0f172a', shoe: '#dc2626' }
+                shinjuku_yuji: { arm: '#b91c1c', leg: '#0f172a', shoe: '#dc2626' },
+                calamity_1x1:  { arm: '#050508', leg: '#050508', shoe: '#14532d' },
+                nightmare_bonnie: { arm: '#1e1b4b', leg: '#1e1b4b', shoe: '#64748b' }
             };
             return map[type] || { arm: '#1e293b', leg: '#0f172a', shoe: '#09090b' };
         }
@@ -6219,6 +6313,48 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     // Iskra Black Flash (czarno-czerwona błyskawica)
                     c.strokeStyle = '#ef4444'; c.lineWidth = 1.4;
                     c.beginPath(); c.moveTo(-7, 4); c.lineTo(-2, 7); c.lineTo(4, 3); c.lineTo(8, 8); c.stroke();
+                } else if (type === 'calamity_1x1') {
+                    // 1x1x1x1x1 (Calamity Hacker): półprzezroczysty neonowo-zielony tors z widocznym czarnym/zielonym szkieletem żebrowym, zglitchowaną aurą 1x1 i 2 zielonymi mieczami Virus Sword!
+                    const xAura = c.createRadialGradient(0, 4, 2, 0, 4, 24);
+                    xAura.addColorStop(0, 'rgba(34, 197, 94, 0.48)');
+                    xAura.addColorStop(1, 'rgba(34, 197, 94, 0)');
+                    c.fillStyle = xAura; c.beginPath(); c.arc(0, 4, 24, 0, Math.PI * 2); c.fill();
+                    // Zielony zglitchowany tors 4D Roblox
+                    const torsoG = c.createLinearGradient(-11, -7.5, 11, 16);
+                    torsoG.addColorStop(0, 'rgba(74, 222, 128, 0.90)');
+                    torsoG.addColorStop(0.5, 'rgba(22, 163, 74, 0.88)');
+                    torsoG.addColorStop(1, 'rgba(5, 46, 22, 0.94)');
+                    c.fillStyle = torsoG;
+                    c.strokeStyle = '#86efac'; c.lineWidth = 1.3;
+                    c.beginPath(); c.roundRect(-11, -7.5, 22, 19, 2.2); c.fill(); c.stroke();
+                    // Czarny pas biodrowy / nogi hakera
+                    c.fillStyle = '#050508';
+                    c.fillRect(-11, 11.5, 22, 5.5);
+                    // Prześwitujący czarny kręgosłup i żebra wewnątrz zielonego torsu!
+                    c.strokeStyle = '#052e16'; c.lineWidth = 1.6;
+                    c.beginPath();
+                    c.moveTo(0, -6); c.lineTo(0, 10);
+                    c.moveTo(-6.5, -3.5); c.lineTo(6.5, -3.5);
+                    c.moveTo(-7.2, 0.5);  c.lineTo(7.2, 0.5);
+                    c.moveTo(-6.0, 4.5);  c.lineTo(6.0, 4.5);
+                    c.stroke();
+                    // Dwa skrzyżowane / trzymane zielone miecze Virus Sword po obu stronach!
+                    c.save();
+                    c.shadowColor = '#22c55e'; c.shadowBlur = 7;
+                    c.strokeStyle = '#4ade80'; c.lineWidth = 2.4;
+                    c.beginPath();
+                    c.moveTo(-11, 8); c.lineTo(-21, -8);
+                    c.moveTo(11, 8);  c.lineTo(21, -8);
+                    c.stroke();
+                    c.strokeStyle = '#dcfce7'; c.lineWidth = 1.0;
+                    c.beginPath();
+                    c.moveTo(-11, 8); c.lineTo(-21, -8);
+                    c.moveTo(11, 8);  c.lineTo(21, -8);
+                    c.stroke();
+                    c.restore();
+                    // Paski zielonego glitchu 1x1
+                    c.fillStyle = '#bbf7d0';
+                    c.fillRect(-13, -1, 5, 1.3); c.fillRect(8, 6, 6, 1.3);
                 } else if (type === 'higuruma') {
                     // Hiromi Higuruma: perfekcyjnie skrojony czarny garnitur adwokata z białą koszulą, krawatem, złotą odznaka adwokacką w klapie oraz Młotem Sędziowskim (Gavel) otoczonym złotą/przeklętą energią!
                     const SuitGrad = c.createLinearGradient(-11, -8, 11, 17);
@@ -6548,6 +6684,39 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         c.fillStyle = '#ef4444';
                         c.beginPath(); c.arc(fx - 1.1, fy - 0.5, 0.8, 0, Math.PI * 2); c.arc(fx + 1.1, fy - 0.5, 0.8, 0, Math.PI * 2); c.fill();
                     }
+                } else if (type === 'nightmare_bonnie') {
+                    // Nightmare Bonnie (FNAF 4 Calamity): rozszarpany ciemnogranatowy kostium królika z odsłoniętymi żebrami endoszkieletu, poszarpaną czerwoną muszką i Czerwoną Gitarą (Red Guitar)!
+                    c.fillStyle = '#1e1b4b';
+                    c.beginPath(); c.roundRect(-11.5, -7.5, 23, 24.5, 5); c.fill();
+                    c.strokeStyle = '#4338ca'; c.lineWidth = 1.1; c.stroke();
+                    // Wielka wyrwa w klatce piersiowej z metalowymi żebrami endoszkieletu
+                    c.fillStyle = '#050508';
+                    c.beginPath(); c.ellipse(0, 5.2, 7.6, 9.0, 0, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#94a3b8'; c.lineWidth = 1.6;
+                    c.beginPath();
+                    c.moveTo(0, -2.5); c.lineTo(0, 13);
+                    c.moveTo(-5.8, 1.5); c.lineTo(5.8, 1.5);
+                    c.moveTo(-6.2, 5.2); c.lineTo(6.2, 5.2);
+                    c.moveTo(-5.2, 9.0); c.lineTo(5.2, 9.0);
+                    c.stroke();
+                    // Poszarpana czerwona muszka
+                    c.fillStyle = '#dc2626';
+                    c.beginPath();
+                    c.moveTo(0, -4.8); c.lineTo(-5.8, -7.4); c.lineTo(-5.8, -2.2); c.closePath();
+                    c.moveTo(0, -4.8); c.lineTo(5.8, -7.4);  c.lineTo(5.8, -2.2);  c.closePath();
+                    c.fill();
+                    // Kultowa Czerwona Gitara (Red Guitar) w łapie Nightmare Bonniego!
+                    c.save();
+                    c.translate(12, 4);
+                    c.rotate(-0.48);
+                    c.shadowColor = '#ef4444'; c.shadowBlur = 6;
+                    c.fillStyle = '#dc2626'; c.strokeStyle = '#fef2f2'; c.lineWidth = 0.9;
+                    c.beginPath();
+                    c.moveTo(0, -5); c.lineTo(6.5, 6); c.lineTo(0, 3); c.lineTo(-6.5, 6); c.closePath();
+                    c.fill(); c.stroke();
+                    c.strokeStyle = '#18181b'; c.lineWidth = 2.2;
+                    c.beginPath(); c.moveTo(0, -4); c.lineTo(0, -15); c.stroke();
+                    c.restore();
                 } else if (type === 'withered_bonnie') {
                     if (getActiveSkinForHero('withered_bonnie')?.id === 'withered_bonnie_ignited') {
                         // Ignited Bonnie (TJOC): zwęglony, spalony granatowo-czarny korpus z żarzącymi się pęknięciami ognia, odsłoniętymi żebrami endo i dymiącymi iskrami!
@@ -6685,6 +6854,114 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
 
         function drawHeroPortrait(c, type, level = 1, withRing = true) {
+            if (type === 'nightmare_bonnie') {
+                // NIGHTMARE BONNIE (FNAF 4 Calamity): przerażająca poszarpana granatowo-indygo głowa królika z metalowymi prętami w uszach, świecącymi różowo-czerwonymi oczami i podwójnym rzędem ostrych zębów!
+                c.save();
+                if (withRing) {
+                    const nbg = c.createRadialGradient(0, 0, 2, 0, 0, 17.5);
+                    nbg.addColorStop(0, '#312e81'); nbg.addColorStop(0.6, '#1e1b4b'); nbg.addColorStop(1, '#05050a');
+                    c.fillStyle = nbg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#ef4444'; c.lineWidth = 2.4;
+                    c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
+                }
+                // Rozszarpane długie uszy z odsłoniętymi metalowymi prętami endoszkieletu
+                c.strokeStyle = '#94a3b8'; c.lineWidth = 1.8;
+                c.beginPath(); c.moveTo(-5.2, -9); c.lineTo(-6.2, -19.5); c.moveTo(5.2, -9); c.lineTo(6.4, -19.5); c.stroke();
+                c.fillStyle = '#1e1b4b'; c.strokeStyle = '#4338ca'; c.lineWidth = 0.9;
+                c.beginPath();
+                c.roundRect(-7.8, -14.2, 4.6, 5.4, 1.2); c.roundRect(-8.2, -20.2, 4.4, 4.8, 1.2);
+                c.roundRect(3.2, -14.2, 4.6, 5.4, 1.2);  c.roundRect(3.8, -20.2, 4.4, 4.8, 1.2);
+                c.fill(); c.stroke();
+                // Głowa i szeroka paszcza Nightmare Bonniego
+                const nbHead = c.createRadialGradient(0, -2, 1.5, 0, -1, 11);
+                nbHead.addColorStop(0, '#3730a3'); nbHead.addColorStop(0.6, '#1e1b4b'); nbHead.addColorStop(1, '#090914');
+                c.fillStyle = nbHead;
+                c.beginPath(); c.arc(0, -2.0, 9.6, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.roundRect(-7.4, 1.8, 14.8, 6.8, 2.4); c.fill();
+                // Pyszczek i czarny nos + wąsy
+                c.fillStyle = '#4f46e5';
+                c.beginPath(); c.ellipse(-2.8, 0.8, 3.2, 2.2, 0, 0, Math.PI * 2); c.ellipse(2.8, 0.8, 3.2, 2.2, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#050508';
+                c.beginPath(); c.ellipse(0, -0.4, 2.2, 1.3, 0, 0, Math.PI * 2); c.fill();
+                // Głębokie czarne oczodoły ze świecącymi czerwono-różowymi oczami FNAF 4!
+                c.fillStyle = '#030306';
+                c.beginPath(); c.arc(-4.0, -3.2, 2.8, 0, Math.PI * 2); c.arc(4.0, -3.2, 2.8, 0, Math.PI * 2); c.fill();
+                c.save();
+                c.shadowColor = '#f43f5e'; c.shadowBlur = 7;
+                c.fillStyle = '#f43f5e';
+                c.beginPath(); c.arc(-4.0, -3.2, 1.65, 0, Math.PI * 2); c.arc(4.0, -3.2, 1.65, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#ffffff';
+                c.beginPath(); c.arc(-4.0, -3.2, 0.65, 0, Math.PI * 2); c.arc(4.0, -3.2, 0.65, 0, Math.PI * 2); c.fill();
+                c.restore();
+                // Monstrualna czarna paszcza z ostrymi trójkątnymi zębami (góra + dół)!
+                c.fillStyle = '#030306';
+                c.beginPath(); c.roundRect(-6.2, 2.4, 12.4, 5.2, 1.4); c.fill();
+                c.fillStyle = '#e2e8f0';
+                for (let tx = -5.4; tx <= 4.2; tx += 2.2) {
+                    c.beginPath(); c.moveTo(tx, 2.5); c.lineTo(tx + 0.9, 4.7); c.lineTo(tx + 1.8, 2.5); c.closePath(); c.fill();
+                    c.beginPath(); c.moveTo(tx, 7.5); c.lineTo(tx + 0.9, 5.3); c.lineTo(tx + 1.8, 7.5); c.closePath(); c.fill();
+                }
+                c.restore();
+                return;
+            }
+            if (type === 'calamity_1x1') {
+                // 1x1x1x1x1 (Calamity): kruczoczarna głowa Roblox z kultową Zieloną Koroną Domino (Green Crown), świecącymi czerwono-zielonymi oczami hakera i binarnym glitchem 1x1!
+                c.save();
+                if (withRing) {
+                    const cg = c.createRadialGradient(0, 0, 2, 0, 0, 17.5);
+                    cg.addColorStop(0, '#14532d'); cg.addColorStop(0.6, '#052e16'); cg.addColorStop(1, '#020617');
+                    c.fillStyle = cg; c.beginPath(); c.arc(0, 0, 16.6, 0, Math.PI * 2); c.fill();
+                    c.strokeStyle = '#22c55e'; c.lineWidth = 2.4;
+                    c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
+                    c.fillStyle = 'rgba(74, 222, 128, 0.40)';
+                    c.fillRect(-13, -6, 7, 1.2); c.fillRect(6, 6, 8, 1.2);
+                }
+                // Zielona poświata wirusa
+                c.shadowColor = '#22c55e'; c.shadowBlur = 8;
+                // Czarna cylindryczna głowa Roblox 1x1x1x1
+                c.fillStyle = '#050508';
+                c.strokeStyle = '#22c55e'; c.lineWidth = 1.2;
+                c.beginPath(); c.roundRect(-8.6, -7.2, 17.2, 15.8, 3.6); c.fill(); c.stroke();
+                c.shadowBlur = 0;
+                // Świecące oczy hakera (czerwone prawe oko + zielone lewe oko z krzyżowym błyskiem!)
+                c.save();
+                c.shadowColor = '#ef4444'; c.shadowBlur = 7;
+                c.fillStyle = '#ef4444';
+                c.beginPath(); c.ellipse(-3.8, -0.5, 2.3, 1.6, 0, 0, Math.PI * 2); c.fill();
+                c.shadowColor = '#4ade80';
+                c.fillStyle = '#4ade80';
+                c.beginPath(); c.ellipse(3.8, -0.5, 2.3, 1.6, 0, 0, Math.PI * 2); c.fill();
+                c.strokeStyle = '#dcfce7'; c.lineWidth = 1.1;
+                c.beginPath(); c.moveTo(3.8, -3.5); c.lineTo(3.8, 2.5); c.moveTo(0.8, -0.5); c.lineTo(6.8, -0.5); c.stroke();
+                c.restore();
+                // Złowrogi zielony zglitchowany grymas
+                c.strokeStyle = '#22c55e'; c.lineWidth = 1.3;
+                c.beginPath(); c.moveTo(-4.8, 4.2); c.lineTo(-2.0, 5.2); c.lineTo(1.5, 3.8); c.lineTo(4.8, 4.8); c.stroke();
+                // KULTOWA GREEN CROWN (Zielona Korona Domino z kostkami domina!)
+                const crownG = c.createLinearGradient(-10, -16, 10, -6.5);
+                crownG.addColorStop(0, '#4ade80');
+                crownG.addColorStop(0.5, '#16a34a');
+                crownG.addColorStop(1, '#14532d');
+                c.fillStyle = crownG;
+                c.strokeStyle = '#bbf7d0'; c.lineWidth = 1.0;
+                c.beginPath(); c.roundRect(-9.8, -10.2, 19.6, 3.6, 1.2); c.fill(); c.stroke();
+                // 3 pionowe zielone tabliczki Domino na koronie z białymi kropkami!
+                for (const dx of [-6.8, 0, 6.8]) {
+                    c.fillStyle = '#22c55e';
+                    c.strokeStyle = '#052e16'; c.lineWidth = 1.0;
+                    c.beginPath(); c.roundRect(dx - 2.5, -16.8, 5.0, 7.2, 1.0); c.fill(); c.stroke();
+                    c.strokeStyle = '#bbf7d0'; c.lineWidth = 0.7;
+                    c.beginPath(); c.moveTo(dx - 2.0, -13.2); c.lineTo(dx + 2.0, -13.2); c.stroke();
+                    c.fillStyle = '#ecfdf5';
+                    c.beginPath();
+                    c.arc(dx, -15.0, 0.75, 0, Math.PI * 2);
+                    c.arc(dx - 0.9, -11.4, 0.65, 0, Math.PI * 2);
+                    c.arc(dx + 0.9, -11.4, 0.65, 0, Math.PI * 2);
+                    c.fill();
+                }
+                c.restore();
+                return;
+            }
             if (type === 'gd_doggie') {
                 // Doggie (1. zdj): Czarna kostka z neonowymi różowymi trójkątami w rogach, świecącym żółtym pierścieniem, fioletowym pierścieniem i żółtym rdzeniem!
                 c.save();
@@ -8879,7 +9156,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             }
             if (!chosen) return null;
 
-            const wps = state.map.waypoints;
+            const wps = pickActiveLaneForSummon();
             const endWp = wps[wps.length - 1];
             const prevWp = wps[Math.max(0, wps.length - 2)];
             const segDx = prevWp.x - endWp.x;
@@ -8905,6 +9182,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     x: endWp.x + ux * distFromBase - uy * perp,
                     y: endWp.y + uy * distFromBase + ux * perp,
                     wpIndex: Math.max(0, wps.length - 2),
+                    lane: wps,
                     maxHp: scaledHp,
                     hp: scaledHp,
                     speed: chosen.speed,
@@ -9088,6 +9366,39 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 c.beginPath(); c.arc(-4, -2, 2.4, 0, Math.PI * 2); c.arc(4, -2, 2.4, 0, Math.PI * 2); c.fill();
                 c.fillStyle = '#2563eb';
                 c.beginPath(); c.arc(14, 4, 5, 0, Math.PI * 2); c.fill();
+            } else if (k === 'tidal_spike') {
+                // Trick Moc 1: TIDAL WAVE — niebieski świecący kolec z falami oceanicznymi (100 HP)
+                const g = c.createLinearGradient(0, -22, 0, 14);
+                g.addColorStop(0, '#bae6fd');
+                g.addColorStop(0.45, '#0ea5e9');
+                g.addColorStop(1, '#1e3a8a');
+                c.fillStyle = g;
+                c.beginPath();
+                c.moveTo(0, -22);
+                c.lineTo(15, 13);
+                c.lineTo(-15, 13);
+                c.closePath();
+                c.fill();
+                c.strokeStyle = '#e0f2fe';
+                c.lineWidth = 2;
+                c.stroke();
+                c.strokeStyle = '#38bdf8';
+                c.lineWidth = 1.5;
+                c.beginPath();
+                c.arc(0, 10, 17 + Math.sin(state.time * 8) * 2, Math.PI * 1.1, Math.PI * 1.9);
+                c.stroke();
+            } else if (k === 'amethyst_wall') {
+                // wPopoff Moc 1: Amethyst — ściana z fioletowo-purpurowych kryształów na drodze
+                const crystals = [[-13, 12, -18, -12, -5, 12, '#9333ea'], [0, 14, 0, -22, 11, 14, '#c084fc'], [-8, 14, 12, -15, 17, 13, '#7e22ce']];
+                for (const [x1, y1, mx, my, x2, y2, col] of crystals) {
+                    c.fillStyle = col;
+                    c.beginPath();
+                    c.moveTo(x1, y1); c.lineTo(mx, my); c.lineTo(x2, y2); c.closePath();
+                    c.fill();
+                    c.strokeStyle = '#f5d0fe';
+                    c.lineWidth = 1.4;
+                    c.stroke();
+                }
             }
 
             // Pasek HP Shikigami
@@ -9134,6 +9445,18 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 c.strokeStyle = '#e879f9';
                 c.lineWidth = 2.5;
                 c.beginPath(); c.arc(0, 0, r + 4, 0, Math.PI * 2); c.stroke();
+            }
+            if (e.greenVirusTimer > 0) {
+                c.strokeStyle = '#22c55e';
+                c.lineWidth = 2.4;
+                c.strokeRect(-r - 4, -r - 4, (r + 4) * 2, (r + 4) * 2);
+                c.fillStyle = 'rgba(34, 197, 94, 0.22)';
+                c.fillRect(-r - 3, -r - 3, (r + 3) * 2, (r + 3) * 2);
+            }
+            if (e.pctBleedTimer > 0 || e.bleedTimer > 0) {
+                c.strokeStyle = '#ef4444';
+                c.lineWidth = 1.8;
+                c.beginPath(); c.arc(0, 0, r + 2.5, 0, Math.PI * 2); c.stroke();
             }
 
             // ==========================================
@@ -9549,7 +9872,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
         function spawnEnemy(typeKey) {
             const tpl = ENEMY_TYPES[typeKey] || ENEMY_TYPES.fly_curse;
-            const startWp = state.map.waypoints[0];
+            const lanes = getMapLanes();
+            state.nextLaneIdx = ((state.nextLaneIdx || 0) + 1) % lanes.length;
+            const chosenLane = lanes[state.nextLaneIdx] || state.map.waypoints;
+            const startWp = chosenLane[0];
             const isMysteryMap = state.map.id === 'mystery_void';
             const isEndlessOrBr = state.diff.id === 'endless' || state.diff.id === 'boss_rush';
             const tierStepMult = state.diff.id === 'endless'
@@ -9576,6 +9902,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 x: startWp.x,
                 y: startWp.y,
                 wpIndex: 1,
+                lane: chosenLane,
                 distanceTraveled: 0,
                 maxHp,
                 hp: maxHp,
@@ -9699,7 +10026,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         function getMaxPlacementForHero(heroId) {
             const tpl = HEROES[heroId];
             if (!tpl) return 3;
-            let maxAllowed = (PLACEMENT_LIMITS[tpl.rarity] || 3) + (state.vowBonusPlacements || 0);
+            let maxAllowed = (tpl.maxPlace || PLACEMENT_LIMITS[tpl.rarity] || 3) + (state.vowBonusPlacements || 0);
             if (multiverseSave.unlocked && multiverseSave.unlocked.shadow_freddy_hero) {
                 if (!multiverseSave.shadowFreddySlotHeroId || !HEROES[multiverseSave.shadowFreddySlotHeroId]) {
                     multiverseSave.shadowFreddySlotHeroId = (multiverseSave.equipped && multiverseSave.equipped[0]) || 'yuji';
@@ -9776,7 +10103,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
 
         function upgradeTowerInstance(t, fromSync = false) {
-            if (!t || t.level >= 6) return false;
+            const maxLvl = (t && HEROES[t.type] && HEROES[t.type].maxLevel) || 6;
+            if (!t || t.level >= maxLvl) return false;
             const upg = getHeroLevelStats(t.type, t.level + 1);
             const owner = (state.isCoop2P && t.owner === 2) ? 2 : 1;
             const walletKey = owner === 2 ? 'ce2' : 'ce';
@@ -10011,8 +10339,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else if (tower.type === 'kirara') {
                     for (const e of state.enemies) {
                         if (e.hp > 0 && !e.isBoss && Math.hypot(e.x - tower.x, e.y - tower.y) <= tower.range + 60) {
+                            const eWps = e.lane || state.map.waypoints;
                             e.wpIndex = Math.max(1, e.wpIndex - 2);
-                            const backWp = state.map.waypoints[e.wpIndex - 1];
+                            const backWp = eWps[e.wpIndex - 1];
                             e.x = backWp.x; e.y = backWp.y;
                             e.stunTimer = Math.max(e.stunTimer, 2.4);
                             damageEnemy(e, dmg * 2.4, tower, { pierce: 1 });
@@ -10103,8 +10432,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else if (tower.type === 'todo') {
                     for (const e of state.enemies) {
                         if (e.hp > 0 && !e.isBoss && Math.hypot(e.x - tower.x, e.y - tower.y) <= tower.range + 45) {
+                            const eWps = e.lane || state.map.waypoints;
                             e.wpIndex = Math.max(1, e.wpIndex - 2);
-                            const backWp = state.map.waypoints[e.wpIndex - 1];
+                            const backWp = eWps[e.wpIndex - 1];
                             e.x = backWp.x;
                             e.y = backWp.y;
                             e.distanceTraveled = Math.max(0, e.distanceTraveled - 180);
@@ -10299,7 +10629,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else if (tower.type === 'kenjaku_hero') {
                     // Kenjaku Moc 1 (bez zmian mocy!): Wariant 1 (Absorb 25 → 15 klątw z bazy) / Wariant 2 (Absorb 50 → Womb Profusion 2000 DMG/s przez 20s)
                     tower.kenjakuVariant = ((tower.kenjakuVariant || 0) % 2) + 1;
-                    const wps = state.map.waypoints;
+                    const wps = pickActiveLaneForSummon();
                     const endWp = wps[wps.length - 1];
                     if (tower.kenjakuVariant === 1) {
                         const candidates = state.enemies.filter(e => e.hp > 0 && !e.isBoss).slice(0, 25);
@@ -10308,15 +10638,18 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                             e.hp = 0;
                         }
                         for (let c = 0; c < 15; c++) {
+                            const cl = pickActiveLaneForSummon();
+                            const cEnd = cl[cl.length - 1];
                             const rHp = Math.round((320 + Math.random() * 1400) * (1 + state.wave * 0.18));
                             const rDmg = Math.round((65 + Math.random() * 260) * (1 + state.wave * 0.14));
                             state.shikigami.push({
                                 id: state.nextEnemyId++,
                                 kind: 'transfigured_human',
                                 name: 'Absorbed Curse',
-                                x: endWp.x - 36 + (c % 5) * 10,
-                                y: endWp.y + ((c % 3) - 1) * 9,
-                                wpIndex: wps.length - 2,
+                                x: cEnd.x - 36 + (c % 5) * 10,
+                                y: cEnd.y + ((c % 3) - 1) * 9,
+                                wpIndex: cl.length - 2,
+                                lane: cl,
                                 maxHp: rHp, hp: rHp,
                                 speed: 60 + Math.random() * 45,
                                 dmg: rDmg,
@@ -10344,17 +10677,111 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         });
                         spawnFloatingText(tx, ty - 34, `DOMAIN: WOMB PROFUSION (ABSORB ${candidates.length} • 2000 DMG/s • 20s)!`, '#e879f9', 1.3);
                     }
-                } else if (tower.type === 'gd_doggie' || tower.type === 'gd_hover' || tower.type === 'gd_wpopoff' || tower.type === 'gd_zoink') {
-                    const mult = tower.type === 'gd_zoink' ? 5.5 : tower.type === 'gd_wpopoff' ? 5.2 : tower.type === 'gd_hover' ? 3.8 : 3.2;
-                    for (const e of state.enemies) {
-                        if (e.hp > 0 && Math.hypot(e.x - tx, e.y - ty) <= 155) {
-                            e.stunTimer = Math.max(e.stunTimer, tower.type === 'gd_wpopoff' ? 2.5 : 1.8);
-                            damageEnemy(e, dmg * mult, tower, { pierce: 1, critText: `${tpl.name.toUpperCase()}!`, critColor: tpl.color });
-                        }
+                } else if (tower.type === 'gd_doggie') {
+                    // Doggie Moc 1: Slaungerhouse — szary nóż nakładający bleed zjadający 0.5% HP/s!
+                    const knifeTarget = state.enemies.filter(e => e.hp > 0).sort((a, b) => b.hp - a.hp)[0] || target;
+                    if (knifeTarget) {
+                        state.projectiles.push({
+                            kind: 'slaughterhouse_knife',
+                            tower, target: knifeTarget,
+                            x: tower.x, y: tower.y,
+                            speed: 560, damage: dmg * 2.8
+                        });
                     }
-                    spawnParticles(tx, ty, tpl.color, 26, 170, 4.5);
+                    spawnFloatingText(tower.x, tower.y - 42, 'SLAUNGERHOUSE (0.5% HP BLEED)!', '#94a3b8', 1.2);
+                } else if (tower.type === 'gd_hover') {
+                    // Hover Moc 1: Nullscapes ## — nakłada czarną dziurę na losową jednostkę ze składu na 10s (+10% DMG i +10% RNG)!
+                    const poolAllies = state.towers.length > 0 ? state.towers : [tower];
+                    const chosenAlly = poolAllies[Math.floor(Math.random() * poolAllies.length)];
+                    chosenAlly.nullscapesTimer = 10.0;
+                    spawnParticles(chosenAlly.x, chosenAlly.y, '#2dd4bf', 26, 155, 4.2);
+                    spawnFloatingText(chosenAlly.x, chosenAlly.y - 38, 'NULLSCAPES ## (+10% DMG & RNG • 10s)!', '#2dd4bf', 1.25);
                 } else if (tower.type === 'gd_trick') {
-                    state.skillBeams.push({ kind: 'pure_love', tower, dps: dmg * 4.5, width: 32, life: 4.0, tickTimer: 0.1 });
+                    // Trick Moc 1: TIDAL WAVE — niebieski kolec na drodze (100 HP), po zniszczeniu nakłada bleeding na 5 wrogów!
+                    const pt = snapToNearestPathPoint(tx, ty);
+                    state.shikigami.push({
+                        id: state.nextEnemyId++,
+                        kind: 'tidal_spike',
+                        name: 'Tidal Wave Spike',
+                        x: pt.x, y: pt.y,
+                        wpIndex: 0,
+                        maxHp: 100, hp: 100,
+                        speed: 0, dmg: Math.round(dmg * 1.4),
+                        bleedDmg: Math.max(18, Math.round(dmg * 0.55)),
+                        attackTimer: 0.35,
+                        stationary: true,
+                        sourceTower: tower
+                    });
+                    spawnParticles(pt.x, pt.y, '#38bdf8', 26, 160, 4.2);
+                    spawnFloatingText(pt.x, pt.y - 30, '🌊 TIDAL WAVE SPIKE (100 HP)!', '#38bdf8', 1.25);
+                } else if (tower.type === 'gd_wpopoff') {
+                    // wPopoff Moc 1: Amethyst — fioletowo-purpurowe kryształy stojące na drodze jako ściana z HP!
+                    const pt = snapToNearestPathPoint(tx, ty);
+                    const wallHp = 750 + tower.level * 220;
+                    state.shikigami.push({
+                        id: state.nextEnemyId++,
+                        kind: 'amethyst_wall',
+                        name: 'Amethyst Crystal Wall',
+                        x: pt.x, y: pt.y,
+                        wpIndex: 0,
+                        maxHp: wallHp, hp: wallHp,
+                        speed: 0, dmg: Math.round(dmg * 0.9),
+                        attackTimer: 0.4,
+                        stationary: true,
+                        sourceTower: tower
+                    });
+                    spawnParticles(pt.x, pt.y, '#c084fc', 30, 170, 4.5);
+                    spawnFloatingText(pt.x, pt.y - 32, `💎 AMETHYST WALL (${wallHp} HP)!`, '#e879f9', 1.25);
+                } else if (tower.type === 'gd_zoink') {
+                    // Zoink Moc 1: Orbit — żółte, niebieskie, różowe i zielone orby zadające splash DMG!
+                    const orbColors = ['#facc15', '#38bdf8', '#ec4899', '#22c55e'];
+                    const alive = state.enemies.filter(e => e.hp > 0);
+                    orbColors.forEach((col, idx) => {
+                        const tgtOrb = alive.length > 0 ? alive[idx % alive.length] : null;
+                        const ox = tgtOrb ? tgtOrb.x + (idx - 1.5) * 14 : tx + Math.cos(idx * 1.57) * 45;
+                        const oy = tgtOrb ? tgtOrb.y + ((idx % 2) - 0.5) * 14 : ty + Math.sin(idx * 1.57) * 45;
+                        state.projectiles.push({
+                            kind: 'zoink_orbit_orb',
+                            tower, x: tower.x, y: tower.y,
+                            tx: ox, ty: oy,
+                            color: col, speed: 520,
+                            damage: dmg * 2.2, splashRadius: 95
+                        });
+                    });
+                    spawnFloatingText(tower.x, tower.y - 42, 'ORBIT (4 SPLASH ORBS)!', '#2dd4bf', 1.25);
+                } else if (tower.type === 'calamity_1x1') {
+                    // 1x1x1x1x1 Moc 1: Green Crushing — ukośna zielona zglitchowana fala przeszywająca przeciwników!
+                    state.projectiles.push({
+                        kind: 'green_crushing_wave',
+                        tower,
+                        x: tower.x, y: tower.y,
+                        vx: Math.cos(aimAngle) * 440,
+                        vy: Math.sin(aimAngle) * 440,
+                        angle: aimAngle + 0.55,
+                        radius: 58,
+                        damage: dmg * 7.5,
+                        life: 2.8,
+                        hitIds: new Set()
+                    });
+                    spawnParticles(tower.x, tower.y, '#22c55e', 32, 190, 4.5);
+                    spawnFloatingText(tower.x, tower.y - 44, 'GREEN CRUSHING!', '#4ade80', 1.3);
+                } else if (tower.type === 'nightmare_bonnie') {
+                    // Nightmare Bonnie Moc 1: Guitar Sonic Boom — biało-szary łukowy Slash spowalniający o 75% na 3s!
+                    state.projectiles.push({
+                        kind: 'sonic_boom_slash',
+                        tower,
+                        x: tower.x, y: tower.y,
+                        vx: Math.cos(aimAngle) * 460,
+                        vy: Math.sin(aimAngle) * 460,
+                        angle: aimAngle,
+                        radius: 64,
+                        damage: dmg * 3.8,
+                        life: 2.4,
+                        hitIds: new Set()
+                    });
+                    sfx.playHit('guitar');
+                    spawnParticles(tower.x, tower.y, '#e2e8f0', 26, 175, 4.0);
+                    spawnFloatingText(tower.x, tower.y - 42, 'GUITAR SONIC BOOM (75% SLOW • 3s)!', '#f8fafc', 1.25);
                 } else if (tower.type === 'withered_chica') {
                     for (const e of state.enemies) {
                         if (e.hp > 0 && Math.hypot(e.x - tx, e.y - ty) <= 130) {
@@ -10576,9 +11003,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         spawnFloatingText(tower.x, tower.y - 36, is200 ? '200% HOLLOW PURPLE!' : 'HOLLOW PURPLE!', '#e879f9', is200 ? 1.4 : 1.25);
                     }
                 } else if (tower.type === 'megumi') {
-                    const wps = state.map.waypoints;
-                    for (let i = 0; i < wps.length - 1; i++) {
-                        state.projectiles.push({ kind: 'lightning', x1: wps[i].x, y1: wps[i].y, x2: wps[i + 1].x, y2: wps[i + 1].y, color: '#38bdf8', life: 0.45 });
+                    for (const wps of getMapLanes()) {
+                        for (let i = 0; i < wps.length - 1; i++) {
+                            state.projectiles.push({ kind: 'lightning', x1: wps[i].x, y1: wps[i].y, x2: wps[i + 1].x, y2: wps[i + 1].y, color: '#38bdf8', life: 0.45 });
+                        }
                     }
                     spawnTenShadowShikigami('divine_dog', tower);
                     spawnTenShadowShikigami('divine_dog', tower);
@@ -10740,8 +11168,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else if (tower.type === 'boiled_one') {
                     // Cofa 3 zwykłych przeciwników na początek trasy (prócz bossa)
                     const nonBosses = state.enemies.filter(e => e.hp > 0 && !e.isBoss).sort((a, b) => b.distanceTraveled - a.distanceTraveled).slice(0, 3);
-                    const startWp = state.map.waypoints[0];
                     for (const e of nonBosses) {
+                        const eWps = e.lane || state.map.waypoints;
+                        const startWp = eWps[0];
                         e.x = startWp.x;
                         e.y = startWp.y;
                         e.wpIndex = 1;
@@ -10808,26 +11237,81 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         tickTimer: 0.2
                     });
                     spawnFloatingText(tower.x, tower.y - 48, `MAXIMUM: UZUMAKI (ABSORB ${absorbed.length} • 5000 DMG/s • 10s)!`, '#c084fc', 1.35);
-                } else if (tower.type === 'gd_doggie' || tower.type === 'gd_wpopoff') {
-                    tower.buffTimer = 7.0;
-                    if (tower.type === 'gd_wpopoff') tower.overtimeTimer = 7.0;
-                    for (const e of state.enemies) {
-                        if (e.hp > 0 && Math.hypot(e.x - tx, e.y - ty) <= 165) {
-                            damageEnemy(e, dmg * 4.5, tower, { pierce: 1, critText: 'OVERCLOCK!', critColor: tpl.color });
-                        }
-                    }
+                } else if (tower.type === 'gd_doggie') {
+                    // Doggie Moc 2: Grief 97% — 4 wirujące słowa Grief dają +5% DMG na 10s!
+                    tower.griefSpinTimer = 10.0;
+                    spawnParticles(tower.x, tower.y, '#d946ef', 28, 165, 4.2);
+                    spawnFloatingText(tower.x, tower.y - 44, 'GRIEF 97% (+5% DMG • 10s)!', '#facc15', 1.3);
                 } else if (tower.type === 'gd_hover') {
-                    state.skillZones.push({ kind: 'blizzard', tower, x: tx, y: ty, radius: 165, dps: dmg * 3.0, life: 6.0, tickTimer: 0.1 });
-                } else if (tower.type === 'gd_trick') {
-                    state.skillZones.push({ kind: 'explosion_ring', tower, x: tx, y: ty, radius: 185, dps: 0, life: 0.8, tickTimer: 99 });
+                    // Hover Moc 2: Silent Acropolis — wybucha kolcem + 10% szansy na Mini Koło (+15% DMG dla sojusznika)!
+                    state.skillZones.push({ kind: 'explosion_ring', tower, x: tx, y: ty, radius: 155, dps: 0, life: 0.65, tickTimer: 99 });
                     for (const e of state.enemies) {
-                        if (e.hp > 0 && Math.hypot(e.x - tx, e.y - ty) <= 190) {
-                            e.stunTimer = Math.max(e.stunTimer, 2.6);
-                            damageEnemy(e, dmg * 6.5, tower, { pierce: 1, critText: 'FIREWORK!', critColor: '#a855f7' });
+                        if (e.hp > 0 && Math.hypot(e.x - tx, e.y - ty) <= 160) {
+                            damageEnemy(e, dmg * 4.5, tower, { pierce: 1, critText: 'SILENT ACROPOLIS!', critColor: '#2dd4bf' });
                         }
                     }
+                    spawnParticles(tx, ty, '#2dd4bf', 28, 175, 4.4);
+                    if (Math.random() < 0.10) {
+                        const candidates = state.towers.filter(a => !a.acropolisMiniOrb);
+                        const ally = (candidates.length > 0 ? candidates : state.towers)[Math.floor(Math.random() * (candidates.length > 0 ? candidates.length : state.towers.length))];
+                        if (ally) {
+                            ally.acropolisMiniOrb = true;
+                            state.projectiles.push({ kind: 'lightning', x1: tower.x, y1: tower.y, x2: ally.x, y2: ally.y, color: '#f472b6', life: 0.35 });
+                            spawnParticles(ally.x, ally.y, '#f472b6', 24, 150, 4.0);
+                            spawnFloatingText(ally.x, ally.y - 42, '⚙️ MINI KOŁO (+15% DMG)!', '#f472b6', 1.35);
+                        }
+                    }
+                } else if (tower.type === 'gd_trick') {
+                    // Trick Moc 2: Firework — czerwono-białe fajerwerki (splash) + stały ładunek +0.05% DMG!
+                    tower.fireworkDmgStacks = (tower.fireworkDmgStacks || 0) + 1;
+                    for (let f = 0; f < 6; f++) {
+                        const alive = state.enemies.filter(e => e.hp > 0);
+                        const ft = alive.length > 0 ? alive[f % alive.length] : null;
+                        const fx = ft ? ft.x + (Math.random() - 0.5) * 40 : tx + (Math.random() - 0.5) * 90;
+                        const fy = ft ? ft.y + (Math.random() - 0.5) * 40 : ty + (Math.random() - 0.5) * 90;
+                        state.projectiles.push({
+                            kind: 'trick_firework',
+                            tower, x: tower.x, y: tower.y,
+                            tx: fx, ty: fy, speed: 500 + f * 35,
+                            damage: dmg * 2.6, splashRadius: 105
+                        });
+                    }
+                    spawnFloatingText(tower.x, tower.y - 44, `🎆 FIREWORK (+${(tower.fireworkDmgStacks * 0.05).toFixed(2)}% DMG)!`, '#f87171', 1.3);
+                } else if (tower.type === 'gd_wpopoff') {
+                    // wPopoff Moc 2: Society — białe oko z czerwoną soczewką (dron) daje -10% CD na 10s!
+                    state.societyDroneTimer = 10.0;
+                    state.societyDroneX = tower.x;
+                    state.societyDroneY = tower.y - 36;
+                    spawnParticles(tower.x, tower.y - 30, '#ef4444', 30, 175, 4.5);
+                    spawnFloatingText(tower.x, tower.y - 46, '👁️ SOCIETY DRONE (-10% CD • 10s)!', '#f8fafc', 1.35);
                 } else if (tower.type === 'gd_zoink') {
-                    state.skillBeams.push({ kind: 'pure_love', tower, dps: dmg * 5.5, width: 40, life: 5.0, tickTimer: 0.1 });
+                    // Zoink Moc 2: Heliopolis — zielona mgła nad głową Zoinka daje +30% DMG dla Wpopoff, Trick, Hover i Doggie na 30s!
+                    tower.heliopolisTimer = 30.0;
+                    state.heliopolisBuffTimer = 30.0;
+                    spawnParticles(tower.x, tower.y - 32, '#22c55e', 36, 185, 4.8);
+                    spawnFloatingText(tower.x, tower.y - 46, '☁️ HELIOPOLIS (+30% DMG GD SQUAD • 30s)!', '#4ade80', 1.35);
+                } else if (tower.type === 'calamity_1x1') {
+                    // 1x1x1x1x1 Moc 2: Sword Slash — krzyżuje miecze i wypuszcza zielony X (stun + cofnięcie o 1s)!
+                    state.projectiles.push({
+                        kind: 'green_x_slash',
+                        tower,
+                        x: tower.x, y: tower.y,
+                        vx: Math.cos(aimAngle) * 430,
+                        vy: Math.sin(aimAngle) * 430,
+                        angle: aimAngle,
+                        radius: 56,
+                        damage: dmg * 6.2,
+                        life: 2.6,
+                        hitIds: new Set()
+                    });
+                    spawnParticles(tower.x, tower.y, '#4ade80', 34, 190, 4.6);
+                    spawnFloatingText(tower.x, tower.y - 44, '✖ SWORD SLASH (STUN + COFNIĘCIE 1s)!', '#22c55e', 1.3);
+                } else if (tower.type === 'nightmare_bonnie') {
+                    // Nightmare Bonnie Moc 2: Upgrade — dodaje sobie +1% DMG i -1% CD na całą rundę!
+                    tower.nbUpgradeStacks = (tower.nbUpgradeStacks || 0) + 1;
+                    spawnParticles(tower.x, tower.y, '#ef4444', 32, 180, 4.5);
+                    spawnFloatingText(tower.x, tower.y - 44, `⚡ UPGRADE x${tower.nbUpgradeStacks} (+${tower.nbUpgradeStacks}% DMG / -${tower.nbUpgradeStacks}% CD)!`, '#fca5a5', 1.35);
+                    if (state.selectedTower && state.selectedTower.id === tower.id) updateInspector();
                 } else if (tower.type === 'mahito_calamity') {
                     if (tower.mahitoSpiritWaves > 0) {
                         for (const e of state.enemies) {
@@ -11143,6 +11627,126 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 target.mindControlTimer = Math.max(target.mindControlTimer || 0, 2.5);
                 target.mindControlDmg = dmg * 1.5;
             }
+            // Synergia BEST FRIENDS FOREVER (The Boiled One + The Locust): 33% szansy na 2x obrażeń krytycznych!
+            if ((tower.type === 'boiled_one' || tower.type === 'locust') && syn.hasBff && Math.random() < 0.33) {
+                dmg = Math.round(dmg * 2.0);
+                critText = '🤝 BEST FRIENDS 2x!';
+                critColor = '#f43f5e';
+                sfx.playHit('blackflash');
+                spawnParticles(target.x, target.y, '#ef4444', 14, 130, 3.8);
+            }
+
+            // Customowe ataki (Remodele GD + 1x1x1x1x1 + Nightmare Bonnie)
+            const grantAttackCe = () => {
+                const cMult = multiverseSave.goldUpgrades.doubleCash ? 2 : 1;
+                const ceGain = Math.max(1, Math.min(8, Math.round(HEROES[tower.type].cost / 95))) * cMult;
+                if (state.isCoop2P && tower.owner === 2) state.ce2 += ceGain;
+                else state.ce += ceGain;
+            };
+            if (effType === 'gd_doggie') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                state.projectiles.push({
+                    kind: 'doggie_words',
+                    tower, target,
+                    x: tower.x, y: tower.y,
+                    tx: target.x, ty: target.y,
+                    speed: 440,
+                    damage: dmg,
+                    broDamage: Math.max(2, Math.round(dmg * 0.18)),
+                    text: 'Get back on grief doggie'
+                });
+                return;
+            } else if (effType === 'gd_hover') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                if (tower.attackCount % 2 === 1) {
+                    // Pierwszy atak: liczba 4 (pierce)
+                    state.projectiles.push({
+                        kind: 'hover_num4',
+                        tower,
+                        x: tower.x, y: tower.y,
+                        vx: Math.cos(tower.angle) * 520,
+                        vy: Math.sin(tower.angle) * 520,
+                        damage: dmg,
+                        life: 1.5,
+                        hitIds: new Set()
+                    });
+                } else {
+                    // Drugi atak: liczba 7 (splash)
+                    state.projectiles.push({
+                        kind: 'hover_num7',
+                        tower,
+                        x: tower.x, y: tower.y,
+                        tx: target.x, ty: target.y,
+                        speed: 480,
+                        damage: dmg,
+                        splashRadius: 82
+                    });
+                }
+                return;
+            } else if (effType === 'gd_trick') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                tower.fireworkDmgStacks = (tower.fireworkDmgStacks || 0) + 1;
+                state.projectiles.push({
+                    kind: 'trick_boomerang',
+                    tower,
+                    x: tower.x, y: tower.y,
+                    vx: Math.cos(tower.angle) * 480,
+                    vy: Math.sin(tower.angle) * 480,
+                    outTimer: 0.42,
+                    returning: false,
+                    spin: 0,
+                    damage: dmg,
+                    life: 2.2,
+                    hitOutIds: new Set(),
+                    hitBackIds: new Set()
+                });
+                return;
+            } else if (effType === 'gd_wpopoff') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                state.projectiles.push({
+                    kind: 'wpopoff_words',
+                    tower,
+                    x: tower.x, y: tower.y,
+                    vx: Math.cos(tower.angle) * 540,
+                    vy: Math.sin(tower.angle) * 540,
+                    angle: tower.angle,
+                    damage: dmg,
+                    life: 1.5,
+                    hitIds: new Set(),
+                    text: 'Dubble W Popoff'
+                });
+                return;
+            } else if (effType === 'gd_zoink') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                state.projectiles.push({ kind: 'zoink_laser', x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, width: 5, life: 0.14 });
+                damageEnemy(target, dmg, tower, { pierce: 1, critText, critColor });
+                spawnParticles(target.x, target.y, '#4ade80', 4, 80, 2.4);
+                return;
+            } else if (effType === 'calamity_1x1') {
+                grantAttackCe();
+                sfx.playHit('slash');
+                // 2 zielone miecze nakładające bleeding
+                state.slashes.push({ x: target.x, y: target.y, angle: tower.angle + 0.55, color: '#22c55e', big: true, life: 0.20 });
+                state.slashes.push({ x: target.x, y: target.y, angle: tower.angle - 0.55, color: '#86efac', big: true, life: 0.20 });
+                target.bleedTimer = Math.max(target.bleedTimer || 0, 5.0);
+                target.bleedDps = Math.max(target.bleedDps || 0, Math.round(dmg * 0.35));
+                damageEnemy(target, dmg, tower, { pierce: 1, critText: critText || (tower.attackCount % 5 === 0 ? '☣️ VIRUS BLEED!' : null), critColor: '#4ade80' });
+                spawnParticles(target.x, target.y, '#22c55e', 6, 95, 2.8);
+                return;
+            } else if (effType === 'nightmare_bonnie') {
+                grantAttackCe();
+                sfx.playHit('guitar');
+                // Nightmare Bonnie atakuje wyłącznie laserem!
+                state.projectiles.push({ kind: 'nb_laser', x1: tower.x, y1: tower.y, x2: target.x, y2: target.y, life: 0.16 });
+                damageEnemy(target, dmg, tower, { pierce: 1, critText, critColor });
+                spawnParticles(target.x, target.y, '#ef4444', 4, 85, 2.4);
+                return;
+            }
 
             if (tower.type === 'yuji') {
                 if (!critText) sfx.playHit('slash');
@@ -11371,6 +11975,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         x: enemy.x,
                         y: enemy.y,
                         wpIndex: Math.max(0, enemy.wpIndex - 1),
+                        lane: enemy.lane || state.map.waypoints,
                         maxHp: hpVal, hp: hpVal,
                         speed: Math.max(42, enemy.baseSpeed * (0.85 + Math.random() * 0.45)),
                         dmg: dmgVal,
@@ -11529,7 +12134,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         }
                     }
                     updateUI();
-                    if (state.wave % 10 === 0 && state.wave < state.maxWaves) {
+                    if (state.wave % 10 === 0 && state.wave < state.maxWaves && state.diff && (state.diff.id === 'endless' || state.diff.id === 'boss_rush')) {
                         triggerBindingVowOffer();
                     }
                     if (state.autoWave && !state.pendingVowChoices) setTimeout(() => { if (state.autoWave && !state.waveActive && !state.pendingVowChoices) startNextWave(); }, 850);
@@ -11653,6 +12258,17 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     damageEnemy(e, e.poisonDps * dt, null, { pierce: 1 });
                     if (e.hp <= 0) { state.enemies.splice(i, 1); continue; }
                 }
+                if (e.pctBleedTimer > 0) {
+                    e.pctBleedTimer -= dt;
+                    damageEnemy(e, e.maxHp * (e.pctBleedRate || 0.005) * dt, null, { pierce: 1 });
+                    if (e.hp <= 0) { state.enemies.splice(i, 1); continue; }
+                }
+                if (e.bleedTimer > 0) {
+                    e.bleedTimer -= dt;
+                    damageEnemy(e, (e.bleedDps || 25) * dt, null, { pierce: 1 });
+                    if (e.hp <= 0) { state.enemies.splice(i, 1); continue; }
+                }
+                if (e.greenVirusTimer > 0) e.greenVirusTimer -= dt;
 
                 if (e.buffTimer > 0) e.buffTimer -= dt; else e.buffKind = null;
                 if (e.slowTimer > 0) e.slowTimer -= dt; else e.slowFactor = 0;
@@ -11690,8 +12306,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
                 if (e.mindControlTimer > 0) {
                     e.mindControlTimer -= dt;
+                    const eWps = e.lane || wps;
                     const prevWpIdx = Math.max(0, e.wpIndex - 1);
-                    const backWp = wps[prevWpIdx];
+                    const backWp = eWps[prevWpIdx];
                     const dx = backWp.x - e.x;
                     const dy = backWp.y - e.y;
                     const dist = Math.hypot(dx, dy);
@@ -11716,21 +12333,22 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     }
                 }
 
-                // Fizyczne blokowanie ścieżki przez Mahoragę (od Megumi S3) — wrogowie zatrzymują się na Mahoradze i zabierają mu HP przy kontakcie!
+                // Fizyczne blokowanie ścieżki przez Mahoragę (od Megumi S3) oraz ściany/kolce (Tidal Wave Spike / Amethyst Wall)!
                 let blockedByMahoraga = false;
                 for (const sh of state.shikigami) {
-                    if (sh.hp > 0 && sh.kind === 'mahoraga' && sh.stationary) {
+                    if (sh.hp > 0 && sh.stationary && (sh.kind === 'mahoraga' || sh.kind === 'tidal_spike' || sh.kind === 'amethyst_wall')) {
                         const distToMaho = Math.hypot(e.x - sh.x, e.y - sh.y);
-                        if (distToMaho <= (e.radius || 15) + 34) {
+                        const blockRad = sh.kind === 'mahoraga' ? 34 : 30;
+                        if (distToMaho <= (e.radius || 15) + blockRad) {
                             blockedByMahoraga = true;
-                            const adaptRed = Math.min(0.75, (sh.adaptStacks || 0) * 0.08);
+                            const adaptRed = sh.kind === 'mahoraga' ? Math.min(0.75, (sh.adaptStacks || 0) * 0.08) : 0;
                             const contactDps = (e.isBoss ? 155 : 46) * (1 - adaptRed);
                             sh.hp -= contactDps * dt;
                             sh._contactFxT = (sh._contactFxT || 0) - dt;
                             if (sh._contactFxT <= 0) {
                                 sh._contactFxT = 0.55;
-                                sh.adaptStacks = Math.min(8, (sh.adaptStacks || 0) + 1);
-                                spawnParticles(sh.x, sh.y, '#fbbf24', 5, 85, 2.8);
+                                if (sh.kind === 'mahoraga') sh.adaptStacks = Math.min(8, (sh.adaptStacks || 0) + 1);
+                                spawnParticles(sh.x, sh.y, sh.kind === 'tidal_spike' ? '#38bdf8' : sh.kind === 'amethyst_wall' ? '#c084fc' : '#fbbf24', 5, 85, 2.8);
                             }
                             break;
                         }
@@ -11738,7 +12356,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 }
                 if (blockedByMahoraga) continue;
 
-                const targetWp = wps[e.wpIndex];
+                const eWps = e.lane || wps;
+                const targetWp = eWps[e.wpIndex];
                 if (!targetWp) continue;
                 const dx = targetWp.x - e.x;
                 const dy = targetWp.y - e.y;
@@ -11750,12 +12369,13 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     e.y = targetWp.y;
                     e.distanceTraveled += dist;
                     e.wpIndex++;
-                    if (e.wpIndex >= wps.length) {
+                    if (e.wpIndex >= eWps.length) {
                         const dmgToBase = e.isBoss ? 5 : 1;
                         state.hp = Math.max(0, state.hp - dmgToBase);
                         state.shake = 10;
                         sfx.playLoseLife();
-                        spawnFloatingText(MAP_W - 70, wps[wps.length - 1].y - 16, `-${dmgToBase} HP BAZY!`, '#f43f5e', 1.2);
+                        const exitPt = eWps[eWps.length - 1];
+                        spawnFloatingText(exitPt.x - 65, exitPt.y - 16, `-${dmgToBase} HP BAZY!`, '#f43f5e', 1.2);
                         state.enemies.splice(i, 1);
                         updateUI();
                         if (state.hp <= 0) { endGame(false); return; }
@@ -11785,6 +12405,22 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     if (sh.kind === 'locust_tv') {
                         spawnParticles(sh.x, sh.y, '#ef4444', 24, 160, 4.2);
                         spawnFloatingText(sh.x, sh.y - 20, '📺 TV ZNISZCZONY!', '#f43f5e', 1.15);
+                    } else if (sh.kind === 'tidal_spike') {
+                        // Trick Moc 1: TIDAL WAVE — po zniszczeniu nakłada bleeding na 5 wrogów!
+                        const victims = state.enemies
+                            .filter(ev => ev.hp > 0)
+                            .sort((a, b) => Math.hypot(a.x - sh.x, a.y - sh.y) - Math.hypot(b.x - sh.x, b.y - sh.y))
+                            .slice(0, 5);
+                        for (const v of victims) {
+                            v.bleedTimer = Math.max(v.bleedTimer || 0, 6.0);
+                            v.bleedDps = Math.max(v.bleedDps || 0, sh.bleedDmg || 45);
+                            spawnParticles(v.x, v.y, '#ef4444', 8, 110, 3.2);
+                        }
+                        spawnParticles(sh.x, sh.y, '#38bdf8', 26, 165, 4.2);
+                        spawnFloatingText(sh.x, sh.y - 22, `🌊 TIDAL BLEED (${victims.length}/5)!`, '#38bdf8', 1.2);
+                    } else if (sh.kind === 'amethyst_wall') {
+                        spawnParticles(sh.x, sh.y, '#c084fc', 24, 155, 4.0);
+                        spawnFloatingText(sh.x, sh.y - 20, '💎 AMETHYST PĘKŁ!', '#e879f9', 1.1);
                     } else {
                         const isTenShadow = TEN_SHADOWS_DEFS.some(d => d.id === sh.kind);
                         if (isTenShadow) {
@@ -11951,10 +12587,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     }
                 }
 
-                // Ruch od bazy w stronę początku trasy (wpIndex maleje od wps.length - 1 do 0)
+                // Ruch od bazy w stronę początku trasy (wpIndex maleje od shWps.length - 1 do 0)
                 if (!isTankBlocking && !sh.stationary) {
-                    const idxClamp = Math.max(0, Math.min(wps.length - 1, sh.wpIndex));
-                    const dest = wps[idxClamp];
+                    const shWps = sh.lane || wps;
+                    const idxClamp = Math.max(0, Math.min(shWps.length - 1, sh.wpIndex));
+                    const dest = shWps[idxClamp];
                     const dx = dest.x - sh.x;
                     const dy = dest.y - sh.y;
                     const dist = Math.hypot(dx, dy);
@@ -11976,19 +12613,30 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (state.moduloRoadBuffTimer > 0) {
                 state.moduloRoadBuffTimer = Math.max(0, state.moduloRoadBuffTimer - dt);
             }
+            if (state.societyDroneTimer > 0) {
+                state.societyDroneTimer = Math.max(0, state.societyDroneTimer - dt);
+            }
+            if (state.heliopolisBuffTimer > 0) {
+                state.heliopolisBuffTimer = Math.max(0, state.heliopolisBuffTimer - dt);
+            }
             const hasShinjukuYuji = state.towers.some(tw => tw.type === 'shinjuku_yuji');
 
             for (const t of state.towers) {
                 if (t.recoil > 0) t.recoil = Math.max(0, t.recoil - dt * 5);
                 if (t.shinjukuBfTimer > 0) t.shinjukuBfTimer = Math.max(0, t.shinjukuBfTimer - dt);
-                // Pasywka Shinjuku Yuji: +5% zasięgu (oraz DMG/SPD w getEffective*) dla sojuszników
+                if (t.griefSpinTimer > 0) t.griefSpinTimer = Math.max(0, t.griefSpinTimer - dt);
+                if (t.nullscapesTimer > 0) t.nullscapesTimer = Math.max(0, t.nullscapesTimer - dt);
+                if (t.heliopolisTimer > 0) t.heliopolisTimer = Math.max(0, t.heliopolisTimer - dt);
+                // Pasywka Shinjuku Yuji (+5% RNG) oraz Nullscapes ## (+10% RNG)
                 const baseLvlSt = getHeroLevelStats(t.type, t.level);
                 const tEnch = getUnitEnchant(t.type);
-                const rawRng = baseLvlSt.rng + (tEnch ? tEnch.rngBonus : 0);
-                t.range = hasShinjukuYuji ? Math.round(rawRng * 1.05) : rawRng;
+                let rawRng = baseLvlSt.rng + (tEnch ? tEnch.rngBonus : 0);
+                if (hasShinjukuYuji) rawRng = Math.round(rawRng * 1.05);
+                if (t.nullscapesTimer > 0) rawRng = Math.round(rawRng * 1.10);
+                t.range = rawRng;
 
                 if (t.passiveTimer === undefined) {
-                    t.passiveTimer = t.type === 'dyle' ? 10 : t.type === 'gold_guy' ? 7 : t.type === 'boiled_one' ? 5 : t.type === 'baldi' ? 30 : t.type === 'yuta' ? 5.0 : t.type === 'purple_guy' ? 4.0 : t.type === 'locust' ? 2.0 : t.type === 'megumi' ? 13.0 : t.type === 'megumi_potential' ? 15.0 : t.type === 'nightmare_freddy' ? 15.0 : t.type === 'modulo' ? 60.0 : 0;
+                    t.passiveTimer = t.type === 'dyle' ? 10 : t.type === 'gold_guy' ? 7 : t.type === 'boiled_one' ? 5 : t.type === 'baldi' ? 30 : t.type === 'yuta' ? 5.0 : t.type === 'purple_guy' ? 4.0 : t.type === 'locust' ? 2.0 : t.type === 'megumi' ? 13.0 : t.type === 'megumi_potential' ? 15.0 : t.type === 'nightmare_freddy' ? 15.0 : t.type === 'modulo' ? 60.0 : t.type === 'gd_zoink' ? 5.0 : 0;
                 }
                 if (t.rikaActiveTimer > 0) {
                     t.rikaActiveTimer = Math.max(0, t.rikaActiveTimer - dt);
@@ -12055,8 +12703,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         
                         } else if (t.type === 'nightmare_freddy') {
                             t.passiveTimer = 15.0;
-                            const wps = state.map.waypoints;
-                            const endWp = wps[wps.length - 1];
+                            const fWps = pickActiveLaneForSummon();
+                            const endWp = fWps[fWps.length - 1];
                             for (let f = 0; f < 3; f++) {
                                 state.shikigami.push({
                                     id: state.nextEnemyId++,
@@ -12064,7 +12712,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                     name: 'Freddle',
                                     x: endWp.x - 36 + f * 14,
                                     y: endWp.y + (f - 1) * 9,
-                                    wpIndex: wps.length - 2,
+                                    wpIndex: fWps.length - 2,
+                                    lane: fWps,
                                     maxHp: 225, hp: 225,
                                     speed: 78, dmg: 80,
                                     attackTimer: 0.3,
@@ -12075,18 +12724,37 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         } else if (t.type === 'locust') {
                             // Pasywka Locust Guya: Slash co 2s!
                             t.passiveTimer = 2.0;
-                            const slashDmg = Math.round(getEffectiveDamage(t) * 1.4);
+                            const bffCrit = getActiveSynergies().hasBff && Math.random() < 0.33;
+                            const slashDmg = Math.round(getEffectiveDamage(t) * 1.4 * (bffCrit ? 2.0 : 1.0));
                             let hitAny = false;
                             for (const e of state.enemies) {
                                 if (e.hp > 0 && Math.hypot(e.x - t.x, e.y - t.y) <= t.range + 25) {
-                                    damageEnemy(e, slashDmg, t, { pierce: 1.0 });
+                                    damageEnemy(e, slashDmg, t, { pierce: 1.0, critText: bffCrit ? '🤝 BEST FRIENDS 2x!' : null, critColor: '#f43f5e' });
                                     hitAny = true;
                                 }
                             }
                             if (hitAny) {
                                 state.slashes.push({ x: t.x, y: t.y, angle: t.angle, color: '#a3e635', big: true, life: 0.24 });
                                 spawnParticles(t.x, t.y, '#84cc16', 10, 115, 3.2);
-                                spawnFloatingText(t.x, t.y - 30, 'SLASH!', '#a3e635', 1.05);
+                                spawnFloatingText(t.x, t.y - 30, bffCrit ? 'BFF SLASH 2x!' : 'SLASH!', '#a3e635', 1.05);
+                            }
+                        } else if (t.type === 'gd_zoink') {
+                            // Pasywka Zoinka: strzela biało-zielonym laserem co 5s!
+                            t.passiveTimer = 5.0;
+                            const tgtZ = findTarget(t) || state.enemies.find(e => e.hp > 0);
+                            if (tgtZ) {
+                                const zAng = Math.atan2(tgtZ.y - t.y, tgtZ.x - t.x);
+                                t.angle = zAng;
+                                const endX = t.x + Math.cos(zAng) * 720;
+                                const endY = t.y + Math.sin(zAng) * 720;
+                                state.projectiles.push({ kind: 'zoink_laser', x1: t.x, y1: t.y, x2: endX, y2: endY, width: 14, life: 0.32 });
+                                const laserDmg = Math.round(getEffectiveDamage(t) * 2.6);
+                                for (const e of state.enemies) {
+                                    if (e.hp > 0 && distToSegment(e.x, e.y, t.x, t.y, endX, endY) <= e.radius + 26) {
+                                        damageEnemy(e, laserDmg, t, { pierce: 1.0, critText: '⚡ ZOINK LASER!', critColor: '#4ade80' });
+                                    }
+                                }
+                                spawnParticles(t.x, t.y, '#4ade80', 14, 130, 3.4);
                             }
                         } else if (t.type === 'megumi_potential') {
                             t.passiveTimer = 15.0;
@@ -12097,7 +12765,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     }
                 }
                 const inShinjukuCdAura = (state.skillZones || []).some(z => z.kind === 'shinjuku_cd_aura' && z.life > 0 && Math.hypot(z.x - t.x, z.y - t.y) <= z.radius);
-                const cdTick = dt * (inShinjukuCdAura ? 1.25 : 1.0) * (hasShinjukuYuji ? 1.05 : 1.0);
+                const societySpeed = state.societyDroneTimer > 0 ? (1 / 0.90) : 1.0;
+                const nbSpeed = t.nbUpgradeStacks ? (1 / Math.max(0.25, 1 - t.nbUpgradeStacks * 0.01)) : 1.0;
+                const cdTick = dt * (inShinjukuCdAura ? 1.25 : 1.0) * (hasShinjukuYuji ? 1.05 : 1.0) * societySpeed * nbSpeed;
                 if (t.skill1Cd > 0) t.skill1Cd = Math.max(0, t.skill1Cd - cdTick);
                 if (t.skill2Cd > 0) t.skill2Cd = Math.max(0, t.skill2Cd - cdTick);
                 if (t.skill3Cd > 0) t.skill3Cd = Math.max(0, t.skill3Cd - cdTick);
@@ -12128,9 +12798,161 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
             for (let i = state.projectiles.length - 1; i >= 0; i--) {
                 const p = state.projectiles[i];
-                if (p.kind === 'lightning' || p.kind === 'love_beam' || p.kind === 'piercing_blood') {
+                if (p.kind === 'lightning' || p.kind === 'love_beam' || p.kind === 'piercing_blood' || p.kind === 'nb_laser' || p.kind === 'zoink_laser') {
                     p.life -= dt;
                     if (p.life <= 0) state.projectiles.splice(i, 1);
+                } else if (p.kind === 'doggie_words') {
+                    if (p.target && p.target.hp > 0) { p.tx = p.target.x; p.ty = p.target.y; }
+                    const dx = p.tx - p.x, dy = p.ty - p.y;
+                    const d = Math.hypot(dx, dy);
+                    if (d <= p.speed * dt + 10) {
+                        for (const e of state.enemies) {
+                            if (e.hp > 0 && Math.hypot(e.x - p.tx, e.y - p.ty) <= 56) {
+                                damageEnemy(e, p.damage, p.tower, { pierce: 0.7 });
+                            }
+                        }
+                        spawnParticles(p.tx, p.ty, '#ef4444', 10, 110, 3.0);
+                        // Po wybuchnięciu strzela mało zadającym słowem "Bro"
+                        for (let b = 0; b < 3; b++) {
+                            const bAng = (b / 3) * Math.PI * 2 + (state.time * 2.1);
+                            state.projectiles.push({
+                                kind: 'bro_word',
+                                tower: p.tower,
+                                x: p.tx, y: p.ty,
+                                vx: Math.cos(bAng) * 260,
+                                vy: Math.sin(bAng) * 260,
+                                damage: p.broDamage || 5,
+                                life: 0.75,
+                                hitIds: new Set()
+                            });
+                        }
+                        state.projectiles.splice(i, 1);
+                    } else {
+                        p.x += (dx / d) * p.speed * dt;
+                        p.y += (dy / d) * p.speed * dt;
+                    }
+                } else if (p.kind === 'bro_word') {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.life -= dt;
+                    for (const e of state.enemies) {
+                        if (e.hp > 0 && !p.hitIds.has(e.id) && Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + 18) {
+                            p.hitIds.add(e.id);
+                            damageEnemy(e, p.damage, p.tower, { pierce: 0.5 });
+                        }
+                    }
+                    if (p.life <= 0) state.projectiles.splice(i, 1);
+                } else if (p.kind === 'slaughterhouse_knife') {
+                    if (!p.target || p.target.hp <= 0) { state.projectiles.splice(i, 1); continue; }
+                    const dx = p.target.x - p.x, dy = p.target.y - p.y;
+                    const d = Math.hypot(dx, dy);
+                    if (d <= p.speed * dt + 10) {
+                        p.target.pctBleedTimer = Math.max(p.target.pctBleedTimer || 0, 10.0);
+                        p.target.pctBleedRate = 0.005;
+                        damageEnemy(p.target, p.damage, p.tower, { pierce: 1.0, critText: '🔪 BLEED 0.5% HP/s!', critColor: '#94a3b8' });
+                        spawnParticles(p.target.x, p.target.y, '#ef4444', 16, 130, 3.5);
+                        state.projectiles.splice(i, 1);
+                    } else {
+                        p.x += (dx / d) * p.speed * dt;
+                        p.y += (dy / d) * p.speed * dt;
+                    }
+                } else if (p.kind === 'hover_num4' || p.kind === 'wpopoff_words') {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.life -= dt;
+                    const hitR = p.kind === 'wpopoff_words' ? 28 : 22;
+                    for (const e of state.enemies) {
+                        if (e.hp > 0 && !p.hitIds.has(e.id) && Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + hitR) {
+                            p.hitIds.add(e.id);
+                            damageEnemy(e, p.damage, p.tower, { pierce: 1.0 });
+                        }
+                    }
+                    if (p.life <= 0 || p.x < -60 || p.x > MAP_W + 60 || p.y < -60 || p.y > MAP_H + 60) state.projectiles.splice(i, 1);
+                } else if (p.kind === 'hover_num7' || p.kind === 'zoink_orbit_orb' || p.kind === 'trick_firework') {
+                    const dx = p.tx - p.x, dy = p.ty - p.y;
+                    const d = Math.hypot(dx, dy);
+                    if (d <= p.speed * dt + 10) {
+                        const rad = p.splashRadius || 85;
+                        for (const e of state.enemies) {
+                            if (e.hp > 0 && Math.hypot(e.x - p.tx, e.y - p.ty) <= rad) {
+                                damageEnemy(e, p.damage, p.tower, { pierce: 1.0 });
+                            }
+                        }
+                        const fxCol = p.kind === 'trick_firework' ? '#f87171' : (p.color || '#2dd4bf');
+                        spawnParticles(p.tx, p.ty, fxCol, p.kind === 'trick_firework' ? 18 : 12, 135, 3.4);
+                        if (p.kind === 'trick_firework') spawnParticles(p.tx, p.ty, '#ffffff', 10, 120, 2.8);
+                        state.projectiles.splice(i, 1);
+                    } else {
+                        p.x += (dx / d) * p.speed * dt;
+                        p.y += (dy / d) * p.speed * dt;
+                    }
+                } else if (p.kind === 'trick_boomerang') {
+                    p.life -= dt;
+                    p.spin = (p.spin || 0) + dt * 16;
+                    if (!p.returning) {
+                        p.x += p.vx * dt;
+                        p.y += p.vy * dt;
+                        p.outTimer -= dt;
+                        for (const e of state.enemies) {
+                            if (e.hp > 0 && !p.hitOutIds.has(e.id) && Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + 24) {
+                                p.hitOutIds.add(e.id);
+                                damageEnemy(e, p.damage, p.tower, { pierce: 1.0 });
+                            }
+                        }
+                        if (p.outTimer <= 0) p.returning = true;
+                    } else {
+                        const homeX = p.tower ? p.tower.x : p.x;
+                        const homeY = p.tower ? p.tower.y : p.y;
+                        const dx = homeX - p.x, dy = homeY - p.y;
+                        const d = Math.hypot(dx, dy);
+                        const spd = 540;
+                        for (const e of state.enemies) {
+                            if (e.hp > 0 && !p.hitBackIds.has(e.id) && Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + 24) {
+                                p.hitBackIds.add(e.id);
+                                damageEnemy(e, p.damage * 0.85, p.tower, { pierce: 1.0 });
+                            }
+                        }
+                        if (d <= spd * dt + 12 || p.life <= 0) {
+                            state.projectiles.splice(i, 1);
+                        } else {
+                            p.x += (dx / d) * spd * dt;
+                            p.y += (dy / d) * spd * dt;
+                        }
+                    }
+                } else if (p.kind === 'green_crushing_wave' || p.kind === 'green_x_slash' || p.kind === 'sonic_boom_slash') {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.life -= dt;
+                    for (const e of state.enemies) {
+                        if (e.hp > 0 && !p.hitIds.has(e.id) && Math.hypot(e.x - p.x, e.y - p.y) <= e.radius + (p.radius || 56)) {
+                            p.hitIds.add(e.id);
+                            if (p.kind === 'green_crushing_wave') {
+                                e.bleedTimer = Math.max(e.bleedTimer || 0, 5.0);
+                                e.bleedDps = Math.max(e.bleedDps || 0, Math.round(p.damage * 0.15));
+                                damageEnemy(e, p.damage, p.tower, { pierce: 1.0, critText: 'GREEN CRUSHING!', critColor: '#4ade80' });
+                            } else if (p.kind === 'green_x_slash') {
+                                e.stunTimer = Math.max(e.stunTimer || 0, e.isBoss ? 1.0 : 1.8);
+                                // Cofnięcie przeciwnika o 1s ruchu wzdłuż trasy!
+                                const backDist = (e.baseSpeed || 60) * 1.0;
+                                const eWps = e.lane || wps;
+                                const prevWp = eWps[Math.max(0, (e.wpIndex || 1) - 1)];
+                                if (prevWp) {
+                                    const bdx = prevWp.x - e.x, bdy = prevWp.y - e.y;
+                                    const bd = Math.hypot(bdx, bdy) || 1;
+                                    const stepBack = Math.min(bd, backDist);
+                                    e.x += (bdx / bd) * stepBack;
+                                    e.y += (bdy / bd) * stepBack;
+                                    e.distanceTraveled = Math.max(0, (e.distanceTraveled || 0) - stepBack);
+                                }
+                                damageEnemy(e, p.damage, p.tower, { pierce: 1.0, critText: '✖ STUN & -1s!', critColor: '#22c55e' });
+                            } else if (p.kind === 'sonic_boom_slash') {
+                                e.slowTimer = Math.max(e.slowTimer || 0, 3.0);
+                                e.slowFactor = Math.max(e.slowFactor || 0, 0.75);
+                                damageEnemy(e, p.damage, p.tower, { pierce: 1.0, critText: 'SONIC BOOM (75% SLOW)!', critColor: '#f8fafc' });
+                            }
+                        }
+                    }
+                    if (p.life <= 0 || p.x < -80 || p.x > MAP_W + 80 || p.y < -80 || p.y > MAP_H + 80) state.projectiles.splice(i, 1);
                 } else if (p.kind === 'nail') {
                     if (!p.target || p.target.hp <= 0) { state.projectiles.splice(i, 1); continue; }
                     const dx = p.target.x - p.x;
@@ -13101,6 +13923,63 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     ctx.fillText(`SPIRIT BODY (${t.mahitoSpiritWaves}W)`, 0, -35);
                 }
 
+                // Hover Moc 1: Nullscapes ## — czarna dziura pod/wokół wzmocnionego sojusznika (+10% DMG & RNG)
+                if (t.nullscapesTimer > 0) {
+                    const ng = ctx.createRadialGradient(0, 4, 2, 0, 4, 28);
+                    ng.addColorStop(0, '#000000');
+                    ng.addColorStop(0.65, 'rgba(15, 23, 42, 0.85)');
+                    ng.addColorStop(1, 'rgba(45, 212, 191, 0)');
+                    ctx.fillStyle = ng;
+                    ctx.beginPath(); ctx.arc(0, 4, 28, 0, Math.PI * 2); ctx.fill();
+                    ctx.strokeStyle = '#2dd4bf'; ctx.lineWidth = 1.8;
+                    ctx.beginPath(); ctx.arc(0, 4, 21, state.time * 3, state.time * 3 + Math.PI * 1.5); ctx.stroke();
+                }
+
+                // Hover Moc 2: Silent Acropolis — przyczepione Mini Koło (+15% DMG)
+                if (t.acropolisMiniOrb) {
+                    ctx.save();
+                    ctx.translate(-18, -8);
+                    ctx.rotate(state.time * 4.5);
+                    ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.stroke();
+                    for (let sp = 0; sp < 4; sp++) {
+                        const sa = (sp / 4) * Math.PI * 2;
+                        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(sa) * 7.5, Math.sin(sa) * 7.5); ctx.stroke();
+                    }
+                    ctx.restore();
+                }
+
+                // Doggie Moc 2: Grief 97% — 4 wirujące słowa "Grief" wokół Doggiego!
+                if (t.griefSpinTimer > 0) {
+                    ctx.save();
+                    ctx.font = '900 8px Inter';
+                    ctx.textAlign = 'center';
+                    for (let gw = 0; gw < 4; gw++) {
+                        const ga = state.time * 3.8 + (gw * Math.PI / 2);
+                        const gx = Math.cos(ga) * 28;
+                        const gy = Math.sin(ga) * 18;
+                        ctx.fillStyle = '#09090b';
+                        ctx.fillText('Grief', gx + 1, gy + 1);
+                        ctx.fillStyle = gw % 2 === 0 ? '#facc15' : '#f43f5e';
+                        ctx.fillText('Grief', gx, gy);
+                    }
+                    ctx.restore();
+                }
+
+                // Zoink Moc 2: Heliopolis — zielona mgła nad głową Zoinka!
+                if (t.heliopolisTimer > 0) {
+                    const hg = ctx.createRadialGradient(0, -34, 3, 0, -34, 26);
+                    hg.addColorStop(0, 'rgba(74, 222, 128, 0.72)');
+                    hg.addColorStop(0.6, 'rgba(34, 197, 94, 0.35)');
+                    hg.addColorStop(1, 'rgba(22, 163, 74, 0)');
+                    ctx.fillStyle = hg;
+                    ctx.beginPath(); ctx.ellipse(Math.sin(state.time * 3) * 3, -34, 26, 12, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#bbf7d0';
+                    ctx.font = '900 8px Cinzel';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`HELIOPOLIS (${Math.ceil(t.heliopolisTimer)}s)`, 0, -44);
+                }
+
                 // Cień pod postacią 2D
                 ctx.fillStyle = 'rgba(2, 6, 23, 0.55)';
                 ctx.beginPath(); ctx.ellipse(0, 17, 13, 4.5, 0, 0, Math.PI * 2); ctx.fill();
@@ -13147,10 +14026,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
                 const stars = multiverseSave.stars[t.type] || 1;
                 const badgeText = stars > 1 ? `${t.level}★${stars}` : `${t.level}`;
-                ctx.fillStyle = t.level >= 6 ? '#22d3ee' : t.level === 5 ? '#f59e0b' : '#0f172a';
+                const tMaxLvl = HEROES[t.type]?.maxLevel || 6;
+                ctx.fillStyle = t.level >= tMaxLvl ? '#22d3ee' : t.level === 5 ? '#f59e0b' : '#0f172a';
                 ctx.beginPath(); ctx.arc(t.x + 14, t.y - 14, stars > 1 ? 10 : 8, 0, Math.PI * 2); ctx.fill();
                 ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.2; ctx.stroke();
-                ctx.fillStyle = t.level >= 5 ? '#09090b' : '#ffffff';
+                ctx.fillStyle = (t.level >= tMaxLvl || t.level >= 5) ? '#09090b' : '#ffffff';
                 ctx.font = 'bold 8px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(badgeText, t.x + 14, t.y - 11);
@@ -13173,6 +14053,25 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     ctx.textAlign = 'center';
                     ctx.fillText(isP2 ? 'P2' : 'P1', t.x - 10.5, t.y - 12);
                 }
+            }
+            // wPopoff Moc 2: Society — dron (białe oko z czerwoną soczewką) dający -10% CD!
+            if (state.societyDroneTimer > 0) {
+                const dx = (state.societyDroneX || MAP_W / 2) + Math.cos(state.time * 2.6) * 26;
+                const dy = (state.societyDroneY || MAP_H / 2 - 40) + Math.sin(state.time * 3.4) * 9;
+                ctx.save();
+                ctx.translate(dx, dy);
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath(); ctx.ellipse(0, 0, 14, 10, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.8; ctx.stroke();
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath(); ctx.arc(Math.sin(state.time * 4) * 2.5, 0, 5.2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#09090b';
+                ctx.beginPath(); ctx.arc(Math.sin(state.time * 4) * 2.5, 0, 2.0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fca5a5';
+                ctx.font = '900 8px Cinzel';
+                ctx.textAlign = 'center';
+                ctx.fillText(`SOCIETY -10% CD (${state.societyDroneTimer.toFixed(1)}s)`, 0, -14);
+                ctx.restore();
             }
         }
 
@@ -13206,6 +14105,95 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     g.addColorStop(1, 'rgba(126, 34, 206, 0)');
                     ctx.fillStyle = g;
                     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+                } else if (p.kind === 'nb_laser') {
+                    ctx.save();
+                    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 7;
+                    ctx.beginPath(); ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2); ctx.stroke();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.4;
+                    ctx.beginPath(); ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2); ctx.stroke();
+                    ctx.restore();
+                } else if (p.kind === 'zoink_laser') {
+                    ctx.save();
+                    ctx.strokeStyle = '#22c55e'; ctx.lineWidth = p.width || 10;
+                    ctx.beginPath(); ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2); ctx.stroke();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(2, (p.width || 10) * 0.42);
+                    ctx.beginPath(); ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2); ctx.stroke();
+                    ctx.restore();
+                } else if (p.kind === 'doggie_words' || p.kind === 'bro_word' || p.kind === 'wpopoff_words') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.font = p.kind === 'bro_word' ? '900 9px Inter' : '900 10px Inter';
+                    ctx.textAlign = 'center';
+                    const txt = p.kind === 'bro_word' ? 'Bro' : (p.text || 'W');
+                    ctx.fillStyle = '#09090b';
+                    ctx.fillText(txt, 1, 1);
+                    ctx.fillStyle = p.kind === 'wpopoff_words' ? '#e879f9' : p.kind === 'bro_word' ? '#fca5a5' : '#fde047';
+                    ctx.fillText(txt, 0, 0);
+                    ctx.restore();
+                } else if (p.kind === 'slaughterhouse_knife') {
+                    ctx.save();
+                    const ang = p.target ? Math.atan2(p.target.y - p.y, p.target.x - p.x) : 0;
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(ang);
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-4, -4); ctx.lineTo(-4, 4); ctx.closePath(); ctx.fill();
+                    ctx.fillStyle = '#334155';
+                    ctx.fillRect(-10, -2, 6, 4);
+                    ctx.restore();
+                } else if (p.kind === 'hover_num4' || p.kind === 'hover_num7') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.font = '900 16px Cinzel';
+                    ctx.textAlign = 'center';
+                    const ch = p.kind === 'hover_num4' ? '4' : '7';
+                    ctx.fillStyle = '#09090b';
+                    ctx.fillText(ch, 1, 6);
+                    ctx.fillStyle = p.kind === 'hover_num4' ? '#2dd4bf' : '#f472b6';
+                    ctx.fillText(ch, 0, 5);
+                    ctx.restore();
+                } else if (p.kind === 'trick_boomerang') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.spin || 0);
+                    ctx.scale(0.65, 0.65);
+                    drawHeroPortrait(ctx, 'gd_trick', 6, false);
+                    ctx.restore();
+                } else if (p.kind === 'trick_firework' || p.kind === 'zoink_orbit_orb') {
+                    ctx.save();
+                    ctx.fillStyle = p.kind === 'trick_firework' ? '#ef4444' : (p.color || '#22c55e');
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 7.5, 0, Math.PI * 2); ctx.fill();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.restore();
+                } else if (p.kind === 'green_crushing_wave') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle || 0);
+                    ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 6;
+                    ctx.beginPath(); ctx.moveTo(-28, -28); ctx.lineTo(28, 28); ctx.stroke();
+                    ctx.strokeStyle = '#bbf7d0'; ctx.lineWidth = 2.4;
+                    ctx.strokeRect(-14, -14, 28, 28);
+                    ctx.restore();
+                } else if (p.kind === 'green_x_slash') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle || 0);
+                    ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    ctx.moveTo(-22, -22); ctx.lineTo(22, 22);
+                    ctx.moveTo(22, -22); ctx.lineTo(-22, 22);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#dcfce7'; ctx.lineWidth = 2.2;
+                    ctx.stroke();
+                    ctx.restore();
+                } else if (p.kind === 'sonic_boom_slash') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle || 0);
+                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 7;
+                    ctx.beginPath(); ctx.arc(0, 0, 28, -1.05, 1.05); ctx.stroke();
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.arc(4, 0, 28, -0.95, 0.95); ctx.stroke();
+                    ctx.restore();
                 }
             }
 
@@ -13807,7 +14795,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 list.push({ name: 'Władcy Cieni (+18% DMG, -10% CD)', color: 'text-purple-300 border-purple-500/40 bg-purple-950/60' });
                 dmgMult *= 1.18; cdMult *= 0.90;
             }
-            return { list, dmgMult, cdMult, bfBonus, ceMult };
+            const hasBff = types.has('boiled_one') && types.has('locust');
+            if (hasBff) {
+                list.push({ name: 'BEST FRIENDS FOREVER (33% na 2x Crit!)', color: 'text-lime-300 border-lime-400/60 bg-lime-950/70' });
+            }
+            return { list, dmgMult, cdMult, bfBonus, ceMult, hasBff };
         }
 
         function updateSynergyAndVowStrip() {
@@ -13842,6 +14834,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         ];
 
         function triggerBindingVowOffer() {
+            if (!state.diff || (state.diff.id !== 'endless' && state.diff.id !== 'boss_rush')) return;
             if (MX.autoSkipVows) {
                 showBanner(`⚡ Fala ${state.wave}: Binding Vow pominięty (Auto-Skip AFK).`);
                 return;
@@ -13900,7 +14893,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 updateUI();
             }
             if (vow.freeUpgradeCount) {
-                const upgradable = state.towers.filter(t => t.level < 6).sort(() => Math.random() - 0.5).slice(0, vow.freeUpgradeCount);
+                const upgradable = state.towers.filter(t => t.level < (HEROES[t.type]?.maxLevel || 6)).sort(() => Math.random() - 0.5).slice(0, vow.freeUpgradeCount);
                 for (const tw of upgradable) {
                     const nextUpg = getHeroLevelStats(tw.type, tw.level + 1);
                     const ench = getUnitEnchant(tw.type);
@@ -14382,8 +15375,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                                 { kind: 'hero', id: 'gold_guy', label: 'Gold Guy', rarity: 'EPIC', color: '#a855f7', weight: 40.0 },
                                 { kind: 'hero', id: 'boiled_one', label: 'The Boiled One (PHEN-228)', rarity: 'LEGENDARY', color: '#22c55e', weight: 7.420 },
                                 { kind: 'hero', id: 'john_doe', label: 'John Doe (Corrupted)', rarity: 'MYTHIC', color: '#ef4444', weight: 0.5 },
-                                { kind: 'hero', id: 'ennard', label: 'Ennard', rarity: 'SECRET', color: '#22d3ee', weight: 0.075 },
-                                { kind: 'hero', id: 'baldi', label: 'Baldi', rarity: 'MYSTERIOUS', color: '#84cc16', weight: 0.005 }
+                                { kind: 'hero', id: 'ennard', label: 'Ennard', rarity: 'SECRET', color: '#22d3ee', weight: 0.070 },
+                                { kind: 'hero', id: 'baldi', label: 'Baldi', rarity: 'MYSTERIOUS', color: '#84cc16', weight: 0.010 }
                             ]
                             : [
                                 { kind: 'hero', id: 'toy_freddy', label: 'Toy Freddy', rarity: 'RARE', color: '#38bdf8', weight: 62 },
@@ -14817,6 +15810,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         };
 
         function getActiveSkinForHero(heroId) {
+            if (!(multiverseSave.unlocked && multiverseSave.unlocked[heroId])) return null;
             const skinId = multiverseSave.activeSkins && multiverseSave.activeSkins[heroId];
             if (!skinId || !multiverseSave.unlockedSkins || !multiverseSave.unlockedSkins[skinId]) return null;
             return HERO_SKINS[skinId] || null;
@@ -14834,6 +15828,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
 
         function setSkinForHero(heroId, skinId) {
+            if (skinId && !(multiverseSave.unlocked && multiverseSave.unlocked[heroId])) {
+                showBanner('nie masz tej postaci aby załozyc tego skina');
+                return;
+            }
             if (skinId && !(multiverseSave.unlockedSkins && multiverseSave.unlockedSkins[skinId])) {
                 showBanner('Nie posiadasz tego skina! Zdobądź go w Skin Crate (10 💎).');
                 return;
@@ -14845,6 +15843,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
 
         function cycleSkinForHero(heroId) {
+            if (!(multiverseSave.unlocked && multiverseSave.unlocked[heroId])) {
+                showBanner('nie masz tej postaci aby załozyc tego skina');
+                return;
+            }
             const heroSkins = Object.values(HERO_SKINS).filter(s => s.heroId === heroId);
             if (heroSkins.length === 0) {
                 showBanner('Ta postać nie ma skina. Skiny: Sukuna, Choso, Gojo, Golden Freddy (panel „Moje skiny").');
@@ -14873,16 +15875,17 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             const expanded = !!MX.skinsExpanded;
             const html = skinList.map(sk => {
                 const owned = !!(multiverseSave.unlockedSkins && multiverseSave.unlockedSkins[sk.id]);
-                const active = multiverseSave.activeSkins && multiverseSave.activeSkins[sk.heroId] === sk.id;
+                const hasHero = !!(multiverseSave.unlocked && multiverseSave.unlocked[sk.heroId]);
+                const active = hasHero && multiverseSave.activeSkins && multiverseSave.activeSkins[sk.heroId] === sk.id;
                 const hn = HEROES[sk.heroId] ? HEROES[sk.heroId].name : sk.heroId;
                 const btn = !owned
                     ? '<span class="text-[10px] font-extrabold text-slate-500">🔒 Zablokowany</span>'
                     : active
                         ? `<button data-skin-hero="${sk.heroId}" data-skin-id="" class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-black">Zdejmij</button>`
-                        : `<button data-skin-hero="${sk.heroId}" data-skin-id="${sk.id}" class="px-2 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 text-[10px] font-black">Załóż</button>`;
+                        : `<button data-skin-hero="${sk.heroId}" data-skin-id="${sk.id}" class="px-2 py-1 rounded ${hasHero ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/40'} text-[10px] font-black">Załóż</button>`;
                 return `<div class="flex items-center justify-between gap-2 p-1.5 rounded-lg ${active ? 'bg-emerald-950/60 border border-emerald-500/50' : 'bg-slate-900 border border-slate-800'}">
                     <div class="min-w-0"><div class="text-[11px] font-bold text-white truncate">${sk.name}</div>
-                    <div class="text-[9px] text-slate-400">${hn}${active ? ' • <span class="text-emerald-400 font-extrabold">ZAŁOŻONY</span>' : ''}</div></div>${btn}</div>`;
+                    <div class="text-[9px] text-slate-400">${hn}${!hasHero && owned ? ' • <span class="text-rose-400 font-extrabold">BRAK POSTACI</span>' : ''}${active ? ' • <span class="text-emerald-400 font-extrabold">ZAŁOŻONY</span>' : ''}</div></div>${btn}</div>`;
             }).join('');
             boxes.forEach(b => {
                 b.innerHTML = `
@@ -14932,9 +15935,11 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             let tag = 'NOWY SKIN!';
             if (!multiverseSave.unlockedSkins[won.id]) {
                 multiverseSave.unlockedSkins[won.id] = true;
-                multiverseSave.activeSkins[won.heroId] = won.id;
-                multiverseSave.unlocked[won.heroId] = true;
-                if (!multiverseSave.stars[won.heroId]) multiverseSave.stars[won.heroId] = 1;
+                if (multiverseSave.unlocked && multiverseSave.unlocked[won.heroId]) {
+                    multiverseSave.activeSkins[won.heroId] = won.id;
+                } else {
+                    tag = 'NOWY SKIN! (Zdobądź postać, aby założyć)';
+                }
             } else {
                 multiverseSave.gems += 5;
                 tag = 'DUPLIKAT +5 💎';
@@ -14956,9 +15961,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             const rctx = resCanvas.getContext('2d');
 
             animBox.classList.remove('hidden');
-            animBox.classList.toggle('compact-crate-open', count > 10);
+            animBox.classList.toggle('compact-crate-open', false);
             multiGrid.classList.add('hidden');
-            multiGrid.classList.toggle('compact-drop-scroll', count >= 10);
+            multiGrid.classList.toggle('compact-drop-scroll', false);
             reelCard.classList.remove('hidden');
             statusEl.textContent = 'SKIN CRATE OTWARTY (10 💎)!';
             rarEl.textContent = 'SKIN';
@@ -15006,13 +16011,15 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
             const tbody = document.getElementById('idx-insp-levels');
             tbody.innerHTML = '';
-            for (let lvl = 1; lvl <= 6; lvl++) {
+            const maxIdxLvl = h.maxLevel || 6;
+            for (let lvl = 1; lvl <= maxIdxLvl; lvl++) {
                 const st = getHeroLevelStats(heroId, lvl);
                 const dps = Math.round(st.dmg / st.cd);
+                const isMaxRow = lvl === maxIdxLvl;
                 const tr = document.createElement('tr');
-                tr.className = lvl === 6 ? 'bg-cyan-950/35 text-cyan-200' : 'text-slate-200';
+                tr.className = isMaxRow ? 'bg-cyan-950/35 text-cyan-200' : 'text-slate-200';
                 tr.innerHTML = `
-                    <td class="py-1 px-1.5 font-black ${lvl === 6 ? 'text-cyan-300' : 'text-purple-300'}">LVL ${lvl}${lvl === 6 ? ' ★' : ''}</td>
+                    <td class="py-1 px-1.5 font-black ${isMaxRow ? 'text-cyan-300' : 'text-purple-300'}">LVL ${lvl}${isMaxRow ? ' ★' : ''}</td>
                     <td class="py-1 px-1.5 text-cyan-300">${st.cost} CE</td>
                     <td class="py-1 px-1.5 text-rose-400 font-extrabold">${st.dmg}</td>
                     <td class="py-1 px-1.5 text-amber-300">${st.cd.toFixed(2)}s</td>
@@ -15705,16 +16712,17 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     ownerBadge.classList.add('hidden');
                 }
             }
+            const maxLvl = tpl.maxLevel || 6;
             const lvlBadge = document.getElementById('insp-lvl');
-            lvlBadge.textContent = t.level >= 6 ? 'LVL 6 MAX ★' : `LVL ${t.level}/6`;
-            lvlBadge.className = t.level === 3
-                ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-sky-950 text-sky-300 border border-sky-400/70'
-                : t.level === 4
-                    ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-950 text-amber-300 border border-amber-400/80'
-                    : t.level === 5
-                        ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-950 text-rose-300 border border-rose-400/80'
-                        : t.level >= 6
-                            ? `px-2 py-0.5 text-[10px] font-black rounded-full border ${rarStyle.badge}`
+            lvlBadge.textContent = t.level >= maxLvl ? `LVL ${maxLvl} MAX ★` : `LVL ${t.level}/${maxLvl}`;
+            lvlBadge.className = t.level >= maxLvl
+                ? `px-2 py-0.5 text-[10px] font-black rounded-full border ${rarStyle.badge}`
+                : t.level === 3
+                    ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-sky-950 text-sky-300 border border-sky-400/70'
+                    : t.level === 4
+                        ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-950 text-amber-300 border border-amber-400/80'
+                        : t.level === 5
+                            ? 'px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-950 text-rose-300 border border-rose-400/80'
                             : 'px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-purple-600 text-white';
 
             // Pełny podgląd informacji o ulepszeniach na poziom 3 / 4 / 5 w panelu inspekcji
@@ -15834,9 +16842,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             const nextPrevBox = document.getElementById('insp-next-preview');
             const nextDeltas = document.getElementById('insp-next-deltas');
 
-            if (t.level >= 6) {
+            if (t.level >= maxLvl) {
                 upgBtn.disabled = true;
-                upgText.textContent = 'Maksymalny Poziom (6/6)';
+                upgText.textContent = `Maksymalny Poziom (${maxLvl}/${maxLvl})`;
                 upgDesc.textContent = `Osiągnięto pełną moc: ${effDmg} DMG / ${effCd.toFixed(2)}s = ${dps} DPS!`;
                 if (nextPrevBox) nextPrevBox.classList.add('hidden');
                 if (mobUpgBtn) mobUpgBtn.disabled = true;
@@ -16055,7 +17063,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             if (state.selectedTower) {
                 const upgBtn = document.getElementById('btn-upgrade');
                 const mobUpgBtn = document.getElementById('mob-btn-upg');
-                if (state.selectedTower.level < 6) {
+                const selMaxLvl = HEROES[state.selectedTower.type]?.maxLevel || 6;
+                if (state.selectedTower.level < selMaxLvl) {
                     const cost = getHeroLevelStats(state.selectedTower.type, state.selectedTower.level + 1).cost;
                     const ow = (state.isCoop2P && state.selectedTower.owner === 2) ? state.ce2 : state.ce;
                     upgBtn.disabled = ow < cost;
@@ -16131,6 +17140,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             state.pgUnits = [];
             state.megumiSpawnTimer = 15.0;
             state.moduloRoadBuffTimer = 0;
+            state.societyDroneTimer = 0;
+            state.heliopolisBuffTimer = 0;
             state.selectingExtraSecretOrb = false;
             for (const k of Object.keys(shikigamiDeaths)) delete shikigamiDeaths[k];
             state.placingType = null;
@@ -16189,6 +17200,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 multiverseSave.goldGems += goldGain;
                 multiverseSave.wins += 1;
                 if (state.diff.id === 'extreme') {
+                    if (Math.random() < 0.25) {
+                        addCraftItem('green_crown', 1);
+                    }
                     if (state.map.world === 'fnaf') {
                         multiverseSave.fnafQuest.fnaf1ExtremeWins = (multiverseSave.fnafQuest.fnaf1ExtremeWins || 0) + 1;
                     } else if (state.map.world === 'fnaf2') {
@@ -17253,7 +18267,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
         function autoCastSkills(t) {
             const tpl = HEROES[t.type];
-            if (!tpl || !findTarget(t)) return;
+            const globalOrBuffCast = ['gd_hover', 'gd_wpopoff', 'gd_zoink', 'nightmare_bonnie', 'calamity_1x1'].includes(t.type) && state.enemies.some(e => e.hp > 0);
+            if (!tpl || (!findTarget(t) && !globalOrBuffCast)) return;
             if (!(t.skill1Cd > 0)) activateHeroSkill(t, 1);
             if (t.level >= tpl.skill2.unlockLvl && !(t.skill2Cd > 0)) activateHeroSkill(t, 2);
             if (tpl.skill3 && !(t.skill3Cd > 0)) {
@@ -17281,16 +18296,18 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
 
         // ---------- MOC 3 (SUKUNA + SECRET+) ----------
         function snapToNearestPathPoint(x, y) {
-            const wps = state.map.waypoints;
-            let bestPt = { x: wps[0].x, y: wps[0].y, dist: Infinity };
-            for (let i = 0; i < wps.length - 1; i++) {
-                const a = wps[i], b = wps[i + 1];
-                const dx = b.x - a.x, dy = b.y - a.y;
-                const l2 = dx * dx + dy * dy || 1;
-                const u = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / l2));
-                const px = a.x + u * dx, py = a.y + u * dy;
-                const d = Math.hypot(x - px, y - py);
-                if (d < bestPt.dist) bestPt = { x: px, y: py, dist: d };
+            const lanes = getMapLanes();
+            let bestPt = { x: lanes[0][0].x, y: lanes[0][0].y, dist: Infinity };
+            for (const wps of lanes) {
+                for (let i = 0; i < wps.length - 1; i++) {
+                    const a = wps[i], b = wps[i + 1];
+                    const dx = b.x - a.x, dy = b.y - a.y;
+                    const l2 = dx * dx + dy * dy || 1;
+                    const u = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / l2));
+                    const px = a.x + u * dx, py = a.y + u * dy;
+                    const d = Math.hypot(x - px, y - py);
+                    if (d < bestPt.dist) bestPt = { x: px, y: py, dist: d };
+                }
             }
             return bestPt;
         }
@@ -17422,6 +18439,21 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 spawnParticles(tower.x, tower.y, '#38bdf8', 36, 210, 4.5);
             } else if (t === 'baldi') {
                 hitAll(4, 3.5, '#22c55e', 'DETENTION!', 400);
+            } else if (t === 'calamity_1x1') {
+                // g1x1en1x V1xus: zaznacza wszystkich przeciwników na zielono, nerfując ich życia o 4.1%!
+                let markedCount = 0;
+                for (const e of state.enemies) {
+                    if (e.hp > 0) {
+                        e.greenVirusTimer = 12.0;
+                        const hpCut = Math.max(1, Math.round(e.hp * 0.041));
+                        e.maxHp = Math.max(1, Math.round(e.maxHp * 0.959));
+                        e.hp = Math.max(1, e.hp - hpCut);
+                        spawnParticles(e.x, e.y, '#22c55e', 10, 120, 3.5);
+                        markedCount++;
+                    }
+                }
+                ring(MAP_W / 2, MAP_H / 2, 520);
+                spawnFloatingText(MAP_W / 2, MAP_H / 2 - 34, `☣️ g1x1en1x V1xus: -4.1% HP (${markedCount} WROGÓW)!`, '#4ade80', 1.45);
             } else if (t === 'shinjuku_yuji') {
                 // Shinjuku Yuji Moc 3: Piercing Blood (Weak)
                 const tgt = findTarget(tower) || state.enemies.find(e => e.hp > 0);
@@ -17444,17 +18476,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     showBanner('⚠️ Limit Mahoragi (Megumi Potential): maksymalnie 3 aktywne na mapie jednocześnie!');
                     return;
                 }
-                const wps = state.map.waypoints;
-                let bestPt = { x: wps[0].x, y: wps[0].y, dist: Infinity };
-                for (let i = 0; i < wps.length - 1; i++) {
-                    const a = wps[i], b = wps[i + 1];
-                    const dx = b.x - a.x, dy = b.y - a.y;
-                    const l2 = dx * dx + dy * dy || 1;
-                    const u = Math.max(0, Math.min(1, ((tower.x - a.x) * dx + (tower.y - a.y) * dy) / l2));
-                    const px = a.x + u * dx, py = a.y + u * dy;
-                    const d = Math.hypot(tower.x - px, tower.y - py);
-                    if (d < bestPt.dist) bestPt = { x: px, y: py, dist: d };
-                }
+                const bestPt = snapToNearestPathPoint(tower.x, tower.y);
                 state.shikigami.push({
                     id: state.nextEnemyId++,
                     kind: 'mahoraga',
@@ -17539,10 +18561,12 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 spawnParticles(pt.x, pt.y, '#f59e0b', 22, 140, 4);
                 spawnFloatingText(pt.x, pt.y - 28, 'PLUSHIE FREDDY (450 HP • AoE JUMPSCARE)!', '#fbbf24', 1.2);
             } else if (t === 'mahito_calamity') {
-                const wps = state.map.waypoints;
+                const wps = pickActiveLaneForSummon();
                 const endWp = wps[wps.length - 1];
                 const countSpawn = tower.mahitoSpiritWaves > 0 ? 5 : 3;
                 for (let k = 0; k < countSpawn; k++) {
+                    const mLane = pickActiveLaneForSummon();
+                    const mEnd = mLane[mLane.length - 1];
                     const scaleW = 0.65 + Math.random() * 1.35;
                     const scaleH = 0.65 + Math.random() * 1.45;
                     const hpVal = Math.round((450 + state.wave * 140) * scaleW * scaleH * (tower.mahitoSpiritWaves > 0 ? 1.8 : 1.0));
@@ -17551,9 +18575,10 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         id: state.nextEnemyId++,
                         kind: 'transfigured_human',
                         name: scaleW > 1.55 ? 'Transfigured Boss' : 'Transfigured Human',
-                        x: endWp.x - 36 + k * 14,
-                        y: endWp.y + (k % 2 === 0 ? -8 : 8),
-                        wpIndex: wps.length - 2,
+                        x: mEnd.x - 36 + k * 14,
+                        y: mEnd.y + (k % 2 === 0 ? -8 : 8),
+                        wpIndex: mLane.length - 2,
+                        lane: mLane,
                         maxHp: hpVal, hp: hpVal,
                         speed: 55 + Math.random() * 45,
                         dmg: dmgVal,
@@ -17657,8 +18682,8 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
 
         // ---------- PURPLE GUY: JEDNOSTKI NA ŚCIEŻCE ----------
-        function pathPointAt(frac) {
-            const w = state.map.waypoints;
+        function pathPointAt(frac, laneWps = null) {
+            const w = laneWps || state.map.waypoints;
             const segs = []; let total = 0;
             for (let i = 1; i < w.length; i++) { const l = Math.hypot(w[i].x - w[i - 1].x, w[i].y - w[i - 1].y); segs.push(l); total += l; }
             let d = Math.max(0, Math.min(1, frac)) * total;
@@ -17670,27 +18695,31 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         }
         function pathPointNear(tower) {
             const pts = [];
-            for (let i = 0; i <= 80; i++) {
-                const p = pathPointAt(i / 80);
-                if (Math.hypot(p.x - tower.x, p.y - tower.y) <= tower.range * 1.1) pts.push(p);
+            const lanes = getMapLanes();
+            for (const ln of lanes) {
+                for (let i = 0; i <= 50; i++) {
+                    const p = pathPointAt(i / 50, ln);
+                    if (Math.hypot(p.x - tower.x, p.y - tower.y) <= tower.range * 1.1) pts.push(p);
+                }
             }
             const lead = state.enemies.filter(e => e.hp > 0 && Math.hypot(e.x - tower.x, e.y - tower.y) <= tower.range * 1.1).sort((a, b) => b.distanceTraveled - a.distanceTraveled)[0];
             if (lead && Math.random() < 0.6) return { x: lead.x, y: lead.y };
             if (pts.length) return pts[Math.floor(Math.random() * pts.length)];
-            return pathPointAt(0.5);
+            return snapToNearestPathPoint(tower.x, tower.y);
         }
         function pgList() { if (!state.pgUnits) state.pgUnits = []; return state.pgUnits; }
 
-        function pathTotalLen() {
-            const w = state.map.waypoints; let t = 0;
+        function pathTotalLen(laneWps = null) {
+            const w = laneWps || state.map.waypoints; let t = 0;
             for (let i = 1; i < w.length; i++) t += Math.hypot(w[i].x - w[i - 1].x, w[i].y - w[i - 1].y);
             return t || 1;
         }
         function pgSpawnEndo(tower) {
             const L = pgList();
             if (L.filter(u => u.kind === 'endo' && u.tower === tower).length >= 4) return;
-            const p = pathPointAt(0.985);
-            L.push({ kind: 'endo', frac: 0.985, x: p.x, y: p.y, hp: 700, maxHp: 700, life: 90, maxLife: 90, radius: 46, dps: getEffectiveDamage(tower) * 0.9, speed: 58, tower });
+            const endoLane = pickActiveLaneForSummon();
+            const p = pathPointAt(0.985, endoLane);
+            L.push({ kind: 'endo', lane: endoLane, frac: 0.985, x: p.x, y: p.y, hp: 700, maxHp: 700, life: 90, maxLife: 90, radius: 46, dps: getEffectiveDamage(tower) * 0.9, speed: 58, tower });
             spawnFloatingText(p.x - 20, p.y - 24, 'ENDO (SUMMON Z BAZY)!', '#c084fc', 1.0);
             spawnParticles(p.x, p.y, '#a855f7', 12, 100, 3);
         }
@@ -17734,9 +18763,9 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                         }
                     }
                     if (!fighting) {
-                        u.frac -= u.speed * dt / pathTotalLen();
+                        u.frac -= u.speed * dt / pathTotalLen(u.lane);
                         if (u.frac <= 0) u.life = 0;
-                        const p = pathPointAt(Math.max(0, u.frac)); u.x = p.x; u.y = p.y;
+                        const p = pathPointAt(Math.max(0, u.frac), u.lane); u.x = p.x; u.y = p.y;
                     }
                     if (u.hp <= 0) { spawnParticles(u.x, u.y, '#94a3b8', 14, 120, 3); u.life = 0; }
                 } else if (u.kind === 'trap') {
@@ -17904,9 +18933,34 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         const CRAFT_ITEMS = {
             sukuna_finger: { name: 'Palec Sukuny', icon: '☝️', drop: 'Drop: koniec fali 1 lub 2 (50% każda) — każdy tryb' },
             sukuna_arm:    { name: 'Ramię Sukuny', icon: '💪', drop: 'Drop: tylko Endless, co 5 fal, 5% szansy' },
-            potential_orb: { name: 'Kula Potencjału', icon: '🔮', drop: 'Drop: tylko Endless, co 5 fal, 15% szansy' }
+            potential_orb: { name: 'Kula Potencjału', icon: '🔮', drop: 'Drop: tylko Endless, co 5 fal, 15% szansy' },
+            virus_sword:   { name: 'Virus Sword', icon: '🗡️', drop: 'Drop: co 5 fal w Endless / Boss Rush (35%) lub fala 10/20 (25%)' },
+            green_crown:   { name: 'Green Crown', icon: '👑', drop: 'Drop: co 5 fal w Endless / Boss Rush (18%) lub wygrana Extreme (25%)' },
+            red_guitar:    { name: 'Red Guitar', icon: '🎸', drop: 'Drop: co 5 fal w Endless / Boss Rush (30%) lub na mapach FNAF (fala 10/20: 35%)' }
         };
         const CRAFT_RECIPES = [{
+            id: 'nightmare_bonnie',
+            heroId: 'nightmare_bonnie',
+            subtitle: 'CALAMITY • Koszt 800 CE (Limit 1) • LVL 5 MAX: 3000 DMG / 0.20s • Tylko Laser (Brak Pasywki), Guitar Sonic Boom (75% Slow 3s) & Upgrade (+1% DMG / -1% CD na całą rundę)',
+            reqs: [
+                { kind: 'hero', id: 'nightmare_freddy', label: 'Nightmare Freddy (zostaje w kolekcji — NIE znika!)' },
+                { kind: 'item', id: 'red_guitar', n: 10, label: 'Red Guitar 🎸' },
+                { kind: 'cur', id: 'gems', n: 1000, label: 'Gems 💎' },
+                { kind: 'cur', id: 'souls', n: 2000, label: 'Souls 👻' },
+                { kind: 'cur', id: 'fnafCoins', n: 250000, label: 'FNAF Coin 🍕' }
+            ]
+        }, {
+            id: 'calamity_1x1',
+            heroId: 'calamity_1x1',
+            subtitle: 'CALAMITY • Koszt 1010 CE • 10 101 DPS MAX • 2 Zielone Miecze (Bleed), Green Crushing (45s), Sword Slash X (50s) & g1x1en1x V1xus (-4.1% HP, 120s)',
+            reqs: [
+                { kind: 'hero', id: 'john_doe', label: 'John Doe (zostaje w kolekcji — NIE znika!)' },
+                { kind: 'item', id: 'virus_sword', n: 10, label: 'Virus Sword 🗡️' },
+                { kind: 'item', id: 'green_crown', n: 5, label: 'Green Crown 👑' },
+                { kind: 'cur', id: 'souls', n: 500, label: 'Souls 👻' },
+                { kind: 'cur', id: 'gems', n: 200, label: 'Gems 💎' }
+            ]
+        }, {
             id: 'shinjuku_yuji',
             heroId: 'shinjuku_yuji',
             subtitle: 'Przebudzony Shinjuku • 7 555 DPS MAX • Black Flash 4x DMG (3s), Aura -20% CD (10s), Piercing Blood (Weak) & Pasywka +5% Wszystkie Statystyki',
@@ -17954,7 +19008,7 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             return rc.reqs.every(r => craftHave(r) >= craftNeed(r));
         }
         function addCraftItem(id, n) {
-            if (!multiverseSave.craftItems) multiverseSave.craftItems = { sukuna_finger: 0, sukuna_arm: 0 };
+            if (!multiverseSave.craftItems) multiverseSave.craftItems = { sukuna_finger: 0, sukuna_arm: 0, potential_orb: 0, virus_sword: 0, green_crown: 0, red_guitar: 0 };
             multiverseSave.craftItems[id] = (multiverseSave.craftItems[id] || 0) + n;
             saveMultiverseData();
             const tab = document.getElementById('tab-content-craft');
@@ -17966,6 +19020,28 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                     addCraftItem('sukuna_finger', 1);
                     showBanner(`☝️ Palec Sukuny! (${multiverseSave.craftItems.sukuna_finger}/20) — Crafting`);
                     spawnFloatingText(MAP_W / 2, MAP_H / 2 - 20, '☝️ PALEC SUKUNY +1', '#fca5a5', 1.25);
+                }
+            }
+            if ((state.wave === 10 || state.wave === 20) && Math.random() < 0.25) {
+                addCraftItem('virus_sword', 1);
+                spawnFloatingText(MAP_W / 2, MAP_H / 2 - 42, '🗡️ VIRUS SWORD +1!', '#4ade80', 1.25);
+            }
+            if ((state.wave === 10 || state.wave === 20) && (state.map.world === 'fnaf' || state.map.world === 'fnaf2' || state.diff.id === 'boss_rush') && Math.random() < 0.35) {
+                addCraftItem('red_guitar', 1);
+                spawnFloatingText(MAP_W / 2, MAP_H / 2 - 58, '🎸 RED GUITAR +1!', '#ef4444', 1.25);
+            }
+            if (state.diff && (state.diff.id === 'endless' || state.diff.id === 'boss_rush') && state.wave % 5 === 0) {
+                if (Math.random() < 0.35) {
+                    addCraftItem('virus_sword', 1);
+                    showBanner(`🗡️ VIRUS SWORD! (${multiverseSave.craftItems.virus_sword}/10) — Crafting 1x1x1x1x1`);
+                }
+                if (Math.random() < 0.18) {
+                    addCraftItem('green_crown', 1);
+                    showBanner(`👑 GREEN CROWN! (${multiverseSave.craftItems.green_crown}/5) — Crafting 1x1x1x1x1`);
+                }
+                if (Math.random() < 0.30) {
+                    addCraftItem('red_guitar', 1);
+                    showBanner(`🎸 RED GUITAR! (${multiverseSave.craftItems.red_guitar}/10) — Crafting Nightmare Bonnie`);
                 }
             }
             if (state.diff && state.diff.id === 'endless' && state.wave % 5 === 0 && Math.random() < 0.05) {
@@ -18082,8 +19158,12 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 } else { multiverseSave.gems += 10; msg = '🟣 Purple Guy MAX ★ — +10 💎'; }
             } else if (!multiverseSave.unlockedSkins.golden_freddy_shadow) {
                 multiverseSave.unlockedSkins.golden_freddy_shadow = true;
-                multiverseSave.activeSkins.golden_freddy = 'golden_freddy_shadow';
-                msg = '🟣 SKIN (99%): Shadow Freddy dla Golden Freddy! Założony automatycznie (zmiana w panelu „Moje skiny").';
+                if (multiverseSave.unlocked && multiverseSave.unlocked.golden_freddy) {
+                    multiverseSave.activeSkins.golden_freddy = 'golden_freddy_shadow';
+                    msg = '🟣 SKIN (99%): Shadow Freddy dla Golden Freddy! Założony automatycznie (zmiana w panelu „Moje skiny").';
+                } else {
+                    msg = '🟣 SKIN (99%): Shadow Freddy dla Golden Freddy! (Zdobądź Golden Freddy\'ego, aby założyć ten skin).';
+                }
             } else { multiverseSave.gems += 2; msg = '🟣 Duplikat skina Shadow Freddy: +2 💎'; }
             saveMX(); saveMultiverseData();
             buildShop(); buildIndexGrid(); buildHigherUpsSelect(); refreshPurpleCrateBox();
@@ -18095,12 +19175,14 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
         // ---------- ŁADNIEJSZE MAPY ----------
         function seededRng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
         function distToPath(x, y) {
-            const w = state.map.waypoints; let best = 1e9;
-            for (let i = 1; i < w.length; i++) {
-                const ax = w[i - 1].x, ay = w[i - 1].y, bx = w[i].x, by = w[i].y;
-                const dx = bx - ax, dy = by - ay; const l2 = dx * dx + dy * dy || 1;
-                const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
-                best = Math.min(best, Math.hypot(x - (ax + dx * t), y - (ay + dy * t)));
+            let best = 1e9;
+            for (const w of getMapLanes()) {
+                for (let i = 1; i < w.length; i++) {
+                    const ax = w[i - 1].x, ay = w[i - 1].y, bx = w[i].x, by = w[i].y;
+                    const dx = bx - ax, dy = by - ay; const l2 = dx * dx + dy * dy || 1;
+                    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
+                    best = Math.min(best, Math.hypot(x - (ax + dx * t), y - (ay + dy * t)));
+                }
             }
             return best;
         }
@@ -18218,42 +19300,54 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
             ctx.fillText('? ? ?   PUSTKA NIEZNANEGO   ? ? ?', MAP_W / 2, 24);
         }
         function drawPathAndBase() {
-            const wps = state.map.waypoints;
+            const lanes = getMapLanes();
             const isFnaf = state.map.world === 'fnaf' || state.map.world === 'fnaf2';
             const mys = state.map.id === 'mystery_void';
             const pal = mys ? { edge: '#581c87', mid: '#0c0518', glow: 'rgba(217,70,239,0.5)', line: 'rgba(244,114,182,0.55)' }
                 : isFnaf ? { edge: '#92400e', mid: '#1c1410', glow: 'rgba(251,191,36,0.30)', line: 'rgba(253,224,71,0.55)' }
                 : { edge: '#4338ca', mid: '#0b1020', glow: 'rgba(129,140,248,0.32)', line: 'rgba(192,132,252,0.55)' };
-            const trace = () => { ctx.beginPath(); ctx.moveTo(wps[0].x, wps[0].y); for (let i = 1; i < wps.length; i++) ctx.lineTo(wps[i].x, wps[i].y); };
+            const wScale = lanes.length >= 4 ? 0.72 : lanes.length >= 2 ? 0.84 : 1.0;
+            const traceAll = () => {
+                ctx.beginPath();
+                for (const wps of lanes) {
+                    if (!wps || !wps.length) continue;
+                    ctx.moveTo(wps[0].x, wps[0].y);
+                    for (let i = 1; i < wps.length; i++) ctx.lineTo(wps[i].x, wps[i].y);
+                }
+            };
             ctx.save();
             ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            trace(); ctx.shadowColor = pal.glow; ctx.shadowBlur = 24; ctx.strokeStyle = pal.edge; ctx.lineWidth = 60; ctx.stroke(); ctx.shadowBlur = 0;
-            trace(); ctx.strokeStyle = pal.edge; ctx.lineWidth = 56; ctx.stroke();
-            trace(); ctx.strokeStyle = pal.mid; ctx.lineWidth = 47; ctx.stroke();
-            trace(); ctx.strokeStyle = 'rgba(255,255,255,0.045)'; ctx.lineWidth = 30; ctx.stroke();
-            trace(); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 44; ctx.lineCap = 'butt'; ctx.setLineDash([3, 21]); ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = 'round';
-            trace(); ctx.strokeStyle = pal.line; ctx.lineWidth = 2; ctx.setLineDash([14, 14]); ctx.lineDashOffset = -state.time * 32; ctx.stroke(); ctx.setLineDash([]);
-            // strzałki kierunku
-            let acc = -((state.time * 28) % 120);
+            traceAll(); ctx.shadowColor = pal.glow; ctx.shadowBlur = 22; ctx.strokeStyle = pal.edge; ctx.lineWidth = 60 * wScale; ctx.stroke(); ctx.shadowBlur = 0;
+            traceAll(); ctx.strokeStyle = pal.edge; ctx.lineWidth = 56 * wScale; ctx.stroke();
+            traceAll(); ctx.strokeStyle = pal.mid; ctx.lineWidth = 47 * wScale; ctx.stroke();
+            traceAll(); ctx.strokeStyle = 'rgba(255,255,255,0.045)'; ctx.lineWidth = 30 * wScale; ctx.stroke();
+            traceAll(); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 44 * wScale; ctx.lineCap = 'butt'; ctx.setLineDash([3, 21]); ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = 'round';
+            traceAll(); ctx.strokeStyle = pal.line; ctx.lineWidth = 2; ctx.setLineDash([14, 14]); ctx.lineDashOffset = -state.time * 32; ctx.stroke(); ctx.setLineDash([]);
+
+            // Strzałki kierunku na każdej drodze
             ctx.fillStyle = pal.line;
-            for (let i = 1; i < wps.length; i++) {
-                const ax = wps[i - 1].x, ay = wps[i - 1].y, bx = wps[i].x, by = wps[i].y;
-                const L = Math.hypot(bx - ax, by - ay), ang = Math.atan2(by - ay, bx - ax);
-                for (let d = ((acc % 120) + 120) % 120; d < L; d += 120) {
-                    const x = ax + Math.cos(ang) * d, y = ay + Math.sin(ang) * d;
-                    ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.globalAlpha = 0.5;
-                    ctx.beginPath(); ctx.moveTo(5, 0); ctx.lineTo(-3, -4.5); ctx.lineTo(-3, 4.5); ctx.closePath(); ctx.fill(); ctx.restore();
+            for (const wps of lanes) {
+                let acc = -((state.time * 28) % 120);
+                for (let i = 1; i < wps.length; i++) {
+                    const ax = wps[i - 1].x, ay = wps[i - 1].y, bx = wps[i].x, by = wps[i].y;
+                    const L = Math.hypot(bx - ax, by - ay), ang = Math.atan2(by - ay, bx - ax);
+                    for (let d = ((acc % 120) + 120) % 120; d < L; d += 120) {
+                        const x = ax + Math.cos(ang) * d, y = ay + Math.sin(ang) * d;
+                        ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.globalAlpha = 0.5;
+                        ctx.beginPath(); ctx.moveTo(5, 0); ctx.lineTo(-3, -4.5); ctx.lineTo(-3, 4.5); ctx.closePath(); ctx.fill(); ctx.restore();
+                    }
+                    acc -= L;
                 }
-                acc -= L;
             }
-            // Pasywka Modulo: świecąca przerywana linia biegnąca od bazy w głąb trasy na 15s (daje 2x DMG wszystkim jednostkom!)
-            if (state.moduloRoadBuffTimer > 0 && wps.length >= 2) {
+
+            // Pasywka Modulo: świecąca przerywana linia biegnąca od bazy w głąb wszystkich tras na 15s!
+            if (state.moduloRoadBuffTimer > 0) {
                 ctx.save();
                 ctx.beginPath();
-                // Biegnie od bazy (wps[wps.length - 1]) aż w głąb trasy (do pierwszego odcinka trasy!)
-                ctx.moveTo(wps[wps.length - 1].x, wps[wps.length - 1].y);
-                for (let ri = wps.length - 2; ri >= 0; ri--) {
-                    ctx.lineTo(wps[ri].x, wps[ri].y);
+                for (const wps of lanes) {
+                    if (wps.length < 2) continue;
+                    ctx.moveTo(wps[wps.length - 1].x, wps[wps.length - 1].y);
+                    for (let ri = wps.length - 2; ri >= 0; ri--) ctx.lineTo(wps[ri].x, wps[ri].y);
                 }
                 ctx.shadowColor = '#f43f5e';
                 ctx.shadowBlur = 16;
@@ -18267,28 +19361,47 @@ table{text-indent:0;border-color:inherit;border-collapse:collapse}
                 ctx.stroke();
                 ctx.setLineDash([]);
                 ctx.shadowBlur = 0;
-                const midPt = wps[Math.floor(wps.length / 2)];
                 ctx.fillStyle = '#ffe4e6';
                 ctx.font = '900 12px Cinzel';
                 ctx.textAlign = 'center';
-                ctx.fillText(`⚡ MODULO: LINIA 2x DMG (${state.moduloRoadBuffTimer.toFixed(1)}s)`, midPt.x, Math.max(22, midPt.y - 26));
+                ctx.fillText(`⚡ MODULO: LINIA 2x DMG (${state.moduloRoadBuffTimer.toFixed(1)}s)`, MAP_W / 2, 26);
                 ctx.restore();
             }
             ctx.restore();
 
-            const endPt = wps[wps.length - 1];
-            const bx = endPt.x - 42, by = endPt.y;
-            const pulse = 1 + Math.sin(state.time * 3) * 0.06;
-            const grad = ctx.createRadialGradient(bx, by, 6, bx, by, 50 * pulse);
-            grad.addColorStop(0, isFnaf ? 'rgba(251,191,36,0.95)' : mys ? 'rgba(232,121,249,0.9)' : 'rgba(56,189,248,0.9)');
-            grad.addColorStop(1, 'rgba(56,189,248,0)');
-            ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(bx, by, 50 * pulse, 0, Math.PI * 2); ctx.fill();
-            ctx.save(); ctx.translate(bx, by); ctx.rotate(state.time * 0.8);
-            ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 8]);
-            ctx.beginPath(); ctx.arc(0, 0, 30, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 10px Inter'; ctx.textAlign = 'center';
-            ctx.fillText(isFnaf ? 'BIURO' : 'BARIERA', bx, by + 40);
-            ctx.fillStyle = '#34d399'; ctx.fillText('HP ' + state.hp + '/' + state.maxHp, bx, by + 52);
+            // Portale WEJŚCIA (dla map z wieloma wejściami i zwykłych)
+            const starts = getUniqueLaneStarts();
+            for (const st of starts) {
+                const sx = Math.max(18, Math.min(MAP_W - 18, st.x));
+                const sy = Math.max(18, Math.min(MAP_H - 18, st.y));
+                const sp = 1 + Math.sin(state.time * 4) * 0.08;
+                const sg = ctx.createRadialGradient(sx, sy, 3, sx, sy, 26 * sp);
+                sg.addColorStop(0, 'rgba(244, 63, 94, 0.82)');
+                sg.addColorStop(1, 'rgba(244, 63, 94, 0)');
+                ctx.fillStyle = sg;
+                ctx.beginPath(); ctx.arc(sx, sy, 26 * sp, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = 'rgba(254, 205, 211, 0.7)';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath(); ctx.arc(sx, sy, 12, 0, Math.PI * 2); ctx.stroke();
+            }
+
+            // Bazy / Wyjścia (obsługuje 1 lub 2+ wyjścia na mapie!)
+            const ends = getUniqueLaneEnds();
+            ends.forEach((endPt, idx) => {
+                const bx = endPt.x - 42, by = endPt.y;
+                const pulse = 1 + Math.sin(state.time * 3 + idx) * 0.06;
+                const grad = ctx.createRadialGradient(bx, by, 6, bx, by, 46 * pulse);
+                grad.addColorStop(0, isFnaf ? 'rgba(251,191,36,0.95)' : mys ? 'rgba(232,121,249,0.9)' : 'rgba(56,189,248,0.9)');
+                grad.addColorStop(1, 'rgba(56,189,248,0)');
+                ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(bx, by, 46 * pulse, 0, Math.PI * 2); ctx.fill();
+                ctx.save(); ctx.translate(bx, by); ctx.rotate(state.time * 0.8 * (idx % 2 === 0 ? 1 : -1));
+                ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 8]);
+                ctx.beginPath(); ctx.arc(0, 0, 27, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+                ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 10px Inter'; ctx.textAlign = 'center';
+                const exitLabel = ends.length > 1 ? `${isFnaf ? 'BIURO' : 'WYJŚCIE'} #${idx + 1}` : (isFnaf ? 'BIURO' : 'BARIERA');
+                ctx.fillText(exitLabel, bx, by + 37);
+                ctx.fillStyle = '#34d399'; ctx.fillText('HP ' + state.hp + '/' + state.maxHp, bx, by + 49);
+            });
         }
 
         document.getElementById('btn-auto-skills').addEventListener('click', () => {
