@@ -1473,6 +1473,20 @@ aside, #inspector-panel {
  <div class="flex items-center gap-2 shrink-0 z-10"><span class="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow"><i class="fa-solid fa-fire mr-1"></i>WALCZ Z BOSSEM</span></div>
  </button>
  </div>
+ <!-- TRYB ŚWIĄTECZNY POD WATCHMAN OF DOOM: CHRISTMAS EVENT (COMING SOON) -->
+ <div class="pt-1">
+ <button id="btn-christmas-event-soon" type="button" class="wide-mode-banner w-full p-3.5 rounded-2xl border-2 border-cyan-300/85 hover:border-amber-300 transition shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-2 text-left" style="background:linear-gradient(115deg,rgba(127,29,29,0.92) 0%,rgba(6,78,59,0.92) 50%,rgba(12,74,110,0.94) 100%);">
+ <i class="fa-solid fa-snowflake map-bg-watermark text-cyan-200"></i>
+ <div class="flex items-center gap-3 z-10">
+ <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-600 via-emerald-600 to-cyan-500 border-2 border-amber-200/90 flex items-center justify-center shrink-0 shadow-lg"><i class="fa-solid fa-tree text-amber-200 text-lg"></i></div>
+ <div>
+ <div class="flex items-center gap-2 flex-wrap"><span class="font-jjk font-black text-sm sm:text-base text-cyan-100 tracking-wider">🎄 CHRISTMAS EVENT — ZIMOWA ARENA ❄️</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black uppercase">COMING SOON</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-rose-600 text-white font-black uppercase">LIMITED EVENT</span></div>
+ <p class="text-[11px] text-slate-100 mt-0.5">Świąteczna mapa, limitowane zimowe postacie i specjalne prezenty! <strong>Już wkrótce (Coming Soon)...</strong></p>
+ </div>
+ </div>
+ <div class="flex items-center gap-2 shrink-0 z-10"><span class="px-4 py-2 rounded-xl bg-slate-950/90 border-2 border-cyan-300/80 text-cyan-200 font-black text-xs uppercase tracking-wider shadow"><i class="fa-solid fa-snowflake mr-1"></i>COMING SOON</span></div>
+ </button>
+ </div>
                     </div>
                 </div>
             </div>
@@ -4035,6 +4049,9 @@ aside, #inspector-panel {
                 baldi: false,
                 nightmare_freddy: false,
                 purple_guy: false,
+                nexus_gd: false,
+                spaceuk: false,
+                nightmare_chica: false,
                 heian_sukuna: false,
                 mahito_calamity: false,
                 hanami_hero: false,
@@ -5738,13 +5755,13 @@ aside, #inspector-panel {
                 id: 'nightmare_bonnie', universe: 'fnaf', craftOnly: true, rarity: 'Calamity', name: 'Nightmare Bonnie', cost: 800, maxPlace: 1, maxLevel: 5,
                 color: '#4f46e5', accent: '#dc2626',
                 damage: 500, cooldown: 0.50, range: 265, armorPierce: 1.0,
-                technique: 'Tylko Laser (Brak Pasywki) • Guitar Sonic Boom • Upgrade (+1% DMG / -1% CD)',
+                technique: 'Tylko Laser (Brak Pasywki) • Guitar Sonic Boom • Upgrade (+2,5% DMG / -2,5% CD)',
                 desc: 'CALAMITY CRAFTING (800 CE • Limit 1 • LVL 5 MAX: 3000 DMG / 0.20s = 15 000 DPS): Atakuje wyłącznie potężnym laserem — nie posiada pasywki!',
                 skill1: { name: 'Guitar Sonic Boom', cd: 25, unlockLvl: 1, desc: 'Wysyła biało-szary łukowy Slash, który spowalnia przeciwników o 75% na 3s!' },
-                skill2: { name: 'Upgrade', cd: 120, unlockLvl: 3, desc: 'Gdy używa mocy, dodaje sobie na stałe +1% DMG oraz -1% CD na całą rundę!' },
+                skill2: { name: 'Upgrade', cd: 120, unlockLvl: 3, desc: 'Gdy używa mocy, dodaje sobie na stałe +2,5% DMG oraz -2,5% CD na całą rundę!' },
                 upgrades: [
                     { cost: 680,  dmg: 700,  cd: 0.40, rng: 280, text: 'LVL 2: 700 DMG / 0.40s (1750 DPS) — silniejszy laser z Red Guitar.' },
-                    { cost: 1150, dmg: 1200, cd: 0.35, rng: 295, text: 'LVL 3: 1200 DMG / 0.35s (3429 DPS!) — Odblokowuje Upgrade (+1% DMG / -1% CD na całą rundę)!' },
+                    { cost: 1150, dmg: 1200, cd: 0.35, rng: 295, text: 'LVL 3: 1200 DMG / 0.35s (3429 DPS!) — Odblokowuje Upgrade (+2,5% DMG / -2,5% CD na całą rundę)!' },
                     { cost: 1950, dmg: 2250, cd: 0.25, rng: 315, text: 'LVL 4: 2250 DMG / 0.25s (9000 DPS!) — niszczycielski promień koszmaru.' },
                     { cost: 2900, dmg: 3000, cd: 0.20, rng: 340, text: 'LVL 5 MAX: 3000 DMG / 0.20s (15 000 DPS!) — Maksymalny poziom Nightmare Bonnie!' }
                 ]
@@ -6603,7 +6620,7 @@ aside, #inspector-panel {
             if (tower.nullscapesTimer > 0) mult *= 1.10; // Hover Nullscapes ##: +10% DMG na 10s!
             if (tower.acropolisMiniOrb) mult *= 1.15; // Hover Silent Acropolis Mini Koło: +15% DMG!
             if (tower.fireworkDmgStacks > 0) mult *= (1 + tower.fireworkDmgStacks * 0.0005); // Trick Firework: +0.05% DMG za ładunek!
-            if (tower.nbUpgradeStacks > 0) mult *= (1 + tower.nbUpgradeStacks * 0.01); // Nightmare Bonnie Upgrade: +1% DMG na całą rundę!
+            if (tower.nbUpgradeStacks > 0) mult *= (1 + tower.nbUpgradeStacks * 0.025); // Nightmare Bonnie Upgrade: +2,5% DMG na całą rundę!
             if (state.heliopolisBuffTimer > 0 && (tower.type === 'gd_wpopoff' || tower.type === 'gd_trick' || tower.type === 'gd_hover' || tower.type === 'gd_doggie')) {
                 mult *= 1.30; // Zoink Heliopolis: +30% DMG dla Wpopoff, Trick, Hover i Doggie na 30s!
             }
@@ -6655,7 +6672,7 @@ aside, #inspector-panel {
             if (tower.type === 'yuta' && tower.rikaActiveTimer > 0) cd *= 0.78;
             if (tower.cdBoostWavesLeft > 0) cd *= 0.90; // -10% cooldown od Hakari Heal Others
             if (state.societyDroneTimer > 0) cd *= 0.90; // Wpopoff Society Dron: -10% CD na 10s!
-            if (tower.nbUpgradeStacks > 0) cd *= Math.max(0.25, 1 - tower.nbUpgradeStacks * 0.01); // Nightmare Bonnie Upgrade: -1% CD na całą rundę!
+            if (tower.nbUpgradeStacks > 0) cd *= Math.max(0.25, 1 - tower.nbUpgradeStacks * 0.025); // Nightmare Bonnie Upgrade: -2,5% CD na całą rundę!
             if (state.towers.some(a => a.type === 'shinjuku_yuji')) cd *= 0.95; // Pasywka Shinjuku Yuji: +5% szybkości (-5% CD) dla sojuszników!
             for (const z of (state.skillZones || [])) {
                 if (z.kind === 'shinjuku_cd_aura' && z.life > 0 && Math.hypot(z.x - tower.x, z.y - tower.y) <= z.radius) {
@@ -6818,7 +6835,10 @@ aside, #inspector-panel {
  phantom_puppet: { arm: '#18181b', leg: '#09090b', shoe: '#09090b' },
  springtrap: { arm: '#6b7a2c', leg: '#4d591e', shoe: '#1c1917' },
  st_titan_tv_1: { arm: '#111018', leg: '#09080f', shoe: '#050408' },
- st_large_tv_evo: { arm: '#14111a', leg: '#0c0a12', shoe: '#050408' }
+ st_large_tv_evo: { arm: '#14111a', leg: '#0c0a12', shoe: '#050408' },
+                nexus_gd: { arm: '#dc2626', leg: '#b91c1c', shoe: '#7f1d1d' },
+                spaceuk: { arm: '#f8fafc', leg: '#e2e8f0', shoe: '#cbd5e1' },
+                nightmare_chica: { arm: '#a16207', leg: '#78350f', shoe: '#450a0a' }
             };
             return map[type] || { arm: '#1e293b', leg: '#0f172a', shoe: '#09090b' };
         }
@@ -16861,10 +16881,10 @@ aside, #inspector-panel {
                     spawnParticles(tower.x, tower.y, '#4ade80', 34, 190, 4.6);
                     spawnFloatingText(tower.x, tower.y - 44, '✖ SWORD SLASH (STUN + COFNIĘCIE 1s)!', '#22c55e', 1.3);
                 } else if (tower.type === 'nightmare_bonnie') {
-                    // Nightmare Bonnie Moc 2: Upgrade — dodaje sobie +1% DMG i -1% CD na całą rundę!
+                    // Nightmare Bonnie Moc 2: Upgrade — dodaje sobie +2,5% DMG i -2,5% CD na całą rundę!
                     tower.nbUpgradeStacks = (tower.nbUpgradeStacks || 0) + 1;
                     spawnParticles(tower.x, tower.y, '#ef4444', 32, 180, 4.5);
-                    spawnFloatingText(tower.x, tower.y - 44, `⚡ UPGRADE x${tower.nbUpgradeStacks} (+${tower.nbUpgradeStacks}% DMG / -${tower.nbUpgradeStacks}% CD)!`, '#fca5a5', 1.35);
+                    spawnFloatingText(tower.x, tower.y - 44, `⚡ UPGRADE x${tower.nbUpgradeStacks} (+${tower.nbUpgradeStacks * 2.5}% DMG / -${tower.nbUpgradeStacks * 2.5}% CD)!`, '#fca5a5', 1.35);
                     if (state.selectedTower && state.selectedTower.id === tower.id) updateInspector();
                 } else if (tower.type === 'mahito_calamity') {
                     if (tower.mahitoSpiritWaves > 0) {
@@ -19167,7 +19187,7 @@ aside, #inspector-panel {
                 }
                 const inShinjukuCdAura = (state.skillZones || []).some(z => z.kind === 'shinjuku_cd_aura' && z.life > 0 && Math.hypot(z.x - t.x, z.y - t.y) <= z.radius);
                 const societySpeed = state.societyDroneTimer > 0 ? (1 / 0.90) : 1.0;
-                const nbSpeed = t.nbUpgradeStacks ? (1 / Math.max(0.25, 1 - t.nbUpgradeStacks * 0.01)) : 1.0;
+                const nbSpeed = t.nbUpgradeStacks ? (1 / Math.max(0.25, 1 - t.nbUpgradeStacks * 0.025)) : 1.0;
                 const cdTick = dt * (inShinjukuCdAura ? 1.25 : 1.0) * (hasShinjukuYuji ? 1.05 : 1.0) * societySpeed * nbSpeed;
                 if (t.skill1Cd > 0) t.skill1Cd = Math.max(0, t.skill1Cd - cdTick);
                 if (t.skill2Cd > 0) t.skill2Cd = Math.max(0, t.skill2Cd - cdTick);
@@ -22412,11 +22432,11 @@ aside, #inspector-panel {
             let chosen = rollWeighted(enchantPool).id;
             let pityHit = false;
             if (MX.enchantPity >= ENCHANT_PITY_MAX) {
-                if (wantedId && ENCHANTS[wantedId]) chosen = wantedId;
+                if (wantedId && wantedId !== 'multiversal_threat' && ENCHANTS[wantedId]) chosen = wantedId;
                 else if (!RARE_ENCHANTS.includes(chosen)) chosen = RARE_ENCHANTS[Math.floor(Math.random() * RARE_ENCHANTS.length)];
                 pityHit = true;
             }
-            if (pityHit || (wantedId ? chosen === wantedId : RARE_ENCHANTS.includes(chosen))) MX.enchantPity = 0;
+            if (pityHit || (wantedId && wantedId !== 'multiversal_threat' ? chosen === wantedId : RARE_ENCHANTS.includes(chosen))) MX.enchantPity = 0;
             saveMX();
 
             multiverseSave.enchants[heroId] = chosen;
@@ -22815,7 +22835,7 @@ aside, #inspector-panel {
             document.getElementById('idx-insp-name').textContent = h.name;
             document.getElementById('idx-insp-cost').textContent = `Koszt: ${h.cost} CE`;
             const stEl = document.getElementById('idx-insp-status');
-            stEl.textContent = isUnlocked ? '✔ ODBLOKOWANO' : h.craftOnly ? '🔨 CRAFTING (zakładka Crafting)' : h.questOnly ? '🏆 QUEST FNAF (EXCLUSIVE)' : h.id === 'purple_guy' ? '🟣 FIOLETOWY CRATE (ENDLESS, 1%)' : h.secret ? '✨ SECRET DROP (0.05%)' : '🔒 DO WYLOSOWANIA';
+            stEl.textContent = isUnlocked ? '✔ ODBLOKOWANO' : h.craftOnly ? '🔨 CRAFTING (zakładka Crafting)' : h.questOnly ? '🏆 QUEST FNAF (EXCLUSIVE)' : h.afkOnly ? '🎁 AFK PRESENT' : h.id === 'purple_guy' ? '🟣 FIOLETOWY CRATE (ENDLESS, 1%)' : h.secret ? '✨ SECRET DROP (0.05%)' : '🔒 DO WYLOSOWANIA';
             stEl.className = isUnlocked ? 'text-[10px] font-extrabold text-emerald-400' : 'text-[10px] font-extrabold text-amber-400';
 
             document.getElementById('idx-insp-passive').textContent = `${h.technique} — ${h.desc}`;
@@ -23215,7 +23235,7 @@ aside, #inspector-panel {
                         <span class="text-cyan-300 font-bold">L6: ${maxDps} DPS</span>
                     </div>
                     <div class="text-[9px] font-extrabold ${isUnlocked ? 'text-emerald-400' : 'text-slate-500'}">
-                        ${isUnlocked ? '✔ ODBLOKOWANO' : h.craftOnly ? '🔨 CRAFTING' : h.questOnly ? '🏆 QUEST FNAF' : h.id === 'purple_guy' ? '🟣 FIOLETOWY CRATE (ENDLESS)' : h.secret ? '✨ SECRET DROP' : '🔒 W SKRZYNCE'}
+                        ${isUnlocked ? '✔ ODBLOKOWANO' : h.craftOnly ? '🔨 CRAFTING' : h.questOnly ? '🏆 QUEST FNAF' : h.afkOnly ? '🎁 AFK PRESENT' : h.id === 'purple_guy' ? '🟣 FIOLETOWY CRATE (ENDLESS)' : h.secret ? '✨ SECRET DROP' : '🔒 W SKRZYNCE'}
                     </div>
                 `;
                 card.addEventListener('click', () => inspectCharacterInIndex(h.id));
@@ -25120,7 +25140,7 @@ aside, #inspector-panel {
 
         function updateEnchantPityLabel() {
             const el = document.getElementById('enchant-pity-label');
-            if (el) el.textContent = `🎯 PITY Enchantu: ${MX.enchantPity} / ${ENCHANT_PITY_MAX} — po ${ENCHANT_PITY_MAX} rollach dostajesz gwarantowany wybrany Enchant (bez celu: rzadki Enchant).`;
+            const _wtSel = document.getElementById('enchant-target-select')?.value; if (el) el.textContent = _wtSel === 'multiversal_threat' ? `🎯 PITY Enchantu: ${MX.enchantPity} / ${ENCHANT_PITY_MAX} — ⚠️ Multiversal Threat NIE MA PITY (tylko 0.01% szansy; pity daje rzadki Enchant)!` : `🎯 PITY Enchantu: ${MX.enchantPity} / ${ENCHANT_PITY_MAX} — po ${ENCHANT_PITY_MAX} rollach dostajesz gwarantowany wybrany Enchant (bez celu: rzadki Enchant).`;
         }
 
         // ---------- AUTO / MANUAL ----------
@@ -25804,7 +25824,7 @@ aside, #inspector-panel {
         const CRAFT_RECIPES = [{
             id: 'nightmare_bonnie',
             heroId: 'nightmare_bonnie',
-            subtitle: 'CALAMITY • Koszt 800 CE (Limit 1) • LVL 5 MAX: 3000 DMG / 0.20s • Tylko Laser (Brak Pasywki), Guitar Sonic Boom (75% Slow 3s) & Upgrade (+1% DMG / -1% CD na całą rundę)',
+            subtitle: 'CALAMITY • Koszt 800 CE (Limit 1) • LVL 5 MAX: 3000 DMG / 0.20s • Tylko Laser (Brak Pasywki), Guitar Sonic Boom (75% Slow 3s) & Upgrade (+2,5% DMG / -2,5% CD na całą rundę)',
             reqs: [
                 { kind: 'hero', id: 'nightmare_freddy', label: 'Nightmare Freddy (zostaje w kolekcji — NIE znika!)' },
                 { kind: 'item', id: 'red_guitar', n: 10, label: 'Red Guitar 🎸' },
@@ -26847,7 +26867,6 @@ aside, #inspector-panel {
  // === 3. SECRET MERCHANT (DO ODBLOKOWANIA ZA 1 TV POINT • SEKRETNA POSTAĆ ZMIENIA SIĘ CO 30 MINUT!) ===
  const MERCHANT_ROTATION_MS = 30 * 60 * 1000; // 30 minut czasu rzeczywistego
  const MERCHANT_SECRET_POOL = [
-   'st_titan_tv_25',
    'st_titan_speaker_2',
    'st_titan_camera_2',
    'gojo_full_power',
@@ -26856,9 +26875,7 @@ aside, #inspector-panel {
    'endo01',
    'ennard',
    'gd_cp_ufo',
-   'baldi',
-   'purple_guy',
-   'modulo'
+   'springtrap'
  ];
  function getMerchantRotationState() {
    const now = Date.now();
@@ -27373,7 +27390,7 @@ aside, #inspector-panel {
    // 2. REMODEL MERCHANTA: 3 SLOTY OBOK SIEBIE (LEWO: MYTHIC | ŚRODEK: TITAN TV MAN 2.5 ZA 10 📺 TV POINTS | PRAWO: SECRET)
    const V20_ROT_MS = 30 * 60 * 1000;
    const V20_MYTHIC_POOL = ['st_titan_camera_1', 'st_titan_speaker_1', 'gojo', 'sukuna', 'golden_freddy', 'puppet', 'gd_hard_demon', 'gd_zoink', 'withered_foxy', 'jogo_hero'];
-   const V20_SECRET_POOL = ['st_titan_speaker_2', 'st_titan_camera_2', 'gojo_full_power', 'meguna', 'withered_golden_freddy', 'endo01', 'ennard', 'gd_cp_ufo', 'baldi', 'purple_guy', 'modulo'];
+   const V20_SECRET_POOL = ['st_titan_speaker_2', 'st_titan_camera_2', 'gojo_full_power', 'meguna', 'withered_golden_freddy', 'endo01', 'ennard', 'gd_cp_ufo', 'springtrap'];
 
    function getV20MerchSlots() {
      const now = Date.now();
@@ -27381,7 +27398,7 @@ aside, #inspector-panel {
      const msLeft = V20_ROT_MS - (now % V20_ROT_MS);
      const off = Math.max(0, Math.floor((multiverseSave && multiverseSave.merchantRerollOffset) || 0));
      const mPool = V20_MYTHIC_POOL.filter(id => typeof HEROES === 'object' && HEROES[id]);
-     const sPool = V20_SECRET_POOL.filter(id => typeof HEROES === 'object' && HEROES[id]);
+     const sPool = V20_SECRET_POOL.filter(id => typeof HEROES === 'object' && HEROES[id] && HEROES[id].rarity === 'Secret');
      return {
        mythicId: mPool.length ? mPool[(slotNum + off) % mPool.length] : 'st_titan_camera_1',
        centerId: 'st_titan_tv_25',
@@ -29031,35 +29048,35 @@ aside, #inspector-panel {
       let list = [];
       if (curTab === 'hourly') {
         list = [
-          { id: 'h_kill', title: 'Zabij 40 wrogów', cur: q.hr.kills, max: 40, rew: 15, tier: 'EASY', store: q.hr.claimed },
-          { id: 'h_ench', title: 'Zdobądź / zakręć 3 razy Enchantem', cur: q.hr.enchants, max: 3, rew: 10, tier: 'EASY', store: q.hr.claimed },
-          { id: 'h_boss', title: 'Zabij 4 Bossów', cur: q.hr.bosses, max: 4, rew: 25, tier: 'MEDIUM', store: q.hr.claimed },
-          { id: 'h_win', title: 'Wygraj 1 rundę na dowolnej mapie', cur: q.hr.wins, max: 1, rew: 30, tier: 'MEDIUM', store: q.hr.claimed },
-          { id: 'h_end', title: 'Dotrzyj do 15 fali w Endless', cur: q.hr.endless, max: 15, rew: 40, tier: 'HARD', store: q.hr.claimed },
-          { id: 'h_myth', title: 'Dropnij 1 postać Mythic ze skrzynki', cur: q.hr.mythics, max: 1, rew: 50, tier: 'HARD', store: q.hr.claimed }
+          { id: 'h_kill', title: 'Zabij 150 wrogów', cur: q.hr.kills, max: 150, rew: 15, tier: 'EASY', store: q.hr.claimed },
+          { id: 'h_ench', title: 'Zdobądź / zakręć 10 razy Enchantem', cur: q.hr.enchants, max: 10, rew: 12, tier: 'EASY', store: q.hr.claimed },
+          { id: 'h_boss', title: 'Zabij 12 Bossów', cur: q.hr.bosses, max: 12, rew: 25, tier: 'MEDIUM', store: q.hr.claimed },
+          { id: 'h_win', title: 'Wygraj 2 rundy na dowolnej mapie', cur: q.hr.wins, max: 2, rew: 35, tier: 'MEDIUM', store: q.hr.claimed },
+          { id: 'h_end', title: 'Dotrzyj do 30 fali w Endless', cur: q.hr.endless, max: 30, rew: 45, tier: 'HARD', store: q.hr.claimed },
+          { id: 'h_myth', title: 'Dropnij 2 postacie Mythic ze skrzynki', cur: q.hr.mythics, max: 2, rew: 55, tier: 'HARD', store: q.hr.claimed }
         ];
       } else if (curTab === 'daily') {
         list = [
-          { id: 'd_kill', title: 'Zabij 300 wrogów', cur: q.day.kills, max: 300, rew: 35, tier: 'DAILY', store: q.day.claimed },
-          { id: 'd_ench', title: 'Zakręć Enchantem 15 razy', cur: q.day.enchants, max: 15, rew: 30, tier: 'DAILY', store: q.day.claimed },
-          { id: 'd_boss', title: 'Zabij 20 Bossów', cur: q.day.bosses, max: 20, rew: 50, tier: 'DAILY', store: q.day.claimed },
-          { id: 'd_win', title: 'Wygraj 4 rundy', cur: q.day.wins, max: 4, rew: 60, tier: 'DAILY', store: q.day.claimed },
-          { id: 'd_end', title: 'Dotrzyj do 45 fali w Endless', cur: q.day.endless, max: 45, rew: 75, tier: 'DAILY+', store: q.day.claimed },
-          { id: 'd_myth', title: 'Dropnij 3 postacie Mythic', cur: q.day.mythics, max: 3, rew: 80, tier: 'DAILY+', store: q.day.claimed }
+          { id: 'd_kill', title: 'Zabij 1 500 wrogów', cur: q.day.kills, max: 1500, rew: 40, tier: 'DAILY', store: q.day.claimed },
+          { id: 'd_ench', title: 'Zakręć Enchantem 50 razy', cur: q.day.enchants, max: 50, rew: 35, tier: 'DAILY', store: q.day.claimed },
+          { id: 'd_boss', title: 'Zabij 60 Bossów', cur: q.day.bosses, max: 60, rew: 55, tier: 'DAILY', store: q.day.claimed },
+          { id: 'd_win', title: 'Wygraj 10 rund', cur: q.day.wins, max: 10, rew: 65, tier: 'DAILY', store: q.day.claimed },
+          { id: 'd_end', title: 'Dotrzyj do 80 fali w Endless', cur: q.day.endless, max: 80, rew: 85, tier: 'DAILY+', store: q.day.claimed },
+          { id: 'd_myth', title: 'Dropnij 8 postaci Mythic', cur: q.day.mythics, max: 8, rew: 95, tier: 'DAILY+', store: q.day.claimed }
         ];
       } else {
         const wonAll4 = ['easy', 'normal', 'hard', 'extreme'].filter(d => q.ach.wonDiffs && q.ach.wonDiffs[d]).length;
         const secretOwned = Object.keys(multiverseSave.unlocked || {}).filter(id => multiverseSave.unlocked[id] && HEROES[id] && (HEROES[id].rarity === 'Secret' || HEROES[id].rarity === 'Mysterious')).length;
         list = [
-          { id: 'a_e1', title: '[SŁABE] Wygraj swoją pierwszą rundę', cur: q.ach.wins, max: 1, rew: 100, tier: 'SŁABE (100💎)', store: q.ach.claimed },
-          { id: 'a_e2', title: '[SŁABE] Zdobądź dowolny Enchant (1 raz)', cur: q.ach.enchants, max: 1, rew: 100, tier: 'SŁABE (100💎)', store: q.ach.claimed },
-          { id: 'a_m1', title: '[MEDIUM] Dropnij / posiadaj dowolnego Secreta', cur: Math.max(q.ach.secrets, secretOwned), max: 1, rew: 200, tier: 'MEDIUM (200💎)', store: q.ach.claimed },
-          { id: 'a_m2', title: '[MEDIUM] Dotrzyj do 40 fali w Endless', cur: Math.max(q.ach.maxEndless, (multiverseSave.fnafQuest && multiverseSave.fnafQuest.maxEndlessWave) || 0), max: 40, rew: 200, tier: 'MEDIUM (200💎)', store: q.ach.claimed },
+          { id: 'a_e1', title: '[SŁABE] Wygraj 3 rundy', cur: q.ach.wins, max: 3, rew: 100, tier: 'SŁABE (100💎)', store: q.ach.claimed },
+          { id: 'a_e2', title: '[SŁABE] Zakręć Enchantem 10 razy', cur: q.ach.enchants, max: 10, rew: 100, tier: 'SŁABE (100💎)', store: q.ach.claimed },
+          { id: 'a_m1', title: '[MEDIUM] Posiadaj 2 postacie Secret / Mysterious', cur: Math.max(q.ach.secrets, secretOwned), max: 2, rew: 200, tier: 'MEDIUM (200💎)', store: q.ach.claimed },
+          { id: 'a_m2', title: '[MEDIUM] Dotrzyj do 75 fali w Endless', cur: Math.max(q.ach.maxEndless, (multiverseSave.fnafQuest && multiverseSave.fnafQuest.maxEndlessWave) || 0), max: 75, rew: 200, tier: 'MEDIUM (200💎)', store: q.ach.claimed },
           { id: 'a_h1', title: '[HARD] Wygraj wszystkie 4 tryby (Easy, Normal, Hard, Extreme)', cur: wonAll4, max: 4, rew: 300, tier: 'HARD (300💎)', store: q.ach.claimed },
-          { id: 'a_h2', title: '[HARD] Zabij łącznie 35 Bossów', cur: q.ach.bosses, max: 35, rew: 300, tier: 'HARD (300💎)', store: q.ach.claimed },
-          { id: 'a_x1', title: '[EXTREME] Dotrzyj do 100 fali w Endless', cur: Math.max(q.ach.maxEndless, (multiverseSave.fnafQuest && multiverseSave.fnafQuest.maxEndlessWave) || 0), max: 100, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed },
-          { id: 'a_x2', title: '[EXTREME] Posiadaj 3 różne postacie Secret / Mysterious', cur: secretOwned, max: 3, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed },
-          { id: 'a_x3', title: '[EXTREME] Zdobądź chromowy Enchant: Multiversal Threat!', cur: q.ach.mtEnchant, max: 1, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed }
+          { id: 'a_h2', title: '[HARD] Zabij łącznie 150 Bossów', cur: q.ach.bosses, max: 150, rew: 300, tier: 'HARD (300💎)', store: q.ach.claimed },
+          { id: 'a_x1', title: '[EXTREME] Dotrzyj do 175 fali w Endless', cur: Math.max(q.ach.maxEndless, (multiverseSave.fnafQuest && multiverseSave.fnafQuest.maxEndlessWave) || 0), max: 175, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed },
+          { id: 'a_x2', title: '[EXTREME] Posiadaj 5 różnych postaci Secret / Mysterious', cur: secretOwned, max: 5, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed },
+          { id: 'a_x3', title: '[EXTREME] Zdobądź chromowy Enchant: Multiversal Threat (bez Pity!)', cur: q.ach.mtEnchant, max: 1, rew: 500, tier: 'EXTREME (500💎)', store: q.ach.claimed }
         ];
       }
 
@@ -29121,5 +29138,1202 @@ aside, #inspector-panel {
   setTimeout(mountQuestsAndAchievementsModal, 500);
 })();
 </script>
+
+<script>
+/* ============================================================
+   AFK PRESENT • NEXUS (LEGENDARY) • SPACEUK (MYSTERIOUS)
+   Dodatek dopisany na końcu gry — nie rusza istniejących postaci.
+   ============================================================ */
+(function () {
+  'use strict';
+  if (typeof HEROES === 'undefined' || typeof state === 'undefined') { console.warn('AFK Present: brak HEROES/state'); return; }
+
+  // ------------------------------------------------------------
+  // 1. DEFINICJE BOHATERÓW
+  // ------------------------------------------------------------
+  HEROES.nexus_gd = {
+    id: 'nexus_gd', universe: 'gd', afkOnly: true, rarity: 'Legendary', name: 'Nexus', cost: 400, maxLevel: 6,
+    color: '#38bdf8', accent: '#fb923c',
+    damage: 250, cooldown: 1.0, range: 200, armorPierce: 0.8,
+    technique: 'Bije własną głową • Ship z GD',
+    desc: 'LEGENDARY (99% z AFK Present): Bije własną głową! Pasywka — każde uderzenie wywołuje Ship z Geometry Dash, który zadaje dodatkowe 200 DMG. LVL 6 MAX: 3000 DPS.',
+    skill1: { name: 'Macro', cd: 14, unlockLvl: 1, desc: 'Cofa losową osobę (wroga) w tył trasy! Bossy cofa tylko lekko.' },
+    skill2: { name: 'Showcase', cd: 10, unlockLvl: 3, desc: 'Tworzy clip — rzuca znaczkiem YouTube. 25% szans, że przyczepi się do sojusznika i da mu -7,5% CD (25s).' },
+    upgrades: [
+      { cost: 350,  dmg: 500,  cd: 0.9, rng: 210, text: 'LVL 2: 500 DMG / 0.9s (556 DPS) — mocniejszy łeb.' },
+      { cost: 500,  dmg: 750,  cd: 0.8, rng: 220, text: 'LVL 3: 750 DMG / 0.8s (938 DPS) — Odblokowuje Showcase!' },
+      { cost: 700,  dmg: 1000, cd: 0.7, rng: 235, text: 'LVL 4: 1000 DMG / 0.7s (1429 DPS) — szybszy Ship.' },
+      { cost: 950,  dmg: 1250, cd: 0.6, rng: 250, text: 'LVL 5: 1250 DMG / 0.6s (2083 DPS) — łeb jak kowadło.' },
+      { cost: 1300, dmg: 1500, cd: 0.5, rng: 265, text: 'LVL 6 MAX: 1500 DMG / 0.5s (3000 DPS) — Legenda Nexusa!' }
+    ]
+  };
+
+  HEROES.spaceuk = {
+    id: 'spaceuk', universe: 'gd', afkOnly: true, rarity: 'Mysterious', name: 'SpaceUK', cost: 2500, maxLevel: 5, maxPlace: 1,
+    color: '#a855f7', accent: '#22c55e',
+    damage: 3000, cooldown: 0.8, range: 300, armorPierce: 1.0,
+    technique: 'Atakuje Słowem (Cheat) • UK NUKE',
+    desc: 'MYSTERIOUS (0.5% z AFK Present): Atakuje Słowem (Cheat). Pasywka — 10% szans przy ataku na słowo UK, które jest NUKE! Można postawić tylko 1 (żadne dodatkowe postawienie nie działa). LVL 5 MAX: 30 000 DPS.',
+    skill1: { name: 'Wheel of Fortune', cd: 25, unlockLvl: 1, desc: 'Respi koło, które kręci się 5s (CD 25s). 5 kolumn po 20%: Niebieski — +25% DMG/-25% CD sobie • Zielony — to samo dla sojuszników + biała korona 15s • Czerwony — Clubstep Monsters (100 RNG, spowalniają) • Żółty — połyka 5 postaci (nie bossy) + tabliczka „Hack" • Pomarańczowy — wysyła wielką szybką kulę z klawiszami klawiatury (10 000 DMG, Piercing)!' },
+    skill2: { name: '— (brak Mocy 2)', cd: 999, unlockLvl: 99, desc: 'SpaceUK ma tylko jedną Moc.' },
+    upgrades: [
+      { cost: 3000, dmg: 4500, cd: 0.6, rng: 320, text: 'LVL 2: 4500 DMG / 0.6s (7500 DPS) — Cheat się rozkręca.' },
+      { cost: 4000, dmg: 6000, cd: 0.5, rng: 340, text: 'LVL 3: 6000 DMG / 0.5s (12 000 DPS) — więcej słów, więcej NUKE.' },
+      { cost: 5200, dmg: 7500, cd: 0.4, rng: 360, text: 'LVL 4: 7500 DMG / 0.4s (18 750 DPS) — Cheat bez limitów.' },
+      { cost: 6800, dmg: 9000, cd: 0.3, rng: 380, text: 'LVL 5 MAX: 9000 DMG / 0.3s (30 000 DPS) — ABSOLUTNY MYSTERIOUS!' }
+    ]
+  };
+
+  const AFK_HEROES = ['nexus_gd', 'spaceuk', 'nightmare_chica'];
+  const isAfkHero = (t) => t && AFK_HEROES.includes(t.type);
+
+  // ------------------------------------------------------------
+  // 2. EFEKTY (własna lista w state — resetuje się z każdą grą)
+  // ------------------------------------------------------------
+  const fxList = () => (state.nxfx || (state.nxfx = []));
+  const alive = (e) => e && e.hp > 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  function castMacro(tower) {
+    const foes = state.enemies.filter(alive);
+    if (!foes.length) return false;
+    const e = foes[Math.floor(Math.random() * foes.length)];
+    const wps = e.lane || state.map.waypoints;
+    const back = e.isBoss ? 1 : 3;
+    e.wpIndex = Math.max(1, (e.wpIndex || 1) - back);
+    const wp = wps[Math.max(0, e.wpIndex - 1)];
+    if (wp) { e.x = wp.x; e.y = wp.y; }
+    e.distanceTraveled = Math.max(0, (e.distanceTraveled || 0) - (e.isBoss ? 90 : 320));
+    e.stunTimer = Math.max(e.stunTimer || 0, 0.6);
+    fxList().push({ kind: 'rewind', x: e.x, y: e.y, t: 0, dur: 0.7 });
+    spawnParticles(e.x, e.y, '#38bdf8', 22, 170, 4);
+    spawnFloatingText(tower.x, tower.y - 46, '⏪ MACRO!', '#38bdf8', 1.3);
+    spawnFloatingText(e.x, e.y - 24, e.isBoss ? '⏪ COFNIĘTY (boss)' : '⏪ COFNIĘTY!', '#7dd3fc', 1.1);
+    return true;
+  }
+
+  function castShowcase(tower) {
+    const allies = state.towers.filter(a => a !== tower);
+    if (!allies.length) { showBanner('🎬 Showcase: brak sojuszników na mapie!'); return false; }
+    const ally = allies[Math.floor(Math.random() * allies.length)];
+    fxList().push({ kind: 'yt', tower, ally, t: 0, dur: 0.75, success: Math.random() < 0.25 });
+    spawnFloatingText(tower.x, tower.y - 46, '🎬 SHOWCASE — CLIP!', '#f87171', 1.25);
+    return true;
+  }
+
+  function castWheel(tower) {
+    const res = Math.floor(Math.random() * 5); // 5 kolumn po 20%
+    const sliceAng = (2 * Math.PI) / 5;
+    const target = ((1.5 * Math.PI - (res + 0.5) * sliceAng) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    fxList().push({ kind: 'wheel', tower, t: 0, dur: 5, res, final: 10 * Math.PI + target, resolved: false });
+    spawnFloatingText(tower.x, tower.y - 46, '🎡 WHEEL OF FORTUNE!', '#facc15', 1.35);
+    return true;
+  }
+
+  function resolveWheel(f) {
+    const t = f.tower;
+    if (f.res === 0) { // niebieski
+      t._wofSelf = 15;
+      spawnFloatingText(t.x, t.y - 52, '🔵 +25% DMG • -25% CD (15s)', '#60a5fa', 1.3);
+      spawnParticles(t.x, t.y, '#3b82f6', 30, 180, 4);
+    } else if (f.res === 1) { // zielony
+      let n = 0;
+      for (const a of state.towers) if (a !== t) { a._wofAlly = 15; n++; spawnParticles(a.x, a.y - 30, '#ffffff', 10, 90, 3); }
+      spawnFloatingText(t.x, t.y - 52, `🟢 SOJUSZNICY (${n}): +25% DMG • -25% CD • 👑`, '#4ade80', 1.3);
+    } else if (f.res === 2) { // czerwony
+      const foes = state.enemies.filter(alive).sort(() => Math.random() - 0.5).slice(0, 2);
+      const spots = foes.length ? foes.map(e => ({ x: e.x, y: e.y })) : [{ x: t.x + rnd(-70, 70), y: t.y + rnd(-70, 70) }];
+      for (const s of spots) fxList().push({ kind: 'monster', x: s.x, y: s.y, t: 0, dur: 20, r: 100 });
+      spawnFloatingText(t.x, t.y - 52, '🔴 CLUBSTEP MONSTERS!', '#f87171', 1.3);
+    } else if (f.res === 3) { // żółty
+      const victims = state.enemies.filter(e => alive(e) && !e.isBoss)
+        .sort((a, b) => Math.hypot(a.x - t.x, a.y - t.y) - Math.hypot(b.x - t.x, b.y - t.y)).slice(0, 5);
+      for (const e of victims) fxList().push({ kind: 'swallow', tower: t, enemy: e, t: 0 });
+      if (victims.length) fxList().push({ kind: 'hack', tower: t, t: 0, delay: 1.0, dur: 12 });
+      spawnFloatingText(t.x, t.y - 52, `🟡 POŁYKA ${victims.length} POSTACI!`, '#facc15', 1.3);
+    } else { // pomarańczowy — wielka szybka kula z klawiszami klawiatury (10 000 DMG Piercing)
+      const foes = state.enemies.filter(alive).sort((a, b) => (b.distanceTraveled || 0) - (a.distanceTraveled || 0));
+      const targetEnemy = foes[0];
+      const wps = (targetEnemy && targetEnemy.lane) || (state.map && state.map.waypoints) || [{ x: 0, y: 260 }, { x: 960, y: 260 }];
+      const startWp = wps[wps.length - 1];
+      let ang = 0;
+      if (targetEnemy) {
+        ang = Math.atan2(targetEnemy.y - t.y, targetEnemy.x - t.x);
+      } else if (wps.length >= 2) {
+        ang = Math.atan2(wps[0].y - startWp.y, wps[0].x - startWp.x);
+      }
+      fxList().push({
+        kind: 'kb_orb', tower: t,
+        x: t.x, y: t.y,
+        vx: Math.cos(ang) * 760, vy: Math.sin(ang) * 760,
+        r: 44, dmg: 10000, hitIds: new Set(),
+        t: 0, dur: 2.8,
+        lane: wps, wpIdx: wps.length - 1, followPath: !targetEnemy
+      });
+      spawnParticles(t.x, t.y, '#f97316', 28, 220, 5);
+      spawnFloatingText(t.x, t.y - 54, '🟠 KULA KLAWISZY (10 000 DMG PIERCING)!', '#fb923c', 1.4);
+    }
+  }
+
+  function castNuke(tower) {
+    const dmg = getEffectiveDamage(tower);
+    let hits = 0;
+    for (const e of state.enemies) {
+      if (!alive(e)) continue;
+      damageEnemy(e, dmg * (e.isBoss ? 4 : 10), tower, { pierce: 1, critText: '☢ UK NUKE!', critColor: '#facc15' });
+      hits++;
+    }
+    state.shake = Math.max(state.shake || 0, 14);
+    fxList().push({ kind: 'nuke', x: tower.x, y: tower.y, t: 0, dur: 1.7 });
+    spawnFloatingText(tower.x, tower.y - 56, '☢ „UK" — NUKE! (' + hits + ')', '#facc15', 1.6);
+    showBanner('☢ SPACEUK: SŁOWO „UK" = NUKE! (' + hits + ' trafień)');
+  }
+
+  // ------------------------------------------------------------
+  // 3. UPDATE EFEKTÓW (po każdym kroku gry)
+  // ------------------------------------------------------------
+  function nxUpdate(dt) {
+    // nowy bieg / restart rundy => czas gry cofnął się => czyścimy efekty
+    if (state.time < (state._nxLastTime || 0) - 0.01) { state.nxfx = []; state.ncBig = []; }
+    state._nxLastTime = state.time;
+    for (const t of state.towers) {
+      if (t._wofSelf > 0) t._wofSelf = Math.max(0, t._wofSelf - dt);
+      if (t._wofAlly > 0) t._wofAlly = Math.max(0, t._wofAlly - dt);
+      if (t._nxShowcase > 0) t._nxShowcase = Math.max(0, t._nxShowcase - dt);
+    }
+    try { ncProcess(); } catch (err) { console.error('NC split:', err); }
+    const list = state.nxfx; if (!list || !list.length) return;
+    for (let i = list.length - 1; i >= 0; i--) {
+      const f = list[i]; f.t += dt; let done = false;
+      if (f.kind === 'wheel') {
+        if (!state.towers.includes(f.tower)) done = true;
+        else if (!f.resolved && f.t >= f.dur) { f.resolved = true; resolveWheel(f); }
+        else if (f.resolved && f.t > f.dur + 1.3) done = true;
+      } else if (f.kind === 'monster') {
+        for (const e of state.enemies) {
+          if (alive(e) && Math.hypot(e.x - f.x, e.y - f.y) <= f.r) {
+            e.slowTimer = Math.max(e.slowTimer || 0, 0.3);
+            e.slowFactor = Math.max(e.slowFactor || 0, 0.5);
+          }
+        }
+        done = f.t >= f.dur;
+      } else if (f.kind === 'swallow') {
+        const e = f.enemy;
+        if (!alive(e)) done = true;
+        else {
+          e.stunTimer = Math.max(e.stunTimer || 0, 0.4);
+          const k = Math.min(1, dt * 7);
+          e.x += (f.tower.x - e.x) * k; e.y += (f.tower.y - e.y) * k;
+          if (Math.hypot(e.x - f.tower.x, e.y - f.tower.y) < 22 || f.t > 1.1) {
+            damageEnemy(e, e.hp + 1e8, f.tower, { pierce: 1, critText: '🌀 POŁKNIĘTY!', critColor: '#facc15' });
+            spawnParticles(f.tower.x, f.tower.y, '#facc15', 12, 120, 3);
+            done = true;
+          }
+        }
+      } else if (f.kind === 'hack') {
+        done = f.t >= f.delay + f.dur || !state.towers.includes(f.tower);
+      } else if (f.kind === 'yt') {
+        if (f.t >= f.dur) {
+          if (f.success && state.towers.includes(f.ally)) {
+            f.ally._nxShowcase = 25;
+            spawnFloatingText(f.ally.x, f.ally.y - 40, '▶ CLIP! -7,5% CD', '#f87171', 1.25);
+            spawnParticles(f.ally.x, f.ally.y - 20, '#ef4444', 16, 120, 3.5);
+          } else {
+            spawnFloatingText(f.ally ? f.ally.x : f.tower.x, (f.ally ? f.ally.y : f.tower.y) - 38, '▶ nie przyczepił się…', '#94a3b8', 1.0);
+          }
+          done = true;
+        }
+      } else if (f.kind === 'stain') {
+        done = f.t >= f.dur || !alive(f.enemy);
+      } else if (f.kind === 'kb_orb') {
+        f.x += f.vx * dt; f.y += f.vy * dt;
+        for (const e of state.enemies) {
+          if (!alive(e) || f.hitIds.has(e.id)) continue;
+          if (Math.hypot(e.x - f.x, e.y - f.y) <= f.r + (e.radius || 16)) {
+            f.hitIds.add(e.id);
+            damageEnemy(e, f.dmg, f.tower, { pierce: 1, critText: '⌨️ 10 000!', critColor: '#fb923c' });
+            spawnParticles(e.x, e.y, '#f97316', 10, 140, 3.5);
+          }
+        }
+        done = f.t >= f.dur || f.x < -120 || f.x > (typeof MAP_W !== 'undefined' ? MAP_W : 1100) + 120 || f.y < -120 || f.y > (typeof MAP_H !== 'undefined' ? MAP_H : 700) + 120;
+      } else if (f.kind === 'cupdeco') {
+        done = !state.towers.includes(f.tower);
+      } else { // rewind / ship / nuke / bite
+        done = f.t >= f.dur;
+      }
+      if (done) list.splice(i, 1);
+    }
+  }
+
+  const _updateStep = updateStep;
+  updateStep = function (dt) {
+    _updateStep(dt);
+    try { nxUpdate(dt); } catch (err) { console.error('AFK addon update:', err); }
+  };
+
+  // ------------------------------------------------------------
+  // 4. HOOKI: moce, atak (pasywki), staty buffów, limity
+  // ------------------------------------------------------------
+  const _activateHeroSkill = activateHeroSkill;
+  activateHeroSkill = function (tower, slot) {
+    if (!isAfkHero(tower)) return _activateHeroSkill.apply(this, arguments);
+    const tpl = HEROES[tower.type];
+    const sk = tpl['skill' + slot];
+    if (!sk || tower.level < (sk.unlockLvl || 1)) return;
+    const key = 'skill' + slot + 'Cd';
+    if ((tower[key] || 0) > 0) return;
+    let ok = false;
+    if (tower.type === 'nexus_gd') ok = slot === 1 ? castMacro(tower) : slot === 2 ? castShowcase(tower) : false;
+    else if (tower.type === 'spaceuk') ok = slot === 1 ? castWheel(tower) : false;
+    else if (tower.type === 'nightmare_chica') ok = slot === 1 ? castCupcake(tower) : slot === 2 ? castBite(tower) : slot === 3 ? castNcUpgrade(tower) : false;
+    if (!ok) return;
+    tower[key] = sk.cd;
+    try { sfx.playDomain(); } catch (e) {}
+    state.shake = Math.max(state.shake || 0, 6);
+    if (typeof updateInspectorCooldowns === 'function') updateInspectorCooldowns();
+    if (typeof updateUI === 'function') updateUI();
+  };
+
+  const _performTowerAttack = performTowerAttack;
+  performTowerAttack = function (tower, target) {
+    _performTowerAttack.apply(this, arguments);
+    if (!isAfkHero(tower) || !target) return;
+    if (tower.type === 'nexus_gd') {
+      // Pasywka: uderza Shipem z GD (+200 DMG)
+      fxList().push({ kind: 'ship', x1: tower.x, y1: tower.y - 14, x2: target.x, y2: target.y, t: 0, dur: 0.22 });
+      if (alive(target)) damageEnemy(target, 200, tower, { pierce: 1, critText: '🚀 SHIP +200', critColor: '#fb923c' });
+      spawnParticles(target.x, target.y, '#fbbf24', 6, 100, 3);
+    } else if (tower.type === 'nightmare_chica') {
+      // atakuje tylko trzema czerwonymi szponami
+      for (let k = -1; k <= 1; k++) state.slashes.push({ x: target.x + k * 7, y: target.y - k * 4, angle: tower.angle + k * 0.42, color: '#ef4444', big: true, life: 0.24 });
+      spawnParticles(target.x, target.y, '#dc2626', 7, 110, 3);
+    } else if (tower.type === 'spaceuk') {
+      if (Math.random() < 0.10) castNuke(tower);
+      else if ((tower.attackCount || 0) % 3 === 0) spawnFloatingText(target.x, target.y - 26, 'CHEAT', '#22c55e', 0.9);
+    }
+  };
+
+  const _getEffectiveDamage = getEffectiveDamage;
+  getEffectiveDamage = function (t) {
+    let v = _getEffectiveDamage.apply(this, arguments);
+    if (t && (t._wofSelf > 0 || t._wofAlly > 0)) v = Math.round(v * 1.25);
+    return v;
+  };
+  const _getEffectiveCooldown = getEffectiveCooldown;
+  getEffectiveCooldown = function (t) {
+    let v = _getEffectiveCooldown.apply(this, arguments);
+    if (t) {
+      if (t._wofSelf > 0 || t._wofAlly > 0) v *= 0.75;
+      if (t._nxShowcase > 0) v *= 0.925;
+    }
+    return v;
+  };
+  if (typeof startGameWithDifficulty === 'function') {
+    const _sgwd = startGameWithDifficulty;
+    startGameWithDifficulty = function () { state.nxfx = []; return _sgwd.apply(this, arguments); };
+  }
+  const _getMaxPlacementForHero = getMaxPlacementForHero;
+  getMaxPlacementForHero = function (heroId) {
+    if (heroId === 'spaceuk' || heroId === 'nightmare_chica') return 1; // żadne dodatkowe postawienie na niego nie działa
+    return _getMaxPlacementForHero.apply(this, arguments);
+  };
+
+  // ------------------------------------------------------------
+  // 5. RYSOWANIE: portrety + efekty
+  // ------------------------------------------------------------
+  function drawRing(c, c1, c2, border) {
+    const g = c.createRadialGradient(0, -2, 2, 0, 0, 17);
+    g.addColorStop(0, c1); g.addColorStop(1, c2);
+    c.fillStyle = g; c.beginPath(); c.arc(0, 0, 16.4, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = border; c.lineWidth = 2.3; c.beginPath(); c.arc(0, 0, 19.2, 0, Math.PI * 2); c.stroke();
+  }
+  function drawNexusFace(c, withRing) {
+    // Głowa Nexusa: czerwono-biały wiatrak w czarnej obwódce
+    c.save();
+    if (withRing) drawRing(c, '#450a0a', '#020617', '#ef4444'); else c.translate(0, 4.2);
+    const H = 10;
+    c.fillStyle = '#ffffff'; c.strokeStyle = '#000000'; c.lineWidth = 2.2; c.lineJoin = 'round';
+    c.beginPath(); c.rect(-H, -H, H * 2, H * 2); c.fill(); c.stroke();
+    c.save(); c.beginPath(); c.rect(-H, -H, H * 2, H * 2); c.clip();
+    c.lineWidth = 1.1;
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4 + 0.15, R = 15;
+      c.fillStyle = i % 2 ? '#ffffff' : '#dc2626';
+      c.beginPath();
+      c.moveTo(Math.cos(a) * 2.2, Math.sin(a) * 2.2);
+      c.lineTo(Math.cos(a) * R, Math.sin(a) * R);
+      c.lineTo(Math.cos(a + 0.72) * R * 0.9, Math.sin(a + 0.72) * R * 0.9);
+      c.closePath(); c.fill(); c.stroke();
+    }
+    c.restore();
+    // środek: mała kratka biało-czerwona
+    c.fillStyle = '#ffffff'; c.fillRect(-2.6, -2.6, 5.2, 5.2);
+    c.fillStyle = '#dc2626'; c.fillRect(-2.6, -2.6, 2.6, 2.6); c.fillRect(0, 0, 2.6, 2.6);
+    c.strokeStyle = '#000'; c.lineWidth = 0.9; c.strokeRect(-2.6, -2.6, 5.2, 5.2);
+    c.strokeStyle = '#000000'; c.lineWidth = 2.2; c.strokeRect(-H, -H, H * 2, H * 2);
+    c.restore();
+  }
+  function drawSpaceUKFace(c, withRing) {
+    // Głowa SpaceUK: biało-szara kostka z fazowaną ramką + mała korona po lewej
+    c.save();
+    if (withRing) drawRing(c, '#3b0764', '#020617', '#a855f7'); else c.translate(0, 4.2);
+    c.rotate(-0.1);
+    const H = 10;
+    c.lineJoin = 'round';
+    c.fillStyle = '#000'; c.beginPath(); c.rect(-H - 1.6, -H - 1.6, (H + 1.6) * 2, (H + 1.6) * 2); c.fill();
+    // rama (4 trapezy)
+    const poly = (pts, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) c.lineTo(pts[i], pts[i + 1]); c.closePath(); c.fill(); };
+    const I = 5.4;
+    poly([-H, -H, H, -H, I, -I, -I, -I], '#ffffff');       // góra
+    poly([-H, -H, -I, -I, -I, I, -H, H], '#bdbdbd');       // lewo
+    poly([H, -H, H, H, I, I, I, -I], '#f1f1f1');           // prawo
+    poly([-H, H, -I, I, I, I, H, H], '#a3a3a3');           // dół
+    // wnętrze (ciemnoszare ze skosami)
+    c.fillStyle = '#8c8c8c'; c.fillRect(-I, -I, I * 2, I * 2);
+    poly([-I, -I, I, -I, 2.6, -2.6, -2.6, -2.6], '#7d7d7d');
+    poly([-I, I, -2.6, 2.6, 2.6, 2.6, I, I], '#9b9b9b');
+    // środek: czarny kwadrat z białym oczkiem
+    c.fillStyle = '#000'; c.fillRect(-2.9, -2.9, 5.8, 5.8);
+    c.fillStyle = '#fff'; c.fillRect(-1.5, -1.5, 3, 3);
+    c.restore();
+    // mała koronka po lewej stronie głowy
+    c.save();
+    c.translate(-10.5, -8.5); c.rotate(-0.45);
+    c.fillStyle = '#facc15'; c.strokeStyle = '#000'; c.lineWidth = 1.3;
+    c.beginPath(); c.moveTo(-5, 3); c.lineTo(-5.6, -3.6); c.lineTo(-2.6, -0.8); c.lineTo(0, -4.8); c.lineTo(2.6, -0.8); c.lineTo(5.6, -3.6); c.lineTo(5, 3); c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = '#ef4444'; c.beginPath(); c.arc(0, 0.4, 1, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+  const _drawHeroPortrait = drawHeroPortrait;
+  drawHeroPortrait = function (c, type, level, withRing) {
+    if (type === 'nexus_gd') { drawNexusFace(c, withRing === undefined ? true : withRing); return; }
+    if (type === 'spaceuk') { drawSpaceUKFace(c, withRing === undefined ? true : withRing); return; }
+    if (type === 'nightmare_chica') { drawChicaFace(c, withRing === undefined ? true : withRing); return; }
+    return _drawHeroPortrait.apply(this, arguments);
+  };
+
+
+  // ------------------------------------------------------------
+  // CIAŁA: Nexus cały czerwony (oprócz głowy), SpaceUK cały biały
+  // ------------------------------------------------------------
+  const _drawHeroBodyOutfit = drawHeroBodyOutfit;
+  drawHeroBodyOutfit = function (c, type) {
+    if (type === 'nightmare_chica') {
+      c.fillStyle = 'rgba(0, 0, 0, 0.34)'; c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      c.fillStyle = '#a16207'; c.strokeStyle = '#451a03'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 5); c.fill(); c.stroke();
+      c.fillStyle = '#7f1d1d'; c.beginPath(); c.roundRect(-6.5, -3, 13, 12, 3); c.fill();
+      c.fillStyle = '#f8fafc'; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(-6 + i * 3.4, 9); c.lineTo(-4.3 + i * 3.4, 5.5); c.lineTo(-2.6 + i * 3.4, 9); c.closePath(); c.fill(); }
+      // trzy czerwone szpony na każdej dłoni
+      c.fillStyle = '#ef4444'; c.strokeStyle = '#450a0a'; c.lineWidth = 0.8;
+      for (const side of [-1, 1]) for (let i = 0; i < 3; i++) {
+        const bx = side * 14.5 + (i - 1) * 2.8, by = 9;
+        c.beginPath(); c.moveTo(bx - 1.2, by); c.lineTo(bx + 1.2, by); c.lineTo(bx + side * 0.6, by + 7.5); c.closePath(); c.fill(); c.stroke();
+      }
+      c.restore();
+      return;
+    }
+    if (type !== 'nexus_gd' && type !== 'spaceuk') return _drawHeroBodyOutfit.apply(this, arguments);
+    const red = type === 'nexus_gd';
+    c.fillStyle = 'rgba(0, 0, 0, 0.34)';
+    c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+    c.save();
+    c.fillStyle = red ? '#dc2626' : '#f8fafc'; c.strokeStyle = red ? '#7f1d1d' : '#94a3b8'; c.lineWidth = 1.4;
+    c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 5); c.fill(); c.stroke();
+    c.fillStyle = red ? '#ef4444' : '#e2e8f0';
+    c.beginPath(); c.roundRect(-6, -3, 12, 13, 3); c.fill();
+    c.fillStyle = red ? '#450a0a' : '#64748b'; c.fillRect(-10.5, 9, 21, 3);
+    c.restore();
+  };
+
+  function drawCrown(x, y, col) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = col || '#ffffff'; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-8, 5); ctx.lineTo(-9, -4); ctx.lineTo(-4, 0); ctx.lineTo(0, -6); ctx.lineTo(4, 0); ctx.lineTo(9, -4); ctx.lineTo(8, 5); ctx.closePath();
+    ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+  function drawMonster(f) {
+    const pulse = 1 + Math.sin(f.t * 6) * 0.05;
+    ctx.save(); ctx.translate(f.x, f.y);
+    const fade = Math.min(1, (f.dur - f.t) / 1.5);
+    ctx.globalAlpha = Math.max(0.2, fade);
+    const g = ctx.createRadialGradient(0, 0, 8, 0, 0, f.r);
+    g.addColorStop(0, 'rgba(239,68,68,0.22)'); g.addColorStop(1, 'rgba(239,68,68,0.04)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, f.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.setLineDash([10, 7]); ctx.lineDashOffset = -f.t * 30;
+    ctx.beginPath(); ctx.arc(0, 0, f.r, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = '#18181b'; ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2, r = i % 2 ? 11 : 17; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(-4.5, -3, 2.6, 0, Math.PI * 2); ctx.arc(4.5, -3, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-6, 5); ctx.lineTo(-3, 3); ctx.lineTo(0, 5); ctx.lineTo(3, 3); ctx.lineTo(6, 5); ctx.stroke();
+    ctx.restore();
+  }
+  function drawWheelFx(f) {
+    const t = f.tower, cx = t.x, cy = Math.max(46, t.y - 58), R = 31;
+    const prog = Math.min(1, f.t / f.dur), th = f.final * (1 - Math.pow(1 - prog, 3));
+    const cols = ['#3b82f6', '#22c55e', '#ef4444', '#eab308', '#f97316'];
+    const sliceAng = (2 * Math.PI) / 5;
+    ctx.save();
+    if (f.resolved) ctx.globalAlpha = Math.max(0, 1 - (f.t - f.dur) / 1.3);
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = cols[i]; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, th + i * sliceAng, th + (i + 1) * sliceAng); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, R + 3, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(cx, cy - R - 1); ctx.lineTo(cx - 6, cy - R - 12); ctx.lineTo(cx + 6, cy - R - 12); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawHackFx(f) {
+    if (f.t < f.delay) return;
+    const x = f.tower.x + 40, y = f.tower.y + 28;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, (f.delay + f.dur - f.t) / 1.0);
+    ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2;
+    ctx.fillRect(x - 28, y - 11, 56, 22); ctx.strokeRect(x - 28, y - 11, 56, 22);
+    ctx.fillStyle = '#0f172a'; ctx.font = '900 13px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Hack', x, y + 1);
+    ctx.restore();
+  }
+  function drawYtIcon(x, y, s) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    ctx.fillStyle = '#ef4444'; ctx.strokeStyle = '#7f1d1d'; ctx.lineWidth = 1.2;
+    const w = 22, h = 15, r = 4;
+    ctx.beginPath(); ctx.moveTo(-w / 2 + r, -h / 2); ctx.lineTo(w / 2 - r, -h / 2); ctx.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+    ctx.lineTo(w / 2, h / 2 - r); ctx.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); ctx.lineTo(-w / 2 + r, h / 2);
+    ctx.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); ctx.lineTo(-w / 2, -h / 2 + r); ctx.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(-3, -4); ctx.lineTo(5, 0); ctx.lineTo(-3, 4); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawShip(x, y, ang) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+    ctx.fillStyle = '#fb923c'; ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-7, -6); ctx.lineTo(-4, 0); ctx.lineTo(-7, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#22d3ee'; ctx.beginPath(); ctx.arc(1, 0, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawNxEffects() {
+    // aury i korony na wieżach
+    for (const t of state.towers) {
+      if (t._wofSelf > 0) {
+        ctx.save(); ctx.strokeStyle = 'rgba(96,165,250,0.85)'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 5]); ctx.lineDashOffset = -state.time * 30;
+        ctx.beginPath(); ctx.arc(t.x, t.y, 26, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      }
+      if (t._wofAlly > 0) drawCrown(t.x, t.y - 46, '#ffffff');
+      if (t._nxShowcase > 0) drawYtIcon(t.x + 20, t.y - 34, 0.6);
+    }
+    const list = state.nxfx; if (!list) return;
+    for (const f of list) {
+      if (drawNcFx(f)) continue;
+      if ((f.kind === 'wheel' || f.kind === 'hack' || f.kind === 'swallow' || f.kind === 'yt') && f.tower && !state.towers.includes(f.tower)) continue;
+      if (f.kind === 'wheel') drawWheelFx(f);
+      else if (f.kind === 'monster') drawMonster(f);
+      else if (f.kind === 'hack') drawHackFx(f);
+      else if (f.kind === 'swallow' && alive(f.enemy)) {
+        ctx.save(); ctx.strokeStyle = 'rgba(250,204,21,0.7)'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(f.tower.x, f.tower.y); ctx.lineTo(f.enemy.x, f.enemy.y); ctx.stroke(); ctx.restore();
+      } else if (f.kind === 'yt') {
+        const p = Math.min(1, f.t / f.dur), tx = f.ally.x, ty = f.ally.y - 24;
+        const x = f.tower.x + (tx - f.tower.x) * p, y = f.tower.y + (ty - f.tower.y) * p - Math.sin(p * Math.PI) * 34;
+        drawYtIcon(x, y, 0.9 + Math.sin(p * Math.PI) * 0.3);
+      } else if (f.kind === 'ship') {
+        const p = Math.min(1, f.t / f.dur);
+        drawShip(f.x1 + (f.x2 - f.x1) * p, f.y1 + (f.y2 - f.y1) * p, Math.atan2(f.y2 - f.y1, f.x2 - f.x1));
+      } else if (f.kind === 'rewind') {
+        const p = f.t / f.dur;
+        ctx.save(); ctx.globalAlpha = 1 - p; ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(f.x, f.y, 10 + p * 26, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#7dd3fc'; ctx.font = '900 14px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('⏪', f.x, f.y - 14 - p * 14);
+        ctx.restore();
+      } else if (f.kind === 'kb_orb') {
+        const keys = ['W','A','S','D','↑','SPC','ENT','ESC','⇧','CTRL'];
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        const og = ctx.createRadialGradient(0, 0, 6, 0, 0, f.r);
+        og.addColorStop(0, '#fef08a');
+        og.addColorStop(0.45, '#f97316');
+        og.addColorStop(1, 'rgba(234,88,12,0.15)');
+        ctx.fillStyle = og;
+        ctx.beginPath(); ctx.arc(0, 0, f.r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#fdba74'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(0, 0, f.r * 0.88, 0, Math.PI * 2); ctx.stroke();
+        for (let k = 0; k < 8; k++) {
+          const ka = f.t * 9 + k * (Math.PI / 4);
+          const kr = f.r * (0.45 + (k % 2) * 0.34);
+          const kx = Math.cos(ka) * kr, ky = Math.sin(ka) * kr;
+          ctx.save(); ctx.translate(kx, ky); ctx.rotate(ka * 0.5);
+          ctx.fillStyle = '#0f172a'; ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.roundRect(-10, -8, 20, 16, 3); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#ffffff'; ctx.font = '900 7px Inter, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(keys[k % keys.length], 0, 0.5);
+          ctx.restore();
+        }
+        ctx.restore();
+      } else if (f.kind === 'nuke') {
+        const p = f.t / f.dur;
+        ctx.save();
+        ctx.fillStyle = `rgba(255,255,255,${Math.max(0, 0.75 * (1 - p * 1.6))})`; ctx.fillRect(0, 0, MAP_W, MAP_H);
+        ctx.globalAlpha = Math.max(0, 1 - p); ctx.strokeStyle = '#f97316'; ctx.lineWidth = 12 * (1 - p) + 2;
+        ctx.beginPath(); ctx.arc(f.x, f.y, 20 + p * 620, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = '#facc15'; ctx.lineWidth = 6 * (1 - p) + 1;
+        ctx.beginPath(); ctx.arc(f.x, f.y, 10 + p * 420, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = Math.max(0, 1 - p * 0.9); ctx.fillStyle = '#facc15'; ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 6;
+        ctx.font = '900 ' + Math.round(70 + p * 30) + 'px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.strokeText('UK', MAP_W / 2, MAP_H / 2); ctx.fillText('UK', MAP_W / 2, MAP_H / 2);
+        ctx.restore();
+      }
+    }
+  }
+  const _drawTowers = drawTowers;
+  drawTowers = function () {
+    _drawTowers.apply(this, arguments);
+    try { ctx.save(); drawNxEffects(); ctx.restore(); } catch (err) { try { ctx.restore(); } catch (e) {} console.error('AFK addon draw:', err); }
+  };
+
+
+  // ------------------------------------------------------------
+  // NIGHTMARE CHICA (CALAMITY • tylko crafting) + buff Nightmare Bonnie w źródle gry
+  // ------------------------------------------------------------
+  HEROES.nightmare_chica = {
+    id: 'nightmare_chica', universe: 'fnaf', craftOnly: true, rarity: 'Calamity', name: 'Nightmare Chica', cost: 2500, maxPlace: 1, maxLevel: 5,
+    color: '#dc2626', accent: '#facc15',
+    damage: 3200, cooldown: 1.0, range: 255, armorPierce: 1.0,
+    technique: 'Trzy Czerwone Szpony • Nightmare Cupcake • Bite • Nightmare Upgrade',
+    desc: 'CALAMITY CRAFTING (2500 CE • Limit 1 • LVL 5 MAX: 13 000 DMG / 0.4s = 32 500 DPS): Atakuje wyłącznie trzema czerwonymi szponami!',
+    skill1: { name: 'Nightmare Cupcake', cd: 25, unlockLvl: 1, desc: 'Spawnuje Nightmare Cupcake. Gdy zginie, rozbija się na 3 mini cupcake (trochę słabsze).' },
+    skill2: { name: 'Bite', cd: 40, unlockLvl: 3, desc: 'Gryzie przeciwnika białymi zębami i nakłada różową plamę: spowolnienie o 90% na 10s.' },
+    skill3: { name: 'Nightmare Upgrade', cd: 300, unlockLvl: 4, desc: 'Co 300s ulepsza swoje staty o +5% DMG / +5% RNG / -5% CD na całą rundę (max +300%) oraz stawia mini cupcake przy 1 Twojej wieży (+30% DMG na całą rundę).' },
+    upgrades: [
+      { cost: 5000,  dmg: 5400,  cd: 0.75, rng: 270, text: 'LVL 2: 5400 DMG / 0.75s (7200 DPS) — szpony głębiej.' },
+      { cost: 10000, dmg: 8700,  cd: 0.60, rng: 285, text: 'LVL 3: 8700 DMG / 0.6s (14 500 DPS) — Odblokowuje Bite!' },
+      { cost: 20000, dmg: 10250, cd: 0.50, rng: 300, text: 'LVL 4: 10 250 DMG / 0.5s (20 500 DPS) — Odblokowuje Nightmare Upgrade!' },
+      { cost: 50000, dmg: 13000, cd: 0.40, rng: 320, text: 'LVL 5 MAX: 13 000 DMG / 0.4s (32 500 DPS) — Koszmar w pełni!' }
+    ]
+  };
+
+  if (typeof CRAFT_RECIPES !== 'undefined' && !CRAFT_RECIPES.some(r => r.id === 'nightmare_chica')) {
+    CRAFT_RECIPES.push({
+      id: 'nightmare_chica', heroId: 'nightmare_chica',
+      subtitle: 'CALAMITY • Koszt 2500 CE (Limit 1) • LVL 5 MAX: 32 500 DPS • Trzy Czerwone Szpony, Nightmare Cupcake (25s), Bite (40s) & Nightmare Upgrade',
+      reqs: [
+        { kind: 'hero', id: 'nightmare_bonnie', label: 'Nightmare Bonnie (zostaje w kolekcji — NIE znika!)' },
+        { kind: 'hero', id: 'nightmare_freddy', label: 'Nightmare Freddy (zostaje w kolekcji — NIE znika!)' },
+        { kind: 'hero', id: 'kenjaku_hero', label: 'Geto / Kenjaku (zostaje w kolekcji — NIE znika!)' },
+        { kind: 'item', id: 'red_guitar', n: 100, label: 'Red Guitar 🎸' },
+        { kind: 'item', id: 'sukuna_arm', n: 10, label: 'Ramię Sukuny 💪' },
+        { kind: 'cur', id: 'souls', n: 5000, label: 'Souls 👻' },
+        { kind: 'cur', id: 'gems', n: 3000, label: 'Gems 💎' },
+        { kind: 'cur', id: 'fnafCoins', n: 750000, label: 'FNAF Coin 🍕' }
+      ]
+    });
+  }
+
+  // --- Cupcake'i (jednostki jak summony: chodzą trasą i biją) ---
+  function ncSpawnBig(tower) {
+    const wps = pickActiveLaneForSummon();
+    const endWp = wps[wps.length - 1], prev = wps[Math.max(0, wps.length - 2)];
+    const sx = prev.x - endWp.x, sy = prev.y - endWp.y, L = Math.hypot(sx, sy) || 1;
+    const hpScale = 1 + Math.max(0, (state.wave || 1) - 1) * 0.14;
+    const hp = Math.round(2400 * hpScale * (1 + (tower.level - 1) * 0.25));
+    const u = {
+      id: state.nextEnemyId++, kind: 'nc_cupcake', name: 'Nightmare Cupcake',
+      x: endWp.x + sx / L * 26, y: endWp.y + sy / L * 26, wpIndex: Math.max(0, wps.length - 2), lane: wps,
+      maxHp: hp, hp, speed: 62, dmg: Math.max(300, Math.round(getEffectiveDamage(tower) * 0.2)),
+      attackTimer: 0.12, regenTimer: 3.0, adaptStacks: 0, adaptTimer: 2.5, swallowedEnemyId: null, sourceTower: tower
+    };
+    state.shikigami.push(u);
+    (state.ncBig || (state.ncBig = [])).push(u);
+    return u;
+  }
+  function ncSplit(u) {
+    for (let k = 0; k < 3; k++) {
+      const hp = Math.max(1, Math.round(u.maxHp * 0.35));
+      state.shikigami.push({
+        id: state.nextEnemyId++, kind: 'nc_mini', name: 'Mini Cupcake',
+        x: u.x + (k - 1) * 11, y: u.y + (k % 2 ? 6 : -6), wpIndex: u.wpIndex, lane: u.lane,
+        maxHp: hp, hp, speed: 80, dmg: Math.max(120, Math.round(u.dmg * 0.55)),
+        attackTimer: 0.1, regenTimer: 3.0, adaptStacks: 0, adaptTimer: 2.5, swallowedEnemyId: null, sourceTower: u.sourceTower
+      });
+    }
+    spawnParticles(u.x, u.y, '#be185d', 22, 150, 4);
+    spawnFloatingText(u.x, u.y - 26, '🧁 ROZBIŁ SIĘ NA 3 MINI!', '#f9a8d4', 1.1);
+  }
+  function ncProcess() {
+    const arr = state.ncBig; if (!arr || !arr.length) return;
+    for (let i = arr.length - 1; i >= 0; i--) {
+      const u = arr[i];
+      if (state.shikigami.includes(u)) continue;
+      arr.splice(i, 1);
+      if (u.hp <= 0) ncSplit(u);
+    }
+  }
+
+  function castCupcake(tower) {
+    ncSpawnBig(tower);
+    spawnFloatingText(tower.x, tower.y - 46, '🧁 NIGHTMARE CUPCAKE!', '#f472b6', 1.3);
+    return true;
+  }
+  function castBite(tower) {
+    const e = findTarget(tower) || state.enemies.find(alive);
+    if (!e) return false;
+    damageEnemy(e, getEffectiveDamage(tower) * 4, tower, { pierce: 1, critText: '🦷 BITE!', critColor: '#f9a8d4' });
+    e.slowTimer = Math.max(e.slowTimer || 0, 10);
+    e.slowFactor = Math.max(e.slowFactor || 0, 0.9);
+    fxList().push({ kind: 'bite', x: e.x, y: e.y, t: 0, dur: 0.6 });
+    fxList().push({ kind: 'stain', enemy: e, t: 0, dur: 10 });
+    spawnParticles(e.x, e.y, '#f472b6', 18, 140, 3.5);
+    spawnFloatingText(tower.x, tower.y - 46, '🦷 BITE — SLOW 90% (10s)', '#f9a8d4', 1.25);
+    return true;
+  }
+  function castNcUpgrade(tower) {
+    const MAX_STACKS = 60; // max +300% (60 * 5%)
+    const prevStacks = tower._ncUpStacks || 0;
+    tower._ncUpStacks = Math.min(MAX_STACKS, prevStacks + 1);
+    const pct = tower._ncUpStacks * 5;
+    const candidates = state.towers.filter(a => a !== tower && !a._ncCupcake);
+    let buffedName = '';
+    if (candidates.length > 0) {
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      pick._ncCupcake = true;
+      buffedName = (HEROES[pick.type] && HEROES[pick.type].name) || 'Wieża';
+      fxList().push({ kind: 'cupdeco', tower: pick, t: 0 });
+      spawnParticles(pick.x, pick.y, '#f472b6', 14, 100, 3.5);
+      spawnFloatingText(pick.x, pick.y - 38, '🧁 +30% DMG (cała runda)!', '#f9a8d4', 1.15);
+    }
+    spawnParticles(tower.x, tower.y, '#ef4444', 30, 170, 4.5);
+    spawnFloatingText(tower.x, tower.y - 46, `⬆ NIGHTMARE UPGRADE (+${pct}%/300% DMG/RNG • -${Math.min(75, pct)}% CD)`, '#fca5a5', 1.2);
+    if (buffedName) spawnFloatingText(tower.x, tower.y - 66, `🧁 Mini Cupcake → ${buffedName} (+30% DMG)`, '#f9a8d4', 1.1);
+    return true;
+  }
+
+  const _gedNc = getEffectiveDamage;
+  getEffectiveDamage = function (t) {
+    let v = _gedNc.apply(this, arguments);
+    if (t) {
+      if (t._ncUpStacks > 0) v = Math.round(v * (1 + 0.05 * t._ncUpStacks));
+      if (t._ncCupcake) v = Math.round(v * 1.30);
+    }
+    return v;
+  };
+  const _gecNc = getEffectiveCooldown;
+  getEffectiveCooldown = function (t) {
+    let v = _gecNc.apply(this, arguments);
+    if (t && t._ncUpStacks > 0) v *= Math.max(0.25, 1 - 0.05 * t._ncUpStacks);
+    return v;
+  };
+  const _gerNc = getEffectiveRange;
+  getEffectiveRange = function (t) {
+    let v = _gerNc.apply(this, arguments);
+    if (t && t._ncUpStacks > 0) v = Math.round(v * (1 + 0.05 * t._ncUpStacks));
+    return v;
+  };
+
+  function drawNcCupcake(c, sh) {
+    const mini = sh.kind === 'nc_mini', s = mini ? 0.6 : 1;
+    c.save(); c.translate(sh.x, sh.y); c.scale(s, s);
+    c.lineJoin = 'round'; c.lineWidth = 1.6; c.strokeStyle = '#09090b';
+    c.fillStyle = '#4c1d95'; c.beginPath(); c.moveTo(-10, 2); c.lineTo(10, 2); c.lineTo(7, 13); c.lineTo(-7, 13); c.closePath(); c.fill(); c.stroke();
+    c.strokeStyle = '#2e1065'; c.lineWidth = 1; for (let i = -1; i <= 1; i++) { c.beginPath(); c.moveTo(i * 4, 2); c.lineTo(i * 2.8, 13); c.stroke(); }
+    c.strokeStyle = '#09090b'; c.lineWidth = 1.6;
+    c.fillStyle = '#be185d';
+    c.beginPath(); c.arc(0, -1, 10.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#db2777'; c.beginPath(); c.arc(0, -8, 7.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#ec4899'; c.beginPath(); c.arc(0, -14, 4.6, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#dc2626'; c.beginPath(); c.arc(0, -19, 2.6, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#fef2f2'; c.beginPath(); c.arc(-3.6, -2.6, 2.3, 0, Math.PI * 2); c.arc(3.6, -2.6, 2.3, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ef4444'; c.beginPath(); c.arc(-3.6, -2.6, 1.1, 0, Math.PI * 2); c.arc(3.6, -2.6, 1.1, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffffff'; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(-6 + i * 3.4, 2.4); c.lineTo(-4.3 + i * 3.4, 6.2); c.lineTo(-2.6 + i * 3.4, 2.4); c.closePath(); c.fill(); }
+    c.restore();
+    if (sh.hp < sh.maxHp) {
+      const w = mini ? 14 : 24;
+      c.fillStyle = 'rgba(0,0,0,0.6)'; c.fillRect(sh.x - w / 2, sh.y - (mini ? 16 : 28), w, 3);
+      c.fillStyle = '#f472b6'; c.fillRect(sh.x - w / 2, sh.y - (mini ? 16 : 28), w * Math.max(0, sh.hp / sh.maxHp), 3);
+    }
+  }
+  const _drawShikigamiUnit = drawShikigamiUnit;
+  drawShikigamiUnit = function (c, sh) {
+    if (sh.kind === 'nc_cupcake' || sh.kind === 'nc_mini') { drawNcCupcake(c, sh); return; }
+    return _drawShikigamiUnit.apply(this, arguments);
+  };
+
+  function drawNcFx(f) {
+    if (f.kind === 'bite') {
+      const p = f.t / f.dur, open = Math.abs(Math.cos(p * Math.PI * 1.5)) * 15 * (1 - p * 0.3);
+      ctx.save(); ctx.translate(f.x, f.y); ctx.globalAlpha = 1 - p * 0.6;
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#831843'; ctx.lineWidth = 1.2;
+      for (const dir of [-1, 1]) for (let i = -3; i <= 3; i++) {
+        const x = i * 5.2, y = dir * (open + 4);
+        ctx.beginPath(); ctx.moveTo(x - 2.6, y); ctx.lineTo(x + 2.6, y); ctx.lineTo(x, y - dir * 8); ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+      ctx.restore(); return true;
+    }
+    if (f.kind === 'stain') {
+      const e = f.enemy; if (!alive(e)) return true;
+      ctx.save(); ctx.globalAlpha = Math.min(0.7, (f.dur - f.t) / 2);
+      ctx.fillStyle = '#ec4899';
+      ctx.beginPath(); ctx.ellipse(e.x, e.y + 4, 17, 11, 0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(e.x - 12, e.y - 4, 5, 0, Math.PI * 2); ctx.arc(e.x + 11, e.y + 12, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fbcfe8'; ctx.beginPath(); ctx.arc(e.x - 4, e.y, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.restore(); return true;
+    }
+    if (f.kind === 'cupdeco') {
+      if (!state.towers.includes(f.tower)) return true;
+      const x = f.tower.x - 22, y = f.tower.y + 14, c = ctx;
+      c.save(); c.translate(x, y); c.scale(0.55, 0.55); c.lineJoin = 'round'; c.strokeStyle = '#09090b'; c.lineWidth = 1.6;
+      c.fillStyle = '#4c1d95'; c.beginPath(); c.moveTo(-10, 2); c.lineTo(10, 2); c.lineTo(7, 13); c.lineTo(-7, 13); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#db2777'; c.beginPath(); c.arc(0, -3, 10, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#dc2626'; c.beginPath(); c.arc(0, -13, 2.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#ef4444'; c.beginPath(); c.arc(-3.5, -3, 1.8, 0, Math.PI * 2); c.arc(3.5, -3, 1.8, 0, Math.PI * 2); c.fill();
+      c.restore(); return true;
+    }
+    return false;
+  }
+
+  function drawChicaFace(c, withRing) {
+    c.save();
+    if (withRing) drawRing(c, '#450a0a', '#09090b', '#ef4444'); else c.translate(0, 4.2);
+    c.lineJoin = 'round';
+    // postrzępione "piórka" na czubku
+    c.fillStyle = '#a16207'; c.strokeStyle = '#451a03'; c.lineWidth = 1.1;
+    for (const [x, h] of [[-6, 9], [-1.5, 12], [3.5, 10], [7.5, 7]]) { c.beginPath(); c.moveTo(x - 2.2, -6); c.lineTo(x, -6 - h); c.lineTo(x + 2.2, -6); c.closePath(); c.fill(); c.stroke(); }
+    // głowa
+    c.fillStyle = '#ca8a04'; c.strokeStyle = '#451a03'; c.lineWidth = 1.5;
+    c.beginPath(); c.ellipse(0, -1, 10.5, 9.5, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+    // oczy
+    c.fillStyle = '#09090b'; c.beginPath(); c.arc(-4.2, -3.5, 3, 0, Math.PI * 2); c.arc(4.2, -3.5, 3, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ef4444'; c.beginPath(); c.arc(-4.2, -3.5, 1.3, 0, Math.PI * 2); c.arc(4.2, -3.5, 1.3, 0, Math.PI * 2); c.fill();
+    // otwarty dziób z zębami
+    c.fillStyle = '#3b0a0a'; c.beginPath(); c.ellipse(0, 4.2, 7, 3.6, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffffff'; c.strokeStyle = '#09090b'; c.lineWidth = 0.6;
+    for (let i = 0; i < 5; i++) { const x = -5.2 + i * 2.6; c.beginPath(); c.moveTo(x - 1.2, 1.4); c.lineTo(x, 4.2); c.lineTo(x + 1.2, 1.4); c.closePath(); c.fill(); c.stroke(); }
+    for (let i = 0; i < 4; i++) { const x = -3.9 + i * 2.6; c.beginPath(); c.moveTo(x - 1.2, 7.4); c.lineTo(x, 4.8); c.lineTo(x + 1.2, 7.4); c.closePath(); c.fill(); c.stroke(); }
+    c.restore();
+  }
+
+  // ------------------------------------------------------------
+  // 6. AFK PRESENT — SKRZYNKA (rośnie sama w tle, także offline)
+  // ------------------------------------------------------------
+  const AFK_KEY = 'jjk_fnaf_afk_present_v1';
+  const AFK_INTERVAL = 5 * 60 * 1000; // 1 prezent / 5 minut
+  const AFK_CAP = 20;
+  const afk = (() => {
+    let d = {}; try { d = JSON.parse(localStorage.getItem(AFK_KEY) || '{}'); } catch (e) {}
+    return { count: Math.max(0, d.count | 0), last: +d.last || Date.now() };
+  })();
+  const saveAfk = () => { try { localStorage.setItem(AFK_KEY, JSON.stringify(afk)); } catch (e) {} };
+
+  function afkTick(silent) {
+    const now = Date.now();
+    const gains = Math.floor((now - afk.last) / AFK_INTERVAL);
+    if (gains > 0) {
+      const before = afk.count;
+      afk.count = Math.min(AFK_CAP, afk.count + gains);
+      afk.last = afk.count >= AFK_CAP ? now : afk.last + gains * AFK_INTERVAL;
+      saveAfk();
+      if (afk.count > before && !silent) {
+        try { showBanner('🎁 AFK PRESENT gotowy! (' + afk.count + ') — otwórz w EQ.'); } catch (e) {}
+      }
+    } else if (afk.count >= AFK_CAP) { afk.last = now; }
+    refreshAfkUI();
+  }
+
+  function refreshAfkUI() {
+    const c = document.getElementById('afk-present-count'); if (c) c.textContent = afk.count;
+    const bar = document.getElementById('afk-present-bar'), tm = document.getElementById('afk-present-timer');
+    const left = afk.count >= AFK_CAP ? 0 : Math.max(0, AFK_INTERVAL - (Date.now() - afk.last));
+    if (bar) bar.style.width = (afk.count >= AFK_CAP ? 100 : Math.round((1 - left / AFK_INTERVAL) * 100)) + '%';
+    if (tm) tm.textContent = afk.count >= AFK_CAP ? 'MAX (' + AFK_CAP + ') — otwórz prezenty!' : 'Następny za ' + Math.floor(left / 60000) + ':' + String(Math.floor(left / 1000) % 60).padStart(2, '0');
+    const btn = document.getElementById('btn-open-afk-present'); if (btn) btn.disabled = afk.count <= 0;
+    const bd = document.getElementById('eq-crate-badge');
+    if (bd && afk.count > 0) {
+      bd.textContent = (typeof MX !== 'undefined' && MX.purpleCrates > 0 ? '🟣' + MX.purpleCrates + ' ' : '') + '🎁' + afk.count;
+      bd.classList.remove('hidden');
+    }
+  }
+
+  function grantAfkHero(id) {
+    const h = HEROES[id];
+    if (!multiverseSave.unlocked[id]) {
+      multiverseSave.unlocked[id] = true; multiverseSave.stars[id] = 1;
+      const slots = (multiverseSave.goldUpgrades && multiverseSave.goldUpgrades.extraLoadoutSlot) ? 7 : 6;
+      if (multiverseSave.equipped.length < slots && !multiverseSave.equipped.includes(id)) multiverseSave.equipped.push(id);
+      return { isNew: true, msg: 'ODBLOKOWANO: ' + h.name + ' (' + h.rarity.toUpperCase() + ')!' };
+    }
+    if ((multiverseSave.stars[id] || 1) < 5) {
+      multiverseSave.stars[id] = (multiverseSave.stars[id] || 1) + 1;
+      return { isNew: false, msg: h.name + ' (duplikat): ★' + multiverseSave.stars[id] };
+    }
+    const g = id === 'spaceuk' ? 100 : 10;
+    multiverseSave.gems = (multiverseSave.gems || 0) + g;
+    return { isNew: false, msg: h.name + ' MAX ★ — +' + g + ' 💎' };
+  }
+
+  function openAfkPresent() {
+    afkTick(true);
+    if (afk.count <= 0) { showBanner('🎁 Nie masz AFK Present! Zbiera się sam co 5 minut (max ' + AFK_CAP + ').'); return; }
+    afk.count--; if (afk.count < AFK_CAP && afk.last > Date.now()) afk.last = Date.now(); saveAfk();
+    try { sfx.init(); sfx.playDomain(); } catch (e) {}
+    const luck = !!(multiverseSave.goldUpgrades && multiverseSave.goldUpgrades.luck2x);
+    const pMyst = luck ? 0.01 : 0.005;          // 0,5% SpaceUK (2x z Luck)
+    const id = Math.random() < pMyst ? 'spaceuk' : 'nexus_gd'; // 99,5% Nexus
+    const res = grantAfkHero(id);
+    const msg = (id === 'spaceuk' ? '🟢 MYSTERIOUS (0,5%): ' : '🟡 LEGENDARY (99,5%): ') + res.msg;
+    try { saveMultiverseData(); } catch (e) {}
+    try { buildShop(); buildIndexGrid(); buildHigherUpsSelect(); if (typeof updateMultiverseUI === 'function') updateMultiverseUI(); } catch (e) {}
+    const out = document.getElementById('afk-present-result');
+    if (out) { out.textContent = msg; out.style.color = id === 'spaceuk' ? '#4ade80' : '#fbbf24'; }
+    refreshAfkUI();
+    showBanner(msg);
+  }
+
+  function mountAfkBox() {
+    if (document.getElementById('afk-present-box')) return;
+    const el = document.createElement('div');
+    el.id = 'afk-present-box';
+    el.className = 'bg-gradient-to-r from-amber-950/80 to-emerald-950/60 border border-amber-400/50 rounded-xl p-2.5 space-y-1.5';
+    el.innerHTML = `
+      <div class="flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="text-[11px] font-black text-amber-200 uppercase"><i class="fa-solid fa-gift mr-1"></i>AFK Present (rośnie sam co 5 min)</div>
+          <div class="text-[10px] text-slate-300">99,5% <strong class="text-amber-300">Nexus</strong> (LEGENDARY, 3000 DPS) • 0,5% <strong class="text-lime-300">SpaceUK</strong> (MYSTERIOUS, 30 000 DPS)</div>
+          <div id="afk-present-result" class="text-[10px] font-bold text-amber-300 mt-0.5"></div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-sm font-black text-amber-300">x<span id="afk-present-count">0</span></span>
+          <button id="btn-open-afk-present" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-emerald-600 hover:brightness-110 disabled:opacity-40 text-slate-950 text-[11px] font-black uppercase">Otwórz</button>
+        </div>
+      </div>
+      <div class="h-1.5 rounded bg-slate-900 overflow-hidden"><div id="afk-present-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400" style="width:0%"></div></div>
+      <div class="flex items-center justify-between gap-2"><div id="afk-present-timer" class="text-[9px] text-slate-400 font-bold"></div><button id="btn-afk-arena-open" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-emerald-400/50 text-emerald-200 text-[10px] font-black uppercase">🏟 AFK Arena</button></div>`;
+    const anchor = document.getElementById('purple-crate-box');
+    if (anchor && anchor.parentNode) anchor.insertAdjacentElement('afterend', el);
+    else { const modal = document.getElementById('eq-loadout-slots'); if (modal && modal.parentNode) modal.parentNode.insertAdjacentElement('beforebegin', el); else return; }
+    document.getElementById('btn-open-afk-present').addEventListener('click', openAfkPresent);
+    const ab = document.getElementById('btn-afk-arena-open'); if (ab) ab.addEventListener('click', () => window.openAfkArena && window.openAfkArena());
+    refreshAfkUI();
+  }
+
+  const _refreshPurple = (typeof refreshPurpleCrateBox === 'function') ? refreshPurpleCrateBox : null;
+  if (_refreshPurple) {
+    refreshPurpleCrateBox = function () { _refreshPurple.apply(this, arguments); refreshAfkUI(); };
+  }
+
+
+  // ------------------------------------------------------------
+  // 7. AFK ARENA — co 1 minutę: +5 💎, +3 👻 (souls), 40% szans na AFK Present
+  // ------------------------------------------------------------
+  const arena = { active: false, start: 0, paid: 0, gems: 0, souls: 0, presents: 0 };
+  let arenaRaf = 0;
+
+  function payArena() {
+    multiverseSave.gems = (multiverseSave.gems || 0) + 5;
+    multiverseSave.souls = (multiverseSave.souls || 0) + 3;
+    arena.gems += 5; arena.souls += 3;
+    let drop = false;
+    if (Math.random() < 0.40) { afk.count++; arena.presents++; drop = true; saveAfk(); }
+    try { saveMultiverseData(); } catch (e) {}
+    try { if (typeof updateMultiverseUI === 'function') updateMultiverseUI(); } catch (e) {}
+    refreshAfkUI();
+    try { showBanner('🏟 AFK Arena (1 min): +5 💎 +3 👻' + (drop ? ' • 🎁 AFK PRESENT!' : '')); } catch (e) {}
+  }
+
+  function arenaTick() {
+    if (!arena.active) return;
+    const mins = Math.floor((Date.now() - arena.start) / 60000);
+    while (arena.paid < mins) { arena.paid++; payArena(); }
+    refreshArenaUI();
+  }
+
+  const fmt = (ms) => { const t = Math.max(0, Math.floor(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+
+  function refreshArenaUI() {
+    const pill = document.getElementById('afk-arena-pill');
+    const el = (id) => document.getElementById(id);
+    const into = arena.active ? (Date.now() - arena.start) % 60000 : 0;
+    if (pill) pill.textContent = arena.active ? '🏟 AFK ' + fmt(60000 - into) : '🏟 AFK Arena';
+    if (el('arena-status')) el('arena-status').textContent = arena.active ? 'TRWA — następna nagroda za ' + fmt(60000 - into) : 'Nieaktywna';
+    if (el('arena-bar')) el('arena-bar').style.width = (arena.active ? Math.round(into / 600) / 1 : 0) + '%';
+    if (el('arena-gems')) el('arena-gems').textContent = arena.gems;
+    if (el('arena-souls')) el('arena-souls').textContent = arena.souls;
+    if (el('arena-presents')) el('arena-presents').textContent = arena.presents;
+    if (el('arena-total')) el('arena-total').textContent = arena.active ? fmt(Date.now() - arena.start) : '0:00';
+    const go = el('arena-toggle');
+    if (go) { go.textContent = arena.active ? '⏹ Zakończ AFK' : '▶ Wejdź na AFK Arenę'; go.style.background = arena.active ? '#7f1d1d' : '#047857'; }
+  }
+
+  function arenaAnim() {
+    const m = document.getElementById('afk-arena-modal');
+    if (!m || m.style.display === 'none') { arenaRaf = 0; return; }
+    const cv = document.getElementById('arena-canvas'), c = cv.getContext('2d'), W = cv.width, H = cv.height, t = performance.now() / 1000;
+    c.clearRect(0, 0, W, H);
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0b1020'); g.addColorStop(1, '#1e1b4b');
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // podłoga areny
+    c.fillStyle = '#1f2937'; c.beginPath(); c.ellipse(W / 2, H - 34, W * 0.46, 30, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#fbbf24'; c.lineWidth = 2; c.stroke();
+    c.strokeStyle = 'rgba(251,191,36,0.35)'; c.beginPath(); c.ellipse(W / 2, H - 34, W * 0.34, 20, 0, 0, Math.PI * 2); c.stroke();
+    const ids = (multiverseSave.equipped || []).filter(id => HEROES[id]).slice(0, 7);
+    if (!ids.length) { c.fillStyle = '#94a3b8'; c.font = '700 13px Inter, sans-serif'; c.textAlign = 'center'; c.fillText('Załóż postacie w EQ — pojawią się tu AFK', W / 2, H / 2); }
+    ids.forEach((id, i) => {
+      const x = (W / (ids.length + 1)) * (i + 1), bob = arena.active ? Math.sin(t * 2 + i) * 3 : 0;
+      c.save(); c.translate(x, H - 64 + bob + (i % 2) * 8); c.scale(1.5, 1.5);
+      try { drawHeroPortrait(c, id, 6, true); } catch (e) {}
+      c.restore();
+      if (arena.active) { c.fillStyle = '#94a3b8'; c.font = '700 11px Inter, sans-serif'; c.textAlign = 'center'; c.fillText('z' + 'z'.repeat(Math.floor(t + i) % 3 + 1), x + 16, H - 98 + bob - (Math.floor(t * 2 + i) % 3) * 3); }
+    });
+    c.fillStyle = '#fde68a'; c.font = '900 13px Inter, sans-serif'; c.textAlign = 'center'; c.fillText('🏟 AFK ARENA', W / 2, 20);
+    refreshArenaUI();
+    arenaRaf = requestAnimationFrame(arenaAnim);
+  }
+
+  function openAfkArena() {
+    const m = document.getElementById('afk-arena-modal'); if (!m) return;
+    m.style.display = 'flex'; refreshArenaUI();
+    if (!arenaRaf) arenaRaf = requestAnimationFrame(arenaAnim);
+  }
+  function closeAfkArena() { const m = document.getElementById('afk-arena-modal'); if (m) m.style.display = 'none'; }
+
+  function mountArena() {
+    if (document.getElementById('afk-arena-modal')) return;
+    const pill = document.createElement('button');
+    pill.id = 'afk-arena-pill';
+    pill.style.cssText = 'position:fixed;left:10px;bottom:10px;z-index:99980;padding:6px 12px;border-radius:999px;background:rgba(6,78,59,.92);color:#a7f3d0;border:1px solid #34d399;font:800 12px Inter,sans-serif;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.5)';
+    pill.addEventListener('click', openAfkArena);
+    document.body.appendChild(pill);
+
+    const m = document.createElement('div');
+    m.id = 'afk-arena-modal';
+    m.style.cssText = 'position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.84)';
+    m.innerHTML = `
+      <div style="width:min(520px,94vw);background:#0b1020;border:2px solid #fbbf24;border-radius:16px;padding:14px;color:#e2e8f0;font-family:Inter,sans-serif;box-shadow:0 0 40px rgba(251,191,36,.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:900;font-size:15px;color:#fde68a">🏟 AFK ARENA</div>
+          <button id="arena-close" style="background:#1e293b;border:1px solid #475569;color:#e2e8f0;border-radius:8px;padding:2px 10px;font-weight:800;cursor:pointer">✕</button>
+        </div>
+        <canvas id="arena-canvas" width="480" height="190" style="width:100%;border-radius:10px;border:1px solid #334155;background:#0b1020"></canvas>
+        <div style="font-size:11px;color:#cbd5e1;margin:8px 0 4px">Co <b>1 minutę</b> na arenie: <b style="color:#4ade80">+5 💎</b> • <b style="color:#5eead4">+3 👻 souls</b> • <b style="color:#fbbf24">40%</b> szans na 🎁 AFK Present (99,5% Nexus / 0,5% SpaceUK).</div>
+        <div style="height:8px;border-radius:6px;background:#1e293b;overflow:hidden"><div id="arena-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#fbbf24,#34d399)"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin:4px 0 8px;color:#94a3b8"><span id="arena-status">Nieaktywna</span><span>Czas: <span id="arena-total">0:00</span></span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;font-weight:900;font-size:13px;margin-bottom:10px">
+          <div style="background:#052e16;border:1px solid #16a34a;border-radius:8px;padding:5px">💎 <span id="arena-gems">0</span></div>
+          <div style="background:#042f2e;border:1px solid #0d9488;border-radius:8px;padding:5px">👻 <span id="arena-souls">0</span></div>
+          <div style="background:#451a03;border:1px solid #d97706;border-radius:8px;padding:5px">🎁 <span id="arena-presents">0</span></div>
+        </div>
+        <button id="arena-toggle" style="width:100%;padding:9px;border-radius:10px;border:none;color:#fff;font-weight:900;font-size:13px;cursor:pointer;background:#047857"></button>
+        <div style="font-size:10px;color:#64748b;margin-top:6px;text-align:center">Możesz zamknąć okno (✕) — arena działa dalej w tle, licznik jest na przycisku w rogu. Postęp sesji nie zapisuje się po odświeżeniu strony.</div>
+      </div>`;
+    document.body.appendChild(m);
+    m.addEventListener('click', (e) => { if (e.target === m) closeAfkArena(); });
+    document.getElementById('arena-close').addEventListener('click', closeAfkArena);
+    document.getElementById('arena-toggle').addEventListener('click', () => {
+      if (arena.active) {
+        arena.active = false;
+        try { showBanner('🏟 AFK Arena zakończona: +' + arena.gems + ' 💎, +' + arena.souls + ' 👻, ' + arena.presents + ' 🎁'); } catch (e) {}
+      } else {
+        Object.assign(arena, { active: true, start: Date.now(), paid: 0, gems: 0, souls: 0, presents: 0 });
+        try { showBanner('🏟 AFK Arena rozpoczęta! Nagrody co 1 minutę.'); } catch (e) {}
+      }
+      refreshArenaUI();
+    });
+    refreshArenaUI();
+  }
+  window.openAfkArena = openAfkArena;
+  mountArena();
+  setInterval(arenaTick, 500);
+
+  mountAfkBox();
+  afkTick(false);
+  setInterval(() => afkTick(false), 1000);
+  window.openAfkPresent = openAfkPresent; // do testów w konsoli: openAfkPresent()
+  console.log('%c🎁 AFK Present + Nexus + SpaceUK załadowane', 'color:#fbbf24;font-weight:bold');
+})();
+
+</script>
+
+<!-- CUSTOM_PATCHER_V2_START -->
+<script id="custom-patcher-v2">
+(function () {
+  // =========================================================================
+  // 1. NAPRAWA KOLOROWYCH OPISÓW WSZYSTKICH MOCY (MOC 1 - MOC 5) W INDEX I EQ
+  //    (Prawdziwe nazwy funkcji: inspectCharacterInIndex oraz inspectCharacterInEq!)
+  // =========================================================================
+  const SKILL_ROW_STYLES = [
+    { key: 'skill1', label: 'Moc 1:', color: '#7dd3fc' }, // sky-300
+    { key: 'skill2', label: 'Moc 2:', color: '#f0abfc' }, // fuchsia-300
+    { key: 'skill3', label: 'Moc 3:', color: '#6ee7b7' }, // emerald-300
+    { key: 'skill4', label: 'Moc 4:', color: '#fcd34d' }, // amber-300
+    { key: 'skill5', label: 'Moc 5:', color: '#fb7185' }  // rose-400
+  ];
+
+  function renderColoredSkills(prefix, heroId) {
+    const h = (typeof HEROES !== 'undefined') ? HEROES[heroId] : null;
+    if (!h) return;
+    const s1El = document.getElementById(prefix + '-insp-s1');
+    const s2El = document.getElementById(prefix + '-insp-s2');
+    if (!s1El || !s2El) return;
+
+    // Czysta Moc 1 i Moc 2 (bez sklejonych Mocy 3/4/5!)
+    if (h.skill1) {
+      s1El.textContent = `${h.skill1.name} (CD: ${h.skill1.cd}s) — ${h.skill1.desc}`;
+    }
+    if (h.skill2) {
+      const lvl2 = h.skill2.unlockLvl && h.skill2.unlockLvl < 99 ? `LVL ${h.skill2.unlockLvl}, ` : '';
+      s2El.textContent = `${h.skill2.name} (${lvl2}CD: ${h.skill2.cd}s) — ${h.skill2.desc}`;
+    }
+
+    const parentBox = s2El.parentElement && s2El.parentElement.parentElement;
+    if (!parentBox) return;
+
+    // Osobne kolorowe wiersze dla Mocy 3, 4 i 5 (z bezpośrednim stylem koloru, żeby działało zawsze!)
+    for (let idx = 2; idx < SKILL_ROW_STYLES.length; idx++) {
+      const st = SKILL_ROW_STYLES[idx];
+      const rowId = `${prefix}-insp-row-s${idx + 1}`;
+      let row = document.getElementById(rowId);
+      const sk = h[st.key];
+      if (sk && sk.name && sk.unlockLvl !== 99) {
+        if (!row) {
+          row = document.createElement('div');
+          row.id = rowId;
+          parentBox.appendChild(row);
+        }
+        row.style.display = '';
+        const lvlTxt = sk.unlockLvl ? `LVL ${sk.unlockLvl}, ` : '';
+        row.innerHTML = `<span style="color:${st.color};font-weight:800;">${st.label}</span> <span style="color:#cbd5e1;"></span>`;
+        row.querySelector('span:last-child').textContent = `${sk.name} (${lvlTxt}CD: ${sk.cd}s) — ${sk.desc}`;
+      } else if (row) {
+        row.style.display = 'none';
+      }
+    }
+  }
+
+  // Hook na PRAWDZIWE funkcje: inspectCharacterInIndex oraz inspectCharacterInEq!
+  if (typeof inspectCharacterInIndex === 'function') {
+    const _origInspectIdx = inspectCharacterInIndex;
+    inspectCharacterInIndex = function (heroId) {
+      const r = _origInspectIdx.apply(this, arguments);
+      try { renderColoredSkills('idx', heroId); } catch (e) {}
+      return r;
+    };
+  }
+  if (typeof inspectCharacterInEq === 'function') {
+    const _origInspectEq = inspectCharacterInEq;
+    inspectCharacterInEq = function (heroId) {
+      const r = _origInspectEq.apply(this, arguments);
+      try { renderColoredSkills('eq', heroId); } catch (e) {}
+      return r;
+    };
+  }
+
+  // Odśwież aktualnie podglądaną postać przy starcie
+  setTimeout(() => {
+    try { if (typeof inspectedIndexHeroId !== 'undefined' && inspectedIndexHeroId) renderColoredSkills('idx', inspectedIndexHeroId); } catch (e) {}
+    try { if (typeof inspectedEqHeroId !== 'undefined' && inspectedEqHeroId) renderColoredSkills('eq', inspectedEqHeroId); } catch (e) {}
+  }, 300);
+
+  // =========================================================================
+  // 2. WYGLĄD EWOLUCJI — ŻYWE PODGLĄDY 2D OBOK KAŻDEJ Z 4 EWOLUCJI
+  // =========================================================================
+  const EVO_PREVIEW_MAP = [
+    { btnId: 'v27-evo-ltv',   heroId: 'st_large_tv_evo',  border: 'border-purple-400/75', bg: '#0c0618' },
+    { btnId: 'v27-evo-heian', heroId: 'heian_sukuna',     border: 'border-rose-400/75',   bg: '#160509' },
+    { btnId: 'v27-evo-syuji', heroId: 'shinjuku_yuji',    border: 'border-pink-400/75',   bg: '#140610' },
+    { btnId: 'v27-evo-megs3', heroId: 'megumi_potential', border: 'border-sky-400/75',    bg: '#050c18' }
+  ];
+
+  function injectEvoPortraits() {
+    const evoBox = document.getElementById('v27-evo-container');
+    if (!evoBox) return;
+    EVO_PREVIEW_MAP.forEach(item => {
+      const btn = document.getElementById(item.btnId);
+      if (!btn) return;
+      const card = btn.parentElement;
+      if (!card || card.querySelector('.v28-evo-preview-canvas')) return;
+
+      const resolvedHeroId = (typeof HEROES !== 'undefined' && HEROES[item.heroId])
+        ? item.heroId
+        : (item.heroId === 'megumi_potential' && HEROES && HEROES.megumi_s3 ? 'megumi_s3' : item.heroId);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'flex items-center gap-3';
+
+      const cv = document.createElement('canvas');
+      cv.width = 86;
+      cv.height = 92;
+      cv.dataset.evoHeroId = resolvedHeroId;
+      cv.className = `v28-evo-preview-canvas w-[78px] h-[84px] rounded-xl border-2 ${item.border} shrink-0 shadow-lg`;
+      cv.style.background = item.bg;
+
+      const rightCol = document.createElement('div');
+      rightCol.className = 'flex-1 min-w-0 space-y-2';
+
+      while (card.firstChild) rightCol.appendChild(card.firstChild);
+      wrap.appendChild(cv);
+      wrap.appendChild(rightCol);
+      card.appendChild(wrap);
+    });
+  }
+
+  const evoObserver = new MutationObserver(() => injectEvoPortraits());
+  setInterval(() => {
+    const evoBox = document.getElementById('v27-evo-container');
+    if (evoBox && !evoBox.dataset.v28Obs) {
+      evoBox.dataset.v28Obs = '1';
+      evoObserver.observe(evoBox, { childList: true });
+      injectEvoPortraits();
+    }
+  }, 400);
+
+  (function animEvoPreviews(ts) {
+    const evoBox = document.getElementById('v27-evo-container');
+    const modal = document.getElementById('multiverse-modal');
+    if (modal && !modal.classList.contains('hidden') && evoBox && !evoBox.classList.contains('hidden')) {
+      const canvases = evoBox.querySelectorAll('.v28-evo-preview-canvas');
+      if (canvases.length === 0) injectEvoPortraits();
+      canvases.forEach(cv => {
+        const hid = cv.dataset.evoHeroId;
+        const h = (typeof HEROES !== 'undefined') ? HEROES[hid] : null;
+        if (!h) return;
+        const c = cv.getContext('2d');
+        c.clearRect(0, 0, cv.width, cv.height);
+        try {
+          if (typeof drawChoreographedHero === 'function') {
+            drawChoreographedHero(c, h, 'toctoc', ts * 0.001, cv.width / 2, cv.height * 0.65, 0.88, 0, false);
+          } else if (typeof drawHeroPortrait === 'function') {
+            c.save(); c.translate(cv.width / 2, cv.height / 2); c.scale(1.6, 1.6);
+            drawHeroPortrait(c, hid, 6, true);
+            c.restore();
+          }
+        } catch (_e) {}
+      });
+    }
+    requestAnimationFrame(animEvoPreviews);
+  })(0);
+
+  // =========================================================================
+  // 3. CHRISTMAS EVENT (COMING SOON) — KLIKNIĘCIE KAFELKA
+  // =========================================================================
+  document.getElementById('btn-christmas-event-soon')?.addEventListener('click', () => {
+    if (typeof showBanner === 'function') {
+      showBanner('🎄 CHRISTMAS EVENT — COMING SOON! Świąteczna mapa i nagrody już wkrótce! ❄️');
+    }
+  });
+
+  // Odśwież opis pity po zmianie celu enchantu
+  document.getElementById('enchant-target-select')?.addEventListener('change', () => {
+    if (typeof updateEnchantPityLabel === 'function') updateEnchantPityLabel();
+  });
+
+  console.log('%c🛠️ Custom Patcher v2 załadowany (Kolorowe Moce 1-5 FIXED • Christmas Event Coming Soon • Merchant tylko Secrety)', 'color:#38bdf8;font-weight:bold');
+})();
+</script>
+<!-- CUSTOM_PATCHER_V2_END -->
 </body>
 </html>
