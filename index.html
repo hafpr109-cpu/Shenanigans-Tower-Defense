@@ -3956,6 +3956,9 @@ aside, #inspector-panel {
  multiversal_threat: {
    id: 'multiversal_threat',
    name: 'Multiversal Threat',
+   dmgMult: 1.30,
+   cdMult: 0.80,
+   rngBonus: 30,
    color: '#67e8f9',
    chromatic: true,
    weight: 0,
@@ -4090,7 +4093,7 @@ aside, #inspector-panel {
                 calamity_1x1: false,
                 nightmare_bonnie: false,
  naoya_zenin: false,
- st_cameraman: false, st_speakerman: false, st_tvman: false, st_large_cameraman: false, st_large_speakerman: false, st_large_tvman: false, st_titan_camera_1: false, st_titan_camera_2: false, st_camera_spider: false, st_speaker_spider: false, st_tv_woman: false, st_titan_speaker_1: false, st_heli_speaker: false, gd_diamond: false, st_titan_speaker_2: false, st_titan_tv_25: false, st_secret_agent: false, phantom_freddy: false, phantom_chica: false, phantom_foxy: false, phantom_bb: false, phantom_mangle: false, phantom_puppet: false, springtrap: false, st_titan_tv_1: false, st_large_tv_evo: false, maki_s3: false
+ st_cameraman: false, st_speakerman: false, st_tvman: false, st_large_cameraman: false, st_large_speakerman: false, st_large_tvman: false, st_titan_camera_1: false, st_titan_camera_2: false, st_camera_spider: false, st_speaker_spider: false, st_tv_woman: false, st_titan_speaker_1: false, st_heli_speaker: false, gd_diamond: false, st_titan_speaker_2: false, st_titan_tv_25: false, st_secret_agent: false, phantom_freddy: false, phantom_chica: false, phantom_foxy: false, phantom_bb: false, phantom_mangle: false, phantom_puppet: false, springtrap: false, st_titan_tv_1: false, st_large_tv_evo: false, maki_s3: false, st_scientist_cameraman: false
             },
             shadowFreddySlotHeroId: null,
             extraSlotHeroId: null,
@@ -6647,7 +6650,7 @@ aside, #inspector-panel {
             if (syn.dmgMult) mult *= syn.dmgMult;
  const _dmAuraD = getDiamondAuraForTower(tower);
  mult *= _dmAuraD.dmgMult;
- if (typeof multiverseSave !== 'undefined' && multiverseSave.enchants && multiverseSave.enchants[tower.type] === 'multiversal_threat') mult *= 1.30;
+ // Multiversal Threat DMG (+30%) liczony jest już przez ench.dmgMult (brak duplikacji i brak NaN!)
  if (typeof state !== 'undefined' && state.makiHrBoostTimer > 0) mult *= 1.15;
  if (tower.secretAgentBoostTimer > 0) mult *= 1.15;
  if (HEROES[tower.type] && HEROES[tower.type].universe === 'st' && state.towers.some(a => a.type === 'st_titan_tv_25')) mult *= 1.10;
@@ -6715,7 +6718,7 @@ aside, #inspector-panel {
             if (syn.cdMult) cd *= syn.cdMult;
  const _dmAuraC = getDiamondAuraForTower(tower);
  cd *= _dmAuraC.cdMult;
- if (typeof multiverseSave !== 'undefined' && multiverseSave.enchants && multiverseSave.enchants[tower.type] === 'multiversal_threat') cd *= 0.80;
+ // Multiversal Threat CD (-20%) liczony jest już przez ench.cdMult (brak duplikacji i brak NaN!)
  if (typeof state !== 'undefined' && state.makiHrBoostTimer > 0) cd *= 0.85;
  if (tower.secretAgentBoostTimer > 0) cd *= 0.85;
  if (HEROES[tower.type] && HEROES[tower.type].universe === 'st' && state.towers.some(a => a.type === 'st_titan_tv_25')) cd *= 0.90;
@@ -6838,7 +6841,8 @@ aside, #inspector-panel {
  st_large_tv_evo: { arm: '#14111a', leg: '#0c0a12', shoe: '#050408' },
                 nexus_gd: { arm: '#dc2626', leg: '#b91c1c', shoe: '#7f1d1d' },
                 spaceuk: { arm: '#f8fafc', leg: '#e2e8f0', shoe: '#cbd5e1' },
-                nightmare_chica: { arm: '#a16207', leg: '#78350f', shoe: '#450a0a' }
+                nightmare_chica: { arm: '#854d0e', leg: '#9a3412', shoe: '#451a03' },
+                st_scientist_cameraman: { arm: '#f8fafc', leg: '#1e293b', shoe: '#09090b' }
             };
             return map[type] || { arm: '#1e293b', leg: '#0f172a', shoe: '#09090b' };
         }
@@ -21039,7 +21043,8 @@ aside, #inspector-panel {
             const hudEq = document.getElementById('hud-eq-count');
             if (hudEq) hudEq.textContent = eqCount;
 
-            for (let slotIdx = 0; slotIdx < 6; slotIdx++) {
+            const _maxShopSlots = (multiverseSave.goldUpgrades && multiverseSave.goldUpgrades.extraLoadoutSlot) ? 7 : 6;
+            for (let slotIdx = 0; slotIdx < _maxShopSlots; slotIdx++) {
                 const heroId = multiverseSave.equipped[slotIdx];
                 const keyNum = slotIdx + 1;
 
@@ -25042,7 +25047,7 @@ aside, #inspector-panel {
             }
 
             // P1: Klawisze 1-6 (Stawianie ze składu P1)
-            if (e.key >= '1' && e.key <= '6') {
+            if (e.key >= '1' && e.key <= '7') {
                 const slotIndex = parseInt(e.key, 10) - 1;
                 const heroId = multiverseSave.equipped[slotIndex];
                 if (heroId) {
@@ -26599,12 +26604,14 @@ aside, #inspector-panel {
  card.appendChild(side);
 
  danceWidgets.push({
+ btnId: cfg.btnId,
  canvas: side.querySelector('canvas'),
  nameEl: side.querySelector('.cd-name'),
  rarityEl: side.querySelector('.cd-rarity'),
  heroes: cfg.heroes.filter(id => typeof HEROES === 'object' && HEROES[id]),
  offset: danceWidgets.length * 0.75
  });
+ window._v3DanceWidgets = danceWidgets;
  }
 
  // Fioletowy Crate w EQ — wstawiamy mini podgląd obok opisu, przed przyciskiem Otwórz
@@ -27916,6 +27923,18 @@ aside, #inspector-panel {
        fnafVar = v;
        const is3 = v === 'fnaf3_phantom_crate';
        infoBox.classList.toggle('hidden', !is3);
+       const f1Body = card.querySelector('.space-y-2');
+       if (f1Body) f1Body.classList.toggle('hidden', is3);
+       if (Array.isArray(window._v3DanceWidgets)) {
+         const fw = window._v3DanceWidgets.find(w => w.btnId === 'btn-open-fnaf1-crate');
+         if (fw) {
+           const list = is3
+             ? ['phantom_freddy','phantom_chica','phantom_foxy','phantom_bb','phantom_mangle','phantom_puppet','springtrap']
+             : ['chica','bonnie','foxy','freddy','golden_freddy','endo01'];
+           fw.heroes = list.filter(id => typeof HEROES === 'object' && HEROES[id]);
+           fw._lastId = null;
+         }
+       }
        b1.className = !is3 ? 'py-1 px-2 rounded-lg bg-amber-500 text-slate-950 font-black text-[10px] uppercase shadow' : 'py-1 px-2 rounded-lg bg-slate-900 border border-amber-500/40 text-amber-300 font-black text-[10px] uppercase';
        b3.className = is3 ? 'py-1 px-2 rounded-lg bg-lime-400 text-slate-950 font-black text-[10px] uppercase shadow' : 'py-1 px-2 rounded-lg bg-slate-900 border border-lime-500/60 text-lime-300 font-black text-[10px] uppercase';
      }
@@ -29257,18 +29276,12 @@ aside, #inspector-panel {
       const wps = (targetEnemy && targetEnemy.lane) || (state.map && state.map.waypoints) || [{ x: 0, y: 260 }, { x: 960, y: 260 }];
       const startWp = wps[wps.length - 1];
       let ang = 0;
-      if (targetEnemy) {
-        ang = Math.atan2(targetEnemy.y - t.y, targetEnemy.x - t.x);
-      } else if (wps.length >= 2) {
-        ang = Math.atan2(wps[0].y - startWp.y, wps[0].x - startWp.x);
-      }
+      if (targetEnemy) ang = Math.atan2(targetEnemy.y - t.y, targetEnemy.x - t.x);
+      else if (wps.length >= 2) ang = Math.atan2(wps[0].y - startWp.y, wps[0].x - startWp.x);
       fxList().push({
-        kind: 'kb_orb', tower: t,
-        x: t.x, y: t.y,
+        kind: 'kb_orb', tower: t, x: t.x, y: t.y,
         vx: Math.cos(ang) * 760, vy: Math.sin(ang) * 760,
-        r: 44, dmg: 10000, hitIds: new Set(),
-        t: 0, dur: 2.8,
-        lane: wps, wpIdx: wps.length - 1, followPath: !targetEnemy
+        r: 44, dmg: 10000, hitIds: new Set(), t: 0, dur: 2.8
       });
       spawnParticles(t.x, t.y, '#f97316', 28, 220, 5);
       spawnFloatingText(t.x, t.y - 54, '🟠 KULA KLAWISZY (10 000 DMG PIERCING)!', '#fb923c', 1.4);
@@ -29654,16 +29667,11 @@ aside, #inspector-panel {
         ctx.restore();
       } else if (f.kind === 'kb_orb') {
         const keys = ['W','A','S','D','↑','SPC','ENT','ESC','⇧','CTRL'];
-        ctx.save();
-        ctx.translate(f.x, f.y);
+        ctx.save(); ctx.translate(f.x, f.y);
         const og = ctx.createRadialGradient(0, 0, 6, 0, 0, f.r);
-        og.addColorStop(0, '#fef08a');
-        og.addColorStop(0.45, '#f97316');
-        og.addColorStop(1, 'rgba(234,88,12,0.15)');
-        ctx.fillStyle = og;
-        ctx.beginPath(); ctx.arc(0, 0, f.r, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#fdba74'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(0, 0, f.r * 0.88, 0, Math.PI * 2); ctx.stroke();
+        og.addColorStop(0, '#fef08a'); og.addColorStop(0.45, '#f97316'); og.addColorStop(1, 'rgba(234,88,12,0.15)');
+        ctx.fillStyle = og; ctx.beginPath(); ctx.arc(0, 0, f.r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#fdba74'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, f.r * 0.88, 0, Math.PI * 2); ctx.stroke();
         for (let k = 0; k < 8; k++) {
           const ka = f.t * 9 + k * (Math.PI / 4);
           const kr = f.r * (0.45 + (k % 2) * 0.34);
@@ -29671,8 +29679,7 @@ aside, #inspector-panel {
           ctx.save(); ctx.translate(kx, ky); ctx.rotate(ka * 0.5);
           ctx.fillStyle = '#0f172a'; ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 1.4;
           ctx.beginPath(); ctx.roundRect(-10, -8, 20, 16, 3); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = '#ffffff'; ctx.font = '900 7px Inter, sans-serif';
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#ffffff'; ctx.font = '900 7px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText(keys[k % keys.length], 0, 0.5);
           ctx.restore();
         }
@@ -29794,7 +29801,7 @@ aside, #inspector-panel {
     return true;
   }
   function castNcUpgrade(tower) {
-    const MAX_STACKS = 60; // max +300% (60 * 5%)
+    const MAX_STACKS = 60;
     const prevStacks = tower._ncUpStacks || 0;
     tower._ncUpStacks = Math.min(MAX_STACKS, prevStacks + 1);
     const pct = tower._ncUpStacks * 5;
@@ -30158,19 +30165,112 @@ aside, #inspector-panel {
 
 </script>
 
-<!-- CUSTOM_PATCHER_V2_START -->
-<script id="custom-patcher-v2">
+<!-- CUSTOM_PATCHER_V6_START -->
+<style id="v4-christmas-theme-css">
+  /* === LEKKI, BEZLAGOWY MOTYW ŚWIĄTECZNY v4 (100% GPU CSS, ZERO CANVAS LAGÓW!) === */
+  #v3-christmas-lights {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; height: 20px; z-index: 99960;
+    pointer-events: none; overflow: hidden;
+    border-top: 2px solid #14532d;
+  }
+  body.christmas-theme #v3-christmas-lights { display: flex; justify-content: space-around; align-items: flex-start; }
+  .v3-bulb {
+    width: 9px; height: 13px; border-radius: 50% 50% 60% 60%;
+    margin-top: 1px; position: relative;
+    will-change: opacity;
+    animation: v4BulbGlow 2.2s infinite alternate ease-in-out;
+  }
+  .v3-bulb::before {
+    content: ''; position: absolute; top: -3px; left: 2px; width: 5px; height: 3px;
+    background: #14532d; border-radius: 1px;
+  }
+  @keyframes v4BulbGlow {
+    0% { opacity: 0.42; }
+    100% { opacity: 1; }
+  }
+
+  /* Lekki śnieg CSS (tylko transform: translate3d na GPU — zero obciążenia CPU!) */
+  #v4-snow-layer {
+    display: none;
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 99950; overflow: hidden;
+  }
+  body.christmas-theme:not(.v4-perf-on) #v4-snow-layer { display: block; }
+  .v4-flake {
+    position: absolute; top: -18px;
+    color: rgba(240, 249, 255, 0.85);
+    font-size: 13px; line-height: 1; user-select: none;
+    will-change: transform;
+    animation: v4SnowFall linear infinite;
+  }
+  @keyframes v4SnowFall {
+    0% { transform: translate3d(0, -5vh, 0); }
+    100% { transform: translate3d(28px, 106vh, 0); }
+  }
+
+  /* Bogatszy wystrój świąteczny (czyste lekkie gradienty i obramowania bez ciężkich blurów) */
+  body.christmas-theme {
+    background: radial-gradient(circle at 20% 0%, #2a0a12 0%, #051611 52%, #06101f 100%) !important;
+  }
+  body.christmas-theme header {
+    background: linear-gradient(90deg, rgba(88, 12, 18, 0.96), rgba(6, 78, 59, 0.95), rgba(12, 74, 110, 0.96)) !important;
+    border-bottom: 2px solid rgba(250, 204, 21, 0.78) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
+  }
+  body.christmas-theme #overlay-screen {
+    background:
+      radial-gradient(ellipse at 18% 12%, rgba(220, 38, 38, 0.28) 0%, transparent 45%),
+      radial-gradient(ellipse at 82% 16%, rgba(16, 185, 129, 0.26) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 90%, rgba(56, 189, 248, 0.24) 0%, transparent 50%),
+      linear-gradient(155deg, #07131e 0%, #190914 50%, #051c15 100%) !important;
+  }
+  body.christmas-theme #overlay-screen > div {
+    border: 2px solid rgba(250, 204, 21, 0.75) !important;
+    border-top: 4px solid #e0f2fe !important;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.8), inset 0 6px 14px rgba(224, 242, 254, 0.14) !important;
+  }
+  body.christmas-theme #overlay-title {
+    background: linear-gradient(90deg, #fecaca, #fde047, #a7f3d0, #e0f2fe, #fecaca) !important;
+    background-size: 200% auto !important;
+    -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+  }
+  /* Ośnieżone górne krawędzie panelu Składu, Inspektora i Modali */
+  body.christmas-theme aside,
+  body.christmas-theme #inspector-panel,
+  body.christmas-theme #multiverse-modal > div,
+  body.christmas-theme #equipment-modal > div,
+  body.christmas-theme #v3-settings-modal > div {
+    border-color: rgba(250, 204, 21, 0.55) !important;
+    border-top: 3px solid #bae6fd !important;
+  }
+  body.christmas-theme #wave-bottom-bar,
+  body.christmas-theme #synergy-vow-bar {
+    border-color: rgba(52, 211, 153, 0.55) !important;
+    background: linear-gradient(90deg, rgba(20, 10, 18, 0.94), rgba(6, 40, 32, 0.94)) !important;
+  }
+  body.christmas-theme #v4-xmas-banner {
+    display: flex !important;
+  }
+  #v4-xmas-banner {
+    display: none;
+    align-items: center; justify-content: center; gap: 8px;
+    padding: 5px 12px; border-radius: 999px;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.88), rgba(6, 95, 70, 0.88), rgba(14, 116, 144, 0.88));
+    border: 1px solid rgba(253, 224, 71, 0.75);
+    color: #fef9c3; font-size: 11px; font-weight: 900; letter-spacing: 0.04em;
+    margin: 0 auto 4px; width: fit-content;
+  }
+</style>
+<script id="custom-patcher-v6">
 (function () {
-  // =========================================================================
-  // 1. NAPRAWA KOLOROWYCH OPISÓW WSZYSTKICH MOCY (MOC 1 - MOC 5) W INDEX I EQ
-  //    (Prawdziwe nazwy funkcji: inspectCharacterInIndex oraz inspectCharacterInEq!)
-  // =========================================================================
+  // 1. KOLOROWE OPISY WSZYSTKICH MOCY (MOC 1 - MOC 5) W INDEX I EQ
   const SKILL_ROW_STYLES = [
-    { key: 'skill1', label: 'Moc 1:', color: '#7dd3fc' }, // sky-300
-    { key: 'skill2', label: 'Moc 2:', color: '#f0abfc' }, // fuchsia-300
-    { key: 'skill3', label: 'Moc 3:', color: '#6ee7b7' }, // emerald-300
-    { key: 'skill4', label: 'Moc 4:', color: '#fcd34d' }, // amber-300
-    { key: 'skill5', label: 'Moc 5:', color: '#fb7185' }  // rose-400
+    { key: 'skill1', label: 'Moc 1:', color: '#7dd3fc' },
+    { key: 'skill2', label: 'Moc 2:', color: '#f0abfc' },
+    { key: 'skill3', label: 'Moc 3:', color: '#6ee7b7' },
+    { key: 'skill4', label: 'Moc 4:', color: '#fcd34d' },
+    { key: 'skill5', label: 'Moc 5:', color: '#fb7185' }
   ];
 
   function renderColoredSkills(prefix, heroId) {
@@ -30180,10 +30280,7 @@ aside, #inspector-panel {
     const s2El = document.getElementById(prefix + '-insp-s2');
     if (!s1El || !s2El) return;
 
-    // Czysta Moc 1 i Moc 2 (bez sklejonych Mocy 3/4/5!)
-    if (h.skill1) {
-      s1El.textContent = `${h.skill1.name} (CD: ${h.skill1.cd}s) — ${h.skill1.desc}`;
-    }
+    if (h.skill1) s1El.textContent = `${h.skill1.name} (CD: ${h.skill1.cd}s) — ${h.skill1.desc}`;
     if (h.skill2) {
       const lvl2 = h.skill2.unlockLvl && h.skill2.unlockLvl < 99 ? `LVL ${h.skill2.unlockLvl}, ` : '';
       s2El.textContent = `${h.skill2.name} (${lvl2}CD: ${h.skill2.cd}s) — ${h.skill2.desc}`;
@@ -30192,7 +30289,6 @@ aside, #inspector-panel {
     const parentBox = s2El.parentElement && s2El.parentElement.parentElement;
     if (!parentBox) return;
 
-    // Osobne kolorowe wiersze dla Mocy 3, 4 i 5 (z bezpośrednim stylem koloru, żeby działało zawsze!)
     for (let idx = 2; idx < SKILL_ROW_STYLES.length; idx++) {
       const st = SKILL_ROW_STYLES[idx];
       const rowId = `${prefix}-insp-row-s${idx + 1}`;
@@ -30214,7 +30310,6 @@ aside, #inspector-panel {
     }
   }
 
-  // Hook na PRAWDZIWE funkcje: inspectCharacterInIndex oraz inspectCharacterInEq!
   if (typeof inspectCharacterInIndex === 'function') {
     const _origInspectIdx = inspectCharacterInIndex;
     inspectCharacterInIndex = function (heroId) {
@@ -30232,41 +30327,663 @@ aside, #inspector-panel {
     };
   }
 
-  // Odśwież aktualnie podglądaną postać przy starcie
-  setTimeout(() => {
-    try { if (typeof inspectedIndexHeroId !== 'undefined' && inspectedIndexHeroId) renderColoredSkills('idx', inspectedIndexHeroId); } catch (e) {}
-    try { if (typeof inspectedEqHeroId !== 'undefined' && inspectedEqHeroId) renderColoredSkills('eq', inspectedEqHeroId); } catch (e) {}
-  }, 300);
+  // 2. NOWY WYGLĄD NIGHTMARE CHICA (1:1 ZE ZDJĘCIA) + PORTRET SCIENTIST CAMERAMAN
+  const _origPortraitV3 = drawHeroPortrait;
+  drawHeroPortrait = function (c, type, level, withRing) {
+    if (type === 'nightmare_chica') {
+      const ring = (withRing === undefined) ? true : withRing;
+      c.save();
+      if (ring) {
+        const g = c.createRadialGradient(-4, -5, 2, 0, 0, 21);
+        g.addColorStop(0, '#422006'); g.addColorStop(1, '#09090b');
+        c.fillStyle = g; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = '#ef4444'; c.lineWidth = 2.4; c.stroke();
+      } else {
+        c.translate(0, 3.6);
+      }
+      c.lineJoin = 'round';
+      c.fillStyle = '#71711a'; c.strokeStyle = '#1c1917'; c.lineWidth = 1.1;
+      for (const [fx, fy, ang] of [[-4.5, -10.5, -0.42], [0, -12, 0], [4.5, -10.5, 0.42]]) {
+        c.save(); c.translate(fx, fy); c.rotate(ang);
+        c.beginPath(); c.ellipse(0, -2.5, 2.0, 4.4, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+        c.restore();
+      }
+      const hg = c.createRadialGradient(-3, -4, 2, 0, -1, 13);
+      hg.addColorStop(0, '#a39e2c'); hg.addColorStop(0.65, '#6d6b1e'); hg.addColorStop(1, '#36330f');
+      c.fillStyle = hg; c.strokeStyle = '#18181b'; c.lineWidth = 1.5;
+      c.beginPath(); c.ellipse(0, -1.5, 11.2, 10.2, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#18181b';
+      c.beginPath(); c.ellipse(-7.2, -5.5, 2.2, 1.5, -0.4, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(7.5, -4.5, 2.0, 1.4, 0.3, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#09090b'; c.lineWidth = 0.9;
+      c.beginPath(); c.moveTo(-10, -4); c.quadraticCurveTo(-13.5, -6, -12.5, -9); c.stroke();
+      c.beginPath(); c.moveTo(9.5, 1.5); c.quadraticCurveTo(13, 0.5, 12.2, 3.2); c.stroke();
+      c.fillStyle = '#050507';
+      c.beginPath(); c.arc(-4.2, -4.2, 3.3, 0, Math.PI * 2); c.arc(4.2, -4.2, 3.3, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#e2e8f0'; c.beginPath(); c.arc(-4.0, -4.2, 1.1, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#dc2626'; c.beginPath(); c.arc(4.2, -4.2, 1.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fde047'; c.beginPath(); c.arc(4.2, -4.2, 0.75, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#09090b';
+      c.beginPath(); c.roundRect(-8.8, 0.8, 17.6, 8.8, 3.5); c.fill();
+      c.fillStyle = '#c2410c'; c.strokeStyle = '#290d05'; c.lineWidth = 1.1;
+      c.beginPath(); c.ellipse(0, 0.4, 8.6, 2.7, 0, Math.PI, Math.PI * 2); c.lineTo(8.6, 1.8); c.lineTo(-8.6, 1.8); c.closePath(); c.fill(); c.stroke();
+      c.beginPath(); c.ellipse(0, 9.2, 7.6, 2.2, 0, 0, Math.PI); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#e2e8f0'; c.strokeStyle = '#09090b'; c.lineWidth = 0.55;
+      for (let i = 0; i < 6; i++) {
+        const tx = -6.8 + i * 2.72;
+        c.beginPath(); c.moveTo(tx - 1.0, 1.6); c.lineTo(tx, 5.4); c.lineTo(tx + 1.0, 1.6); c.closePath(); c.fill(); c.stroke();
+      }
+      for (let i = 0; i < 5; i++) {
+        const tx = -5.4 + i * 2.7;
+        c.beginPath(); c.moveTo(tx - 1.0, 8.8); c.lineTo(tx, 4.9); c.lineTo(tx + 1.0, 8.8); c.closePath(); c.fill(); c.stroke();
+      }
+      c.restore();
+      return;
+    }
+    if (type === 'st_scientist_cameraman') {
+      const ring = (withRing === undefined) ? true : withRing;
+      c.save();
+      if (ring) {
+        const g = c.createRadialGradient(-4, -5, 2, 0, 0, 21);
+        g.addColorStop(0, '#1e293b'); g.addColorStop(1, '#020617');
+        c.fillStyle = g; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = '#38bdf8'; c.lineWidth = 2.4; c.stroke();
+      } else {
+        c.translate(0, 3.8);
+      }
+      // ZDJ 1: Biało-jasnoszara kamera CCTV z ciemnym prostokątnym ekranem + mała okrągła kamera pod spodem
+      c.fillStyle = '#d6d3d1'; c.strokeStyle = '#27272a'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10, -10.5, 20, 13.5, 2.5); c.fill(); c.stroke();
+      // Ciemny prostokątny przód kamery
+      c.fillStyle = '#18181b'; c.strokeStyle = '#52525b'; c.lineWidth = 1.1;
+      c.beginPath(); c.roundRect(-7.2, -8.2, 14.4, 9.2, 1.5); c.fill(); c.stroke();
+      // Subtelny odbłysk na szkle
+      c.fillStyle = 'rgba(226,232,240,0.18)'; c.fillRect(-5.8, -6.8, 5, 2.2);
+      // Mniejsza okrągła kamera pod główną obudową (jak na zdj 1)
+      c.fillStyle = '#27272a'; c.strokeStyle = '#71717a'; c.lineWidth = 1.2;
+      c.beginPath(); c.arc(-2.5, 5.2, 4.2, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(-2.5, 5.2, 2.3, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(-2.5, 5.2, 0.9, 0, Math.PI * 2); c.fill();
+      c.restore();
+      return;
+    }
+    return _origPortraitV3.apply(this, arguments);
+  };
 
-  // =========================================================================
-  // 2. WYGLĄD EWOLUCJI — ŻYWE PODGLĄDY 2D OBOK KAŻDEJ Z 4 EWOLUCJI
-  // =========================================================================
+  const _origBodyV3 = drawHeroBodyOutfit;
+  drawHeroBodyOutfit = function (c, type) {
+    if (type === 'nightmare_chica') {
+      c.fillStyle = 'rgba(0, 0, 0, 0.36)'; c.beginPath(); c.ellipse(0, 19.8, 12, 3.8, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      c.fillStyle = '#18181b'; c.fillRect(-12, -5.5, 24, 5); c.fillRect(-5, 10, 10, 8);
+      const bg = c.createLinearGradient(-11, -7, 11, 16);
+      bg.addColorStop(0, '#9a9527'); bg.addColorStop(0.6, '#6d6b1e'); bg.addColorStop(1, '#3b3910');
+      c.fillStyle = bg; c.strokeStyle = '#1c1917'; c.lineWidth = 1.4;
+      c.beginPath();
+      c.moveTo(-10.5, -7); c.lineTo(10.5, -7); c.lineTo(11, 12);
+      c.lineTo(7, 9.5); c.lineTo(4, 13.5); c.lineTo(0, 10.5); c.lineTo(-4, 13.5); c.lineTo(-7.5, 9.8); c.lineTo(-11, 12);
+      c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#cbd5e1'; c.strokeStyle = '#475569'; c.lineWidth = 1.0;
+      c.beginPath();
+      c.moveTo(-7.5, -6.5); c.lineTo(7.5, -6.5); c.lineTo(6.8, 6.5);
+      c.lineTo(3.5, 9.2); c.lineTo(0, 7.2); c.lineTo(-3.5, 9.2); c.lineTo(-6.8, 6.5);
+      c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#ea580c'; c.font = '900 3.7px Inter, sans-serif'; c.textAlign = 'center';
+      c.fillText("LET'S", 0, 0.2); c.fillText('EAT!!!', 0, 4.6);
+      c.fillStyle = '#cbd5e1'; c.strokeStyle = '#09090b'; c.lineWidth = 0.7;
+      for (let i = 0; i < 3; i++) {
+        const bx = -14.8 + (i - 1) * 2.5, by = 9.5;
+        c.beginPath(); c.moveTo(bx - 1.1, by); c.lineTo(bx + 1.1, by); c.lineTo(bx - 0.8, by + 6.8); c.closePath(); c.fill(); c.stroke();
+      }
+      c.save(); c.translate(15.5, 4.5);
+      c.fillStyle = '#581c87'; c.strokeStyle = '#09090b'; c.lineWidth = 0.9;
+      c.beginPath(); c.roundRect(-4.5, -1, 9, 5.5, 1.5); c.fill(); c.stroke();
+      c.fillStyle = '#9333ea';
+      c.beginPath(); c.arc(0, -2, 4.8, Math.PI, Math.PI * 2); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#facc15';
+      c.beginPath(); c.arc(-1.7, -3, 1.1, 0, Math.PI * 2); c.arc(1.7, -3, 1.1, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fef08a'; c.fillRect(-0.7, -9.5, 1.4, 3.2);
+      c.fillStyle = '#f97316'; c.beginPath(); c.arc(0, -10.2, 1.4, 0, Math.PI * 2); c.fill();
+      c.restore();
+      c.restore();
+      return;
+    }
+    if (type === 'st_scientist_cameraman') {
+      c.fillStyle = 'rgba(0, 0, 0, 0.34)'; c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      // ZDJ 1: Jasnoszary/beżowy garnitur (marynarka + czarny krawat + czarne rękawiczki)
+      const sg = c.createLinearGradient(-11, -7, 11, 18);
+      sg.addColorStop(0, '#d6d3cb'); sg.addColorStop(0.55, '#b5b4ac'); sg.addColorStop(1, '#8c8d86');
+      c.fillStyle = sg; c.strokeStyle = '#3f3f46'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -7, 21, 24.5, 4.2); c.fill(); c.stroke();
+      // Czarna koszula i krawat w wycięciu marynarki
+      c.fillStyle = '#18181b';
+      c.beginPath(); c.moveTo(-4, -7); c.lineTo(4, -7); c.lineTo(1.8, 3.5); c.lineTo(-1.8, 3.5); c.closePath(); c.fill();
+      // Wielkie czarne działo/karabin (Anti-Parasite / Paralysis Rifle) trzymane przed sobą ze świecącymi cyjanowymi łukami!
+      c.save(); c.translate(2, 5.5); c.rotate(0.24);
+      c.fillStyle = '#18181b'; c.strokeStyle = '#52525b'; c.lineWidth = 1.2;
+      c.beginPath(); c.roundRect(-14, -4.5, 29, 8.5, 2.2); c.fill(); c.stroke();
+      // Górny blok celownika/magazynka
+      c.fillStyle = '#27272a'; c.fillRect(-1, -8.5, 7, 4.5); c.strokeRect(-1, -8.5, 7, 4.5);
+      // Świecące cyjanowe pierścienie energii przy lufie (jak na zdj 1)
+      c.strokeStyle = '#22d3ee'; c.lineWidth = 2.0;
+      c.beginPath(); c.arc(9.5, -0.2, 4.2, -1.1, 1.1); c.stroke();
+      c.beginPath(); c.arc(9.5, -0.2, 4.2, Math.PI - 1.1, Math.PI + 1.1); c.stroke();
+      // Czarne rękawiczki trzymające broń
+      c.fillStyle = '#09090b';
+      c.beginPath(); c.arc(-5, 3.8, 2.8, 0, Math.PI * 2); c.arc(6.5, 4.2, 2.8, 0, Math.PI * 2); c.fill();
+      c.restore();
+      c.restore();
+      return;
+    }
+    return _origBodyV3.apply(this, arguments);
+  };
+
+  // 3. NOWA EWOLUCJA CAMERAMANA -> SCIENTIST CAMERAMAN (EXCLUSIVE • 4 LVL)
+  if (typeof HEROES === 'object' && !HEROES.st_scientist_cameraman) {
+    HEROES.st_scientist_cameraman = {
+      id: 'st_scientist_cameraman',
+      universe: 'st',
+      craftOnly: true,
+      rarity: 'Exclusive',
+      name: 'Scientist Cameraman',
+      cost: 450,
+      maxLevel: 4,
+      maxPlace: 2,
+      color: '#38bdf8',
+      accent: '#f8fafc',
+      damage: 1200,
+      cooldown: 0.65,
+      range: 235,
+      armorPierce: 0.95,
+      technique: 'Pasywka: -20% CD obok Titan Cameramana 1.0/2.0 • 9650 DPS MAX • 4x Summony (LVL 1-4) • Large Scientist • Titan Cameraman 2.0',
+      desc: 'EXCLUSIVE EWOLUCJA CAMERAMANA (4 LVL • 9650 DPS MAX): Gdy stoi obok Titan Cameramana 1.0 lub 2.0 dostaje -20% CD! Przywołuje 4 jednostki zależne od poziomu, Large Scientist Cameramana oraz Titan Cameramana 2.0 na drogę!',
+      skill1: {
+        name: 'Camera Summons (4x wg LVL)',
+        cd: 18, unlockLvl: 1,
+        desc: 'Respi 4 summony z bazy: LVL 1 Camera Toilet (100 HP) • LVL 2 Camera Drone na 4 kółkach (200 HP, 0 DMG) • LVL 3 Camera Tank (400 HP, 20 DMG z działa) • LVL 4 Heavy Camera Tank (800 HP, 100 DMG z działa)!'
+      },
+      skill2: {
+        name: 'Large Scientist Cameraman',
+        cd: 24, unlockLvl: 2,
+        desc: 'Respi obok siebie Large Scientist Cameramana (z 2 działkami), który strzela po 200 DMG przez 10s!'
+      },
+      skill3: {
+        name: 'Titan Cameraman Summon (3 Range)',
+        cd: 45, unlockLvl: 4,
+        desc: 'Stawia Titan Cameramana 2.0 na drodze! Ma 3 zasięgi: 1. Core Flamethrower (bliski), 2. Hammer (średni), 3. Turrets (daleki)!'
+      },
+      upgrades: [
+        { cost: 1100, dmg: 1950, cd: 0.55, rng: 255, text: 'LVL 2: 1950 DMG / 0.55s (3545 DPS) • Camera Drone (200 HP) + Large Scientist Cameraman (200 DMG / 10s)!' },
+        { cost: 2200, dmg: 2800, cd: 0.45, rng: 275, text: 'LVL 3: 2800 DMG / 0.45s (6222 DPS) • Camera Tank (400 HP, 20 DMG z działa)!' },
+        { cost: 3800, dmg: 3860, cd: 0.40, rng: 300, text: 'LVL 4 MAX: 3860 DMG / 0.40s (9650 DPS!) • Heavy Camera Tank (800 HP, 100 DMG) + Titan Cameraman 2.0 Summon!' }
+      ]
+    };
+  }
+
+  const _origGetCdSci = getEffectiveCooldown;
+  getEffectiveCooldown = function (t) {
+    let cd = _origGetCdSci.apply(this, arguments);
+    if (t && t.type === 'st_scientist_cameraman' && typeof state !== 'undefined' && Array.isArray(state.towers)) {
+      const nearTitan = state.towers.some(a =>
+        (a.type === 'st_titan_camera_1' || a.type === 'st_titan_camera_2') &&
+        Math.hypot(a.x - t.x, a.y - t.y) <= 240
+      );
+      if (nearTitan) cd *= 0.80;
+    }
+    return cd;
+  };
+
+  const sciFxList = () => (state.sciFx || (state.sciFx = []));
+
+  function spawnScientistSummons(tower) {
+    const lvl = Math.min(4, Math.max(1, tower.level || 1));
+    const wps = (typeof pickActiveLaneForSummon === 'function') ? pickActiveLaneForSummon() : (state.map && state.map.waypoints) || [];
+    if (!wps.length) return false;
+    const endWp = wps[wps.length - 1], prev = wps[Math.max(0, wps.length - 2)];
+    const sx = prev.x - endWp.x, sy = prev.y - endWp.y, L = Math.hypot(sx, sy) || 1;
+    const cfgByLvl = {
+      1: { kind: 'sci_cam_toilet', name: 'Camera Toilet', hp: 100, dmg: 12, ranged: false, speed: 68, color: '#cbd5e1' },
+      2: { kind: 'sci_cam_drone',  name: 'Camera Drone',  hp: 200, dmg: 0,  ranged: false, speed: 78, color: '#38bdf8' },
+      3: { kind: 'sci_cam_spider', name: 'Camera Tank', hp: 400, dmg: 20, ranged: true,  range: 170, fireCd: 0.65, speed: 62, color: '#60a5fa' },
+      4: { kind: 'sci_cam_tank',   name: 'Heavy Camera Tank', hp: 800, dmg: 100,ranged: true,  range: 225, fireCd: 0.85, speed: 46, color: '#0284c7' }
+    };
+    const cfg = cfgByLvl[lvl];
+    // Limit max 8 aktywnych camera summonów naraz (zero lagów nawet na 10x speed!)
+    const SCI_SUMMON_KINDS = ['sci_cam_toilet', 'sci_cam_drone', 'sci_cam_spider', 'sci_cam_tank'];
+    const existing = state.shikigami.filter(s => s && s.hp > 0 && SCI_SUMMON_KINDS.includes(s.kind));
+    if (existing.length + 4 > 8) {
+      let toDrop = existing.length + 4 - 8;
+      for (let i = 0; i < state.shikigami.length && toDrop > 0; i++) {
+        if (state.shikigami[i] && SCI_SUMMON_KINDS.includes(state.shikigami[i].kind)) {
+          state.shikigami[i].hp = 0;
+          toDrop--;
+        }
+      }
+    }
+    for (let k = 0; k < 4; k++) {
+      const spread = (k - 1.5) * 15;
+      state.shikigami.push({
+        id: state.nextEnemyId++,
+        kind: cfg.kind, name: cfg.name,
+        x: endWp.x + (sx / L) * (18 + k * 14) + (sy / L) * spread * 0.4,
+        y: endWp.y + (sy / L) * (18 + k * 14) - (sx / L) * spread * 0.4,
+        wpIndex: Math.max(0, wps.length - 2), lane: wps,
+        maxHp: cfg.hp, hp: cfg.hp, speed: cfg.speed, dmg: cfg.dmg,
+        sciRanged: cfg.ranged, sciRange: cfg.range || 0, sciFireCd: cfg.fireCd || 1, sciFireTimer: 0.25 + k * 0.1,
+        attackTimer: 0.2, regenTimer: 99, adaptStacks: 0, adaptTimer: 99, sourceTower: tower
+      });
+    }
+    if (!(typeof MX !== 'undefined' && MX.perfMode)) spawnParticles(tower.x, tower.y, cfg.color, 8, 120, 3);
+    spawnFloatingText(tower.x, tower.y - 46, `📹 4x ${cfg.name.toUpperCase()} (${cfg.hp} HP)!`, '#7dd3fc', 1.3);
+    return true;
+  }
+
+  function pushSciFx(obj) {
+    const arr = sciFxList();
+    // Limit efektów wizualnych (max 24 naraz — zero lagów!)
+    if (obj.kind !== 'large_sci' && arr.length >= 24) {
+      const idx = arr.findIndex(x => x.kind !== 'large_sci');
+      if (idx !== -1) arr.splice(idx, 1);
+    }
+    arr.push(obj);
+  }
+
+  function spawnLargeScientistHelper(tower) {
+    const arr = sciFxList();
+    // Max 2 aktywnych Large Scientist naraz (odświeża czas jeśli już stoi przy tej wieży)
+    const same = arr.find(x => x.kind === 'large_sci' && x.tower === tower);
+    if (same) { same.t = 0; }
+    else {
+      const curLarge = arr.filter(x => x.kind === 'large_sci');
+      if (curLarge.length >= 2) {
+        const rmIdx = arr.indexOf(curLarge[0]);
+        if (rmIdx !== -1) arr.splice(rmIdx, 1);
+      }
+      arr.push({ kind: 'large_sci', tower, x: tower.x + 34, y: tower.y - 8, t: 0, dur: 10.0, fireTimer: 0.1, dmg: 200 });
+    }
+    if (!(typeof MX !== 'undefined' && MX.perfMode)) spawnParticles(tower.x + 34, tower.y - 8, '#38bdf8', 8, 120, 3);
+    spawnFloatingText(tower.x, tower.y - 46, '🔬 LARGE SCIENTIST CAMERAMAN (200 DMG • 10s)!', '#38bdf8', 1.2);
+    return true;
+  }
+
+  function spawnTitanCameramanOnRoad(tower) {
+    const wps = (typeof pickActiveLaneForSummon === 'function') ? pickActiveLaneForSummon() : (state.map && state.map.waypoints) || [];
+    if (!wps.length) return false;
+    // Limit max 2 Titan Cameraman 2.0 na drodze naraz (zero lagów!)
+    const curTitans = state.shikigami.filter(s => s && s.hp > 0 && s.kind === 'sci_titan_cam2');
+    if (curTitans.length >= 2) curTitans[0].hp = 0;
+    const endWp = wps[wps.length - 1], prev = wps[Math.max(0, wps.length - 2)];
+    const sx = prev.x - endWp.x, sy = prev.y - endWp.y, L = Math.hypot(sx, sy) || 1;
+    state.shikigami.push({
+      id: state.nextEnemyId++, kind: 'sci_titan_cam2', name: 'Titan Cameraman 2.0 (Summon)',
+      x: endWp.x + (sx / L) * 26, y: endWp.y + (sy / L) * 26,
+      wpIndex: Math.max(0, wps.length - 2), lane: wps,
+      maxHp: 6000, hp: 6000, speed: 38, dmg: 350,
+      flameCd: 0.25, hammerCd: 0.6, turretCd: 0.2,
+      attackTimer: 0.2, regenTimer: 99, adaptStacks: 0, adaptTimer: 99, sourceTower: tower
+    });
+    if (!(typeof MX !== 'undefined' && MX.perfMode)) spawnParticles(endWp.x, endWp.y, '#38bdf8', 12, 160, 4);
+    spawnFloatingText(tower.x, tower.y - 50, '🤖 TITAN CAMERAMAN 2.0 SUMMON (3 RANGE)!', '#60a5fa', 1.3);
+    return true;
+  }
+
+  const _origActSkillSci = activateHeroSkill;
+  activateHeroSkill = function (tower, slot) {
+    if (tower && tower.type === 'st_scientist_cameraman') {
+      const tpl = HEROES.st_scientist_cameraman;
+      const sk = tpl['skill' + slot];
+      const cdKey = 'skill' + slot + 'Cd';
+      if (!sk || (tower.level || 1) < (sk.unlockLvl || 1) || (tower[cdKey] || 0) > 0) return;
+      let ok = false;
+      if (slot === 1) ok = spawnScientistSummons(tower);
+      else if (slot === 2) ok = spawnLargeScientistHelper(tower);
+      else if (slot === 3) ok = spawnTitanCameramanOnRoad(tower);
+      if (!ok) return;
+      tower[cdKey] = sk.cd;
+      try { sfx.playDomain(); } catch (e) {}
+      if (typeof updateInspectorCooldowns === 'function') updateInspectorCooldowns();
+      if (typeof updateUI === 'function') updateUI();
+      return;
+    }
+    return _origActSkillSci.apply(this, arguments);
+  };
+
+  const _origUpdateSci = updateStep;
+  updateStep = function (dt) {
+    _origUpdateSci.apply(this, arguments);
+    if (state.time < (state._sciLastTime || 0) - 0.01) { state.sciFx = []; }
+    state._sciLastTime = state.time;
+
+    const aliveE = (e) => e && e.hp > 0;
+    for (const sh of (state.shikigami || [])) {
+      if (!sh || sh.hp <= 0) continue;
+      if (sh.kind === 'sci_cam_spider' || sh.kind === 'sci_cam_tank') {
+        sh.sciFireTimer = (sh.sciFireTimer || 0) - dt;
+        if (sh.sciFireTimer <= 0) {
+          let best = null, bestD = sh.sciRange || 180;
+          for (const e of state.enemies) {
+            if (!aliveE(e)) continue;
+            const d = Math.hypot(e.x - sh.x, e.y - sh.y);
+            if (d <= bestD) { bestD = d; best = e; }
+          }
+          if (best) {
+            sh.sciFireTimer = sh.sciFireCd || 0.7;
+            damageEnemy(best, sh.dmg, sh.sourceTower, { pierce: 0.9 });
+            if (!(typeof MX !== 'undefined' && MX.perfMode)) pushSciFx({ kind: 'beam', x1: sh.x, y1: sh.y - 6, x2: best.x, y2: best.y, col: sh.kind === 'sci_cam_tank' ? '#facc15' : '#38bdf8', w: sh.kind === 'sci_cam_tank' ? 3.5 : 2, t: 0, dur: 0.12 });
+          }
+        }
+      } else if (sh.kind === 'sci_titan_cam2') {
+        sh.flameCd = (sh.flameCd || 0) - dt;
+        sh.hammerCd = (sh.hammerCd || 0) - dt;
+        sh.turretCd = (sh.turretCd || 0) - dt;
+        if (sh.flameCd <= 0) {
+          const close = state.enemies.filter(e => aliveE(e) && Math.hypot(e.x - sh.x, e.y - sh.y) <= 105);
+          if (close.length) {
+            sh.flameCd = 0.45;
+            for (const e of close) damageEnemy(e, 260, sh.sourceTower, { pierce: 1.0 });
+            if (!(typeof MX !== 'undefined' && MX.perfMode)) pushSciFx({ kind: 'flame', x: sh.x, y: sh.y, tx: close[0].x, ty: close[0].y, t: 0, dur: 0.25 });
+          }
+        }
+        if (sh.hammerCd <= 0) {
+          const mid = state.enemies.find(e => aliveE(e) && Math.hypot(e.x - sh.x, e.y - sh.y) <= 190);
+          if (mid) {
+            sh.hammerCd = 2.0;
+            for (const e of state.enemies) {
+              if (aliveE(e) && Math.hypot(e.x - mid.x, e.y - mid.y) <= 70) {
+                damageEnemy(e, 650, sh.sourceTower, { pierce: 1.0 });
+                e.stunTimer = Math.max(e.stunTimer || 0, 0.45);
+              }
+            }
+            if (!(typeof MX !== 'undefined' && MX.perfMode)) pushSciFx({ kind: 'hammer', x: mid.x, y: mid.y, t: 0, dur: 0.32 });
+          }
+        }
+        if (sh.turretCd <= 0) {
+          const far = state.enemies.filter(e => aliveE(e) && Math.hypot(e.x - sh.x, e.y - sh.y) <= 310).slice(0, 2);
+          if (far.length) {
+            sh.turretCd = 0.55;
+            far.forEach((e, idx) => {
+              damageEnemy(e, 140, sh.sourceTower, { pierce: 0.9 });
+              if (!(typeof MX !== 'undefined' && MX.perfMode)) pushSciFx({ kind: 'beam', x1: sh.x + (idx === 0 ? -14 : 14), y1: sh.y - 16, x2: e.x, y2: e.y, col: '#60a5fa', w: 2.2, t: 0, dur: 0.12 });
+            });
+          }
+        }
+      }
+    }
+
+    const list = state.sciFx;
+    if (!list || !list.length) return;
+    for (let i = list.length - 1; i >= 0; i--) {
+      const f = list[i];
+      f.t += dt;
+      if (f.kind === 'large_sci') {
+        f.fireTimer -= dt;
+        if (f.fireTimer <= 0) {
+          const foes = state.enemies.filter(e => aliveE(e) && Math.hypot(e.x - f.x, e.y - f.y) <= 300);
+          if (foes.length) {
+            f.fireTimer = 0.42;
+            const tgt = foes[0];
+            damageEnemy(tgt, f.dmg, f.tower, { pierce: 1.0 });
+            if (!(typeof MX !== 'undefined' && MX.perfMode)) pushSciFx({ kind: 'beam', x1: f.x, y1: f.y - 6, x2: tgt.x, y2: tgt.y, col: '#22d3ee', w: 3, t: 0, dur: 0.12 });
+          }
+        }
+      }
+      if (f.t >= f.dur) list.splice(i, 1);
+    }
+  };
+
+  const _origDrawShikSci = drawShikigamiUnit;
+  drawShikigamiUnit = function (c, sh) {
+    if (sh && (sh.kind === 'sci_cam_toilet' || sh.kind === 'sci_cam_drone' || sh.kind === 'sci_cam_spider' || sh.kind === 'sci_cam_tank' || sh.kind === 'sci_titan_cam2')) {
+      c.save(); c.translate(sh.x, sh.y);
+      if (sh.kind === 'sci_cam_toilet') {
+        // ZDJ 3: Camera Toilet — kremowo-biała muszla z dużą spłuczką, srebrnym przyciskiem i kamerą CCTV w środku!
+        c.fillStyle = '#e7e5e4'; c.strokeStyle = '#57534e'; c.lineWidth = 1.4;
+        // Spłuczka z tyłu + przycisk
+        c.beginPath(); c.roundRect(-11, -17, 22, 13, 2.5); c.fill(); c.stroke();
+        c.fillStyle = '#78716c'; c.beginPath(); c.arc(0, -17.5, 2.2, 0, Math.PI * 2); c.fill();
+        // Muszla klozetowa z ciemnym wnętrzem
+        c.fillStyle = '#f5f5f4'; c.strokeStyle = '#57534e';
+        c.beginPath(); c.ellipse(0, 1, 13.5, 9.5, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+        c.fillStyle = '#292524'; c.beginPath(); c.ellipse(0, 1, 9.5, 6.2, 0, 0, Math.PI * 2); c.fill();
+        // Biała kamera CCTV na uchwycie w środku muszli
+        c.fillStyle = '#e7e5e4'; c.strokeStyle = '#44403c'; c.lineWidth = 1.1;
+        c.fillRect(-5.5, -6.5, 11, 7.5); c.strokeRect(-5.5, -6.5, 11, 7.5);
+        c.fillStyle = '#1c1917'; c.fillRect(-3.8, -5, 7.6, 4.8);
+        c.fillStyle = '#94a3b8'; c.beginPath(); c.arc(0, -2.6, 1.8, 0, Math.PI * 2); c.fill();
+      } else if (sh.kind === 'sci_cam_drone') {
+        // ZDJ 4: Camera Drone — cały czarny kanciasty pojazd pancerny na 4 grubych kołach + wielki czarny ekran CCTV!
+        c.fillStyle = '#09090b'; c.strokeStyle = '#27272a'; c.lineWidth = 1.3;
+        // 4 grube czarne koła
+        for (const [wx, wy] of [[-12, 6], [-7, 7.5], [7, 7.5], [12, 6]]) {
+          c.beginPath(); c.roundRect(wx - 2.6, wy - 4, 5.2, 8.5, 1.5); c.fill(); c.stroke();
+        }
+        // Kanciasty czarny korpus z błotnikami
+        c.fillStyle = '#18181b'; c.strokeStyle = '#3f3f46'; c.lineWidth = 1.3;
+        c.beginPath();
+        c.moveTo(-14, 4); c.lineTo(-12, -3); c.lineTo(-3, -4); c.lineTo(0, -1); c.lineTo(3, -4); c.lineTo(12, -3); c.lineTo(14, 4);
+        c.closePath(); c.fill(); c.stroke();
+        // Duży czarny prostokątny monitor/kamera CCTV na górze
+        c.fillStyle = '#09090b'; c.strokeStyle = '#3f3f46'; c.lineWidth = 1.5;
+        c.beginPath(); c.roundRect(-10, -17.5, 20, 14, 3); c.fill(); c.stroke();
+        c.fillStyle = '#141418'; c.fillRect(-7.5, -15, 15, 9);
+      } else if (sh.kind === 'sci_cam_spider') {
+        // ZDJ 5: Camera Tank (LVL 3) — brązowo-ciemnoszary wóz na kołach z jasnym kołnierzem i długą ukośną lufą!
+        c.fillStyle = '#1c1917'; c.strokeStyle = '#44403c'; c.lineWidth = 1.3;
+        // Koła
+        c.beginPath(); c.ellipse(-11, 5, 4.5, 6.2, -0.2, 0, Math.PI * 2); c.fill(); c.stroke();
+        c.beginPath(); c.ellipse(2, 9.5, 4.5, 6.2, -0.2, 0, Math.PI * 2); c.fill(); c.stroke();
+        // Korpus pojazdu
+        c.fillStyle = '#44403c'; c.strokeStyle = '#1c1917'; c.lineWidth = 1.4;
+        c.beginPath(); c.roundRect(-10, -6, 22, 14, 3); c.fill(); c.stroke();
+        // Jasny kołnierz/pancerz
+        c.fillStyle = '#a8a29e'; c.fillRect(-5, -7, 13, 3.8);
+        // Długa ukośna lufa działa
+        c.save(); c.translate(2, -5); c.rotate(-0.92);
+        c.fillStyle = '#292524'; c.strokeStyle = '#78716c'; c.lineWidth = 1.2;
+        c.fillRect(-2.8, -19, 5.6, 20); c.strokeRect(-2.8, -19, 5.6, 20);
+        c.restore();
+      } else if (sh.kind === 'sci_cam_tank') {
+        // ZDJ 6: Heavy Camera Tank (LVL 4) — wielki czarny czołg, 4 wielkie koła z miedzianymi felgami, przednie pługi, cyjanowe przewody i szkieletowe działo!
+        c.fillStyle = '#09090b'; c.strokeStyle = '#334155'; c.lineWidth = 1.4;
+        // 4 wielkie koła z miedziano-brązowymi felgami
+        for (let w = 0; w < 4; w++) {
+          const wx = -3 + w * 6.5;
+          c.fillStyle = '#18181b'; c.beginPath(); c.ellipse(wx, 9, 4.4, 6.2, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+          c.fillStyle = '#92400e'; c.beginPath(); c.ellipse(wx + 0.5, 9, 2.3, 3.6, 0, 0, Math.PI * 2); c.fill();
+        }
+        // Masywny czarny kadłub i przednie tarcze/pługi
+        c.fillStyle = '#18181b'; c.strokeStyle = '#475569'; c.lineWidth = 1.4;
+        c.beginPath(); c.roundRect(-21, -7, 40, 15, 3.5); c.fill(); c.stroke();
+        c.fillStyle = '#09090b';
+        c.beginPath(); c.moveTo(-24, 11); c.lineTo(-19, -2); c.lineTo(-10, -2); c.lineTo(-12, 11); c.closePath(); c.fill(); c.stroke();
+        // Świecące cyjanowe przewody / rdzeń w środku
+        c.strokeStyle = '#67e8f9'; c.lineWidth = 2.0;
+        c.beginPath(); c.moveTo(-10, -4); c.quadraticCurveTo(-2, -10, 6, -4); c.stroke();
+        c.fillStyle = 'rgba(34,211,238,0.45)'; c.beginPath(); c.arc(-3, -5, 5.5, 0, Math.PI * 2); c.fill();
+        // Szkieletowe działo laserowe z pierścieniami na górze (jak na zdj 6)
+        c.strokeStyle = '#94a3b8'; c.lineWidth = 1.4;
+        c.beginPath(); c.moveTo(-2, -10); c.lineTo(-22, -17); c.stroke();
+        c.beginPath(); c.ellipse(-11, -13.5, 3.2, 5.2, 0.25, 0, Math.PI * 2); c.stroke();
+        c.beginPath(); c.ellipse(-17, -15.5, 2.2, 3.6, 0.25, 0, Math.PI * 2); c.stroke();
+      } else if (sh.kind === 'sci_titan_cam2') {
+        // Zoptymalizowany, lekki sprite Titan Cameramana 2.0 (60 FPS!)
+        c.strokeStyle = 'rgba(56,189,248,0.18)'; c.lineWidth = 1;
+        c.beginPath(); c.arc(0, 0, 105, 0, Math.PI * 2); c.stroke();
+        c.fillStyle = '#0f172a'; c.strokeStyle = '#38bdf8'; c.lineWidth = 1.6;
+        c.fillRect(-14, -12, 28, 28); c.strokeRect(-14, -12, 28, 28);
+        // Świecący niebieski rdzeń (Core)
+        c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(0, 1, 5.5, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#e0f2fe'; c.beginPath(); c.arc(0, 1, 2.6, 0, Math.PI * 2); c.fill();
+        // Głowa kamery + 2 boczne kamery naramienne
+        c.fillStyle = '#1e293b'; c.fillRect(-10, -24, 20, 12); c.strokeRect(-10, -24, 20, 12);
+        c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(0, -18, 3.8, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#334155'; c.fillRect(-21, -18, 7, 9); c.fillRect(14, -18, 7, 9);
+      }
+      const bw = sh.kind === 'sci_titan_cam2' ? 44 : 26;
+      const pct = Math.max(0, Math.min(1, sh.hp / Math.max(1, sh.maxHp)));
+      c.fillStyle = '#09090b'; c.fillRect(-bw / 2, -24, bw, 4);
+      c.fillStyle = '#38bdf8'; c.fillRect(-bw / 2, -24, bw * pct, 4);
+      c.restore();
+      return;
+    }
+    return _origDrawShikSci.apply(this, arguments);
+  };
+
+  const _origDrawTowersSci = drawTowers;
+  drawTowers = function () {
+    _origDrawTowersSci.apply(this, arguments);
+    const list = state.sciFx;
+    if (!list || !list.length) return;
+    ctx.save();
+    for (const f of list) {
+      if (f.kind === 'large_sci') {
+        // ZDJ 2: Large Scientist Cameraman — szeroki jasnoszary garnitur, duża czarna kamera filmowa ze szpulą + 2 działka z cyjanowymi pierścieniami!
+        ctx.save(); ctx.translate(f.x, f.y); ctx.scale(1.22, 1.22);
+        // Cień
+        ctx.fillStyle = 'rgba(0,0,0,0.38)'; ctx.beginPath(); ctx.ellipse(0, 21, 13, 3.8, 0, 0, Math.PI * 2); ctx.fill();
+        // Szeroki jasnoszary garnitur i długie ręce
+        const lsg = ctx.createLinearGradient(-13, -7, 13, 18);
+        lsg.addColorStop(0, '#d1d5db'); lsg.addColorStop(0.55, '#9ca3af'); lsg.addColorStop(1, '#6b7280');
+        ctx.fillStyle = lsg; ctx.strokeStyle = '#374151'; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.roundRect(-12.5, -7, 25, 22, 4); ctx.fill(); ctx.stroke();
+        // Ręce po bokach
+        ctx.fillRect(-17.5, -5.5, 5.5, 16); ctx.strokeRect(-17.5, -5.5, 5.5, 16);
+        ctx.fillRect(12, -5.5, 5.5, 16); ctx.strokeRect(12, -5.5, 5.5, 16);
+        // Czarna koszula w wycięciu marynarki
+        ctx.fillStyle = '#111827';
+        ctx.beginPath(); ctx.moveTo(-4.5, -7); ctx.lineTo(4.5, -7); ctx.lineTo(1.5, 5); ctx.lineTo(-1.5, 5); ctx.closePath(); ctx.fill();
+        // 2 ciężkie czarne działka w obu rękach ze świecącymi cyjanowymi pierścieniami!
+        for (const sx of [-15.5, 15.5]) {
+          ctx.fillStyle = '#18181b'; ctx.strokeStyle = '#52525b'; ctx.lineWidth = 1.1;
+          ctx.beginPath(); ctx.roundRect(sx - 3.2, 8.5, 6.4, 13, 1.8); ctx.fill(); ctx.stroke();
+          ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(sx, 16.5, 3.6, 0, Math.PI * 2); ctx.stroke();
+        }
+        // Głowa: duża ciemnoszara/czarna kamera filmowa ze szpulą na górze i czerwoną diodą!
+        ctx.fillStyle = '#27272a'; ctx.strokeStyle = '#09090b'; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.arc(3, -18.5, 6.8, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); // tylna szpula
+        ctx.fillStyle = '#18181b';
+        ctx.beginPath(); ctx.roundRect(-12, -19, 20, 12.5, 2.2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#09090b'; ctx.strokeStyle = '#52525b'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(-4, -13, 4.4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ef4444'; ctx.fillRect(3.5, -10.5, 2.6, 2.2); // czerwona dioda
+        // Licznik czasu
+        ctx.fillStyle = '#38bdf8'; ctx.font = '900 8.5px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText((f.dur - f.t).toFixed(1) + 's', 0, -28);
+        ctx.restore();
+      } else if (f.kind === 'beam') {
+        ctx.save(); ctx.globalAlpha = Math.max(0, 1 - f.t / f.dur);
+        ctx.strokeStyle = f.col || '#38bdf8'; ctx.lineWidth = f.w || 3;
+        ctx.beginPath(); ctx.moveTo(f.x1, f.y1); ctx.lineTo(f.x2, f.y2); ctx.stroke();
+        ctx.restore();
+      } else if (f.kind === 'flame') {
+        const p = f.t / f.dur;
+        ctx.save(); ctx.globalAlpha = (1 - p) * 0.75;
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 14 * (1 - p * 0.4); ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.tx, f.ty); ctx.stroke();
+        ctx.restore();
+      } else if (f.kind === 'hammer') {
+        const p = f.t / f.dur;
+        ctx.save(); ctx.globalAlpha = 1 - p;
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(f.x, f.y, 14 + p * 60, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  };
+
+  // 4. PODGLĄDY 2D EWOLUCJI + 5. KARTA EWOLUCJI: SCIENTIST CAMERAMAN
   const EVO_PREVIEW_MAP = [
-    { btnId: 'v27-evo-ltv',   heroId: 'st_large_tv_evo',  border: 'border-purple-400/75', bg: '#0c0618' },
-    { btnId: 'v27-evo-heian', heroId: 'heian_sukuna',     border: 'border-rose-400/75',   bg: '#160509' },
-    { btnId: 'v27-evo-syuji', heroId: 'shinjuku_yuji',    border: 'border-pink-400/75',   bg: '#140610' },
-    { btnId: 'v27-evo-megs3', heroId: 'megumi_potential', border: 'border-sky-400/75',    bg: '#050c18' }
+    { btnId: 'v27-evo-ltv',   heroId: 'st_large_tv_evo',        border: 'border-purple-400/75', bg: '#0c0618' },
+    { btnId: 'v27-evo-heian', heroId: 'heian_sukuna',           border: 'border-rose-400/75',   bg: '#160509' },
+    { btnId: 'v27-evo-syuji', heroId: 'shinjuku_yuji',          border: 'border-pink-400/75',   bg: '#140610' },
+    { btnId: 'v27-evo-megs3', heroId: 'megumi_potential',       border: 'border-sky-400/75',    bg: '#050c18' },
+    { btnId: 'v3-evo-scicam', heroId: 'st_scientist_cameraman', border: 'border-cyan-400/80',   bg: '#04121f' }
   ];
+
+  function injectScientistEvoCard() {
+    const evoBox = document.getElementById('v27-evo-container');
+    if (!evoBox || document.getElementById('v3-evo-scicam-card')) return;
+    const subBtn = document.getElementById('v27-btn-sub-evo');
+    if (subBtn && subBtn.textContent.includes('(4)')) subBtn.textContent = '⚡ Ewolucje (5)';
+
+    const ci = (multiverseSave && multiverseSave.craftItems) || {};
+    const hasCam = !!(multiverseSave && multiverseSave.unlocked && multiverseSave.unlocked.st_cameraman);
+    const hasLargeCam = !!(multiverseSave && multiverseSave.unlocked && multiverseSave.unlocked.st_large_cameraman);
+    const ownSci = !!(multiverseSave && multiverseSave.unlocked && multiverseSave.unlocked.st_scientist_cameraman);
+    const stC = Math.floor((multiverseSave && multiverseSave.stCoins) || 0);
+    const orbs = Math.floor(ci.potential_orb || 0);
+    const souls = Math.floor((multiverseSave && multiverseSave.souls) || 0);
+    const shards = Math.floor((multiverseSave && multiverseSave.toiletShards) || 0);
+    const canSci = !ownSci && hasCam && hasLargeCam && stC >= 40000 && souls >= 300 && orbs >= 15 && shards >= 2;
+    const row = (ok, lbl, cur, req) => '<div class="flex justify-between items-center px-2 py-1 rounded-lg bg-slate-900/90 border ' + (ok ? 'border-emerald-500/50 text-emerald-300' : 'border-slate-700 text-slate-300') + ' text-[10px]"><span>' + (ok ? '✔ ' : '• ') + lbl + '</span><span class="font-black">' + cur + ' / ' + req + '</span></div>';
+
+    const card = document.createElement('div');
+    card.id = 'v3-evo-scicam-card';
+    card.className = 'p-3.5 rounded-2xl bg-gradient-to-r from-sky-950/90 via-slate-950 to-cyan-950/85 border-2 border-cyan-400/85 space-y-2';
+    card.innerHTML = `
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h4 class="font-jjk text-sm font-black text-cyan-200">🔬 5. SCIENTIST CAMERAMAN (EXCLUSIVE • 4 LVL • 9 650 DPS)</h4>
+        <span class="text-[10px] font-black text-sky-300">-20% CD obok Titan Camera • 4x Summony • Titan 2.0</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+        ${row(hasLargeCam, 'Large Cameraman', hasLargeCam ? 1 : 0, 1)}
+        ${row(hasCam, 'Cameraman', hasCam ? 1 : 0, 1)}
+        ${row(stC >= 40000, 'ST Coins', stC.toLocaleString('pl-PL'), '40k')}
+        ${row(souls >= 300, 'Souls 👻', souls, 300)}
+        ${row(orbs >= 15, 'Potential Balls', orbs, 15)}
+        ${row(shards >= 2, 'Toilet Shards 🚽', shards, 2)}
+      </div>
+      <button id="v3-evo-scicam" ${ownSci || !canSci ? 'disabled' : ''} class="w-full py-2 rounded-xl font-black text-xs uppercase ${ownSci ? 'bg-emerald-950 text-emerald-300' : canSci ? 'bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 cursor-pointer' : 'bg-slate-800 text-slate-400'}">
+        ${ownSci ? '✔ EWOLUOWANO: SCIENTIST CAMERAMAN' : canSci ? '⚡ EWOLUUJ SCIENTIST CAMERAMAN!' : 'Zbierz składniki: Large Camera + Cameraman + 40k ST + 300 Souls + 15 Orbs + 2 Shards'}
+      </button>
+    `;
+    evoBox.appendChild(card);
+
+    document.getElementById('v3-evo-scicam')?.addEventListener('click', () => {
+      if (!canSci) return;
+      multiverseSave.stCoins -= 40000;
+      multiverseSave.souls -= 300;
+      multiverseSave.craftItems.potential_orb = Math.max(0, (multiverseSave.craftItems.potential_orb || 0) - 15);
+      multiverseSave.toiletShards = Math.max(0, (multiverseSave.toiletShards || 0) - 2);
+      multiverseSave.unlocked.st_scientist_cameraman = true;
+      multiverseSave.stars.st_scientist_cameraman = 1;
+      const _mS = (multiverseSave.goldUpgrades && multiverseSave.goldUpgrades.extraLoadoutSlot) ? 7 : 6;
+      if (multiverseSave.equipped.length < _mS && !multiverseSave.equipped.includes('st_scientist_cameraman')) multiverseSave.equipped.push('st_scientist_cameraman');
+      saveMultiverseData();
+      if (typeof updateMultiverseUI === 'function') updateMultiverseUI();
+      if (typeof buildShop === 'function') buildShop();
+      if (typeof buildIndexGrid === 'function') buildIndexGrid();
+      if (typeof buildHigherUpsSelect === 'function') buildHigherUpsSelect();
+      card.remove();
+      injectScientistEvoCard();
+      injectEvoPortraits();
+      showBanner('🔬 EWOLUOWANO: SCIENTIST CAMERAMAN (EXCLUSIVE • 4 LVL)!');
+    });
+  }
 
   function injectEvoPortraits() {
     const evoBox = document.getElementById('v27-evo-container');
     if (!evoBox) return;
+    injectScientistEvoCard();
     EVO_PREVIEW_MAP.forEach(item => {
       const btn = document.getElementById(item.btnId);
-      if (!btn) return;
+      if (!btn || btn.dataset.v28Wrapped || btn.closest('.v28-evo-wrapped')) return;
       const card = btn.parentElement;
       if (!card || card.querySelector('.v28-evo-preview-canvas')) return;
+      btn.dataset.v28Wrapped = '1';
 
       const resolvedHeroId = (typeof HEROES !== 'undefined' && HEROES[item.heroId])
         ? item.heroId
         : (item.heroId === 'megumi_potential' && HEROES && HEROES.megumi_s3 ? 'megumi_s3' : item.heroId);
 
       const wrap = document.createElement('div');
-      wrap.className = 'flex items-center gap-3';
+      wrap.className = 'v28-evo-wrapped flex items-center gap-3';
 
       const cv = document.createElement('canvas');
-      cv.width = 86;
-      cv.height = 92;
+      cv.width = 86; cv.height = 92;
       cv.dataset.evoHeroId = resolvedHeroId;
       cv.className = `v28-evo-preview-canvas w-[78px] h-[84px] rounded-xl border-2 ${item.border} shrink-0 shadow-lg`;
       cv.style.background = item.bg;
@@ -30317,23 +31034,390 @@ aside, #inspector-panel {
     requestAnimationFrame(animEvoPreviews);
   })(0);
 
-  // =========================================================================
-  // 3. CHRISTMAS EVENT (COMING SOON) — KLIKNIĘCIE KAFELKA
-  // =========================================================================
-  document.getElementById('btn-christmas-event-soon')?.addEventListener('click', () => {
-    if (typeof showBanner === 'function') {
-      showBanner('🎄 CHRISTMAS EVENT — COMING SOON! Świąteczna mapa i nagrody już wkrótce! ❄️');
-    }
-  });
+  // 5. MOTYW ŚWIĄTECZNY + OKNO SETTINGS (USTAWIENIA)
+  const THEME_KEY = 'jjk_fnaf_theme_v3';
+  let currentTheme = 'christmas';
+  try { currentTheme = localStorage.getItem(THEME_KEY) || 'christmas'; } catch (e) {}
 
-  // Odśwież opis pity po zmianie celu enchantu
+  function applyMenuTheme(theme, switchAudio = false) {
+    currentTheme = (theme === 'classic') ? 'classic' : 'christmas';
+    try { localStorage.setItem(THEME_KEY, currentTheme); } catch (e) {}
+    document.body.classList.toggle('christmas-theme', currentTheme === 'christmas');
+    syncSettingsModal();
+    if (switchAudio && typeof sfx !== 'undefined' && typeof state !== 'undefined' && !state.running) {
+      if (currentTheme === 'christmas') sfx.playSpecificTrack('lobbyevent.mp3');
+      else sfx.playSpecificTrack('lobby.mp3');
+    }
+  }
+
+  function mountChristmasDecor() {
+    // Usuń stary ciężki canvas śniegu z v3 jeśli istniał
+    document.getElementById('v3-snow-canvas')?.remove();
+
+    // 16 lekkich lampek choinkowych (tylko animacja opacity — zero lagów!)
+    if (!document.getElementById('v3-christmas-lights')) {
+      const bar = document.createElement('div');
+      bar.id = 'v3-christmas-lights';
+      const cols = ['#ef4444', '#22c55e', '#facc15', '#38bdf8', '#f472b6', '#fb923c'];
+      for (let i = 0; i < 16; i++) {
+        const b = document.createElement('span');
+        b.className = 'v3-bulb';
+        b.style.background = cols[i % cols.length];
+        b.style.animationDelay = (i * 0.18) + 's';
+        bar.appendChild(b);
+      }
+      document.body.appendChild(bar);
+    }
+
+    // 18 lekkich płatków śniegu w czystym CSS GPU (zero requestAnimationFrame!)
+    if (!document.getElementById('v4-snow-layer')) {
+      const layer = document.createElement('div');
+      layer.id = 'v4-snow-layer';
+      const glyphs = ['❄', '❅', '•', '❄', '•'];
+      for (let i = 0; i < 18; i++) {
+        const fl = document.createElement('span');
+        fl.className = 'v4-flake';
+        fl.textContent = glyphs[i % glyphs.length];
+        fl.style.left = ((i * 5.6 + (i % 3) * 1.4) % 98) + 'vw';
+        fl.style.fontSize = (9 + (i % 4) * 3) + 'px';
+        fl.style.opacity = (0.45 + (i % 4) * 0.14).toFixed(2);
+        fl.style.animationDuration = (7 + (i % 5) * 2.4) + 's';
+        fl.style.animationDelay = (-1 * (i * 0.9)) + 's';
+        layer.appendChild(fl);
+      }
+      document.body.appendChild(layer);
+    }
+
+    // Świąteczny baner w Lobby nad tytułem
+    const ovTitle = document.getElementById('overlay-title');
+    if (ovTitle && !document.getElementById('v4-xmas-banner')) {
+      const bn = document.createElement('div');
+      bn.id = 'v4-xmas-banner';
+      bn.innerHTML = '🎄 <span>WESOŁYCH ŚWIĄT • CHRISTMAS EDITION</span> ❄️';
+      ovTitle.parentElement?.insertBefore(bn, ovTitle);
+    }
+
+    // Synchronizuj klasę v4-perf-on dla Performance Mode
+    const syncPerfClass = () => {
+      document.body.classList.toggle('v4-perf-on', !!(typeof MX !== 'undefined' && MX.perfMode));
+    };
+    syncPerfClass();
+    document.getElementById('btn-perf-mode')?.addEventListener('click', () => setTimeout(syncPerfClass, 40));
+  }
+
+  function syncSettingsModal() {
+    const bX = document.getElementById('v3-set-theme-xmas');
+    const bC = document.getElementById('v3-set-theme-classic');
+    if (bX && bC) {
+      bX.className = currentTheme === 'christmas'
+        ? 'py-2 px-3 rounded-xl bg-gradient-to-r from-rose-600 to-emerald-600 text-white font-black text-xs border-2 border-amber-300 shadow'
+        : 'py-2 px-3 rounded-xl bg-slate-900 text-slate-300 font-bold text-xs border border-slate-700';
+      bC.className = currentTheme === 'classic'
+        ? 'py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-black text-xs border-2 border-cyan-300 shadow'
+        : 'py-2 px-3 rounded-xl bg-slate-900 text-slate-300 font-bold text-xs border border-slate-700';
+    }
+    const perfOn = (typeof MX !== 'undefined' && !!MX.perfMode);
+    const autoSk = (typeof MX !== 'undefined' && !!MX.autoSkills);
+    const autoVw = (typeof MX !== 'undefined' && !!MX.autoSkipVows);
+    const autoWv = (typeof state !== 'undefined' && !!state.autoWave);
+    const setBtn = (id, on, onTxt, offTxt) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = on ? onTxt : offTxt;
+      el.className = on
+        ? 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-black text-xs shadow'
+        : 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 font-bold text-xs border border-slate-600';
+    };
+    setBtn('v3-set-perf', perfOn, 'ON (Wysokie FPS)', 'OFF');
+    setBtn('v3-set-skills', autoSk, 'AUTO', 'RĘCZNE');
+    setBtn('v3-set-autowave', autoWv, 'ON', 'OFF');
+    setBtn('v3-set-vows', autoVw, 'AUTO-SKIP (AFK)', 'WYBÓR RĘCZNY');
+  }
+
+  function mountSettingsUI() {
+    if (!document.getElementById('btn-open-v3-settings')) {
+      const anchor = document.getElementById('btn-menu');
+      const btn = document.createElement('button');
+      btn.id = 'btn-open-v3-settings';
+      btn.title = 'Ustawienia (Motyw Świąteczny/Klasyczny, Performance, Moce, Auto-Fale)';
+      btn.className = 'px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-slate-800 to-indigo-900 hover:brightness-115 border border-amber-400/60 text-xs font-extrabold text-amber-200 transition active:scale-95 flex items-center gap-1';
+      btn.innerHTML = '<i class="fa-solid fa-gear"></i><span>Settings</span>';
+      if (anchor && anchor.parentElement) anchor.parentElement.insertBefore(btn, anchor);
+    }
+
+    if (!document.getElementById('v3-settings-modal')) {
+      const m = document.createElement('div');
+      m.id = 'v3-settings-modal';
+      m.className = 'hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 z-50';
+      m.innerHTML = `
+        <div class="bg-[#0b0e1e] border-2 border-amber-400/75 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <h3 class="font-jjk text-lg font-black text-amber-200"><i class="fa-solid fa-gear mr-2 text-cyan-300"></i>SETTINGS / USTAWIENIA</h3>
+            <button id="v3-set-close" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2">
+              <div class="font-black text-amber-300 uppercase">Motyw Menu i HUD</div>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="v3-set-theme-xmas" type="button">🎄 Świąteczny</button>
+                <button id="v3-set-theme-classic" type="button">🌌 Klasyczny</button>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+              <div><div class="font-black text-white">Performance Mode</div><div class="text-[10px] text-slate-400">Wyłącza ciężkie efekty i śnieg (więcej FPS)</div></div>
+              <button id="v3-set-perf" type="button">OFF</button>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+              <div><div class="font-black text-white">Moce Postaci</div><div class="text-[10px] text-slate-400">Automatyczne lub ręczne odpalanie skilli</div></div>
+              <button id="v3-set-skills" type="button">AUTO</button>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+              <div><div class="font-black text-white">Automatyczne Fale</div><div class="text-[10px] text-slate-400">Samoczynny start kolejnej fali</div></div>
+              <button id="v3-set-autowave" type="button">OFF</button>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+              <div><div class="font-black text-white">Binding Vows (co 10 fal)</div><div class="text-[10px] text-slate-400">Auto-Skip do gry AFK</div></div>
+              <button id="v3-set-vows" type="button">ON</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(m);
+      m.addEventListener('click', (e) => { if (e.target === m) m.classList.add('hidden'); });
+      document.getElementById('v3-set-close')?.addEventListener('click', () => m.classList.add('hidden'));
+      document.getElementById('v3-set-theme-xmas')?.addEventListener('click', () => applyMenuTheme('christmas', true));
+      document.getElementById('v3-set-theme-classic')?.addEventListener('click', () => applyMenuTheme('classic', true));
+      document.getElementById('v3-set-perf')?.addEventListener('click', () => { document.getElementById('btn-perf-mode')?.click(); syncSettingsModal(); });
+      document.getElementById('v3-set-skills')?.addEventListener('click', () => { document.getElementById('btn-auto-skills')?.click(); syncSettingsModal(); });
+      document.getElementById('v3-set-autowave')?.addEventListener('click', () => { document.getElementById('btn-auto')?.click(); syncSettingsModal(); });
+      document.getElementById('v3-set-vows')?.addEventListener('click', () => { document.getElementById('btn-auto-vows')?.click(); syncSettingsModal(); });
+    }
+
+    document.getElementById('btn-open-v3-settings')?.addEventListener('click', () => {
+      syncSettingsModal();
+      document.getElementById('v3-settings-modal')?.classList.remove('hidden');
+    });
+  }
+
+  function syncSlot7Labels() {
+    const has7 = !!(typeof multiverseSave !== 'undefined' && multiverseSave.goldUpgrades && multiverseSave.goldUpgrades.extraLoadoutSlot);
+    if (!has7) return;
+    document.querySelectorAll('kbd').forEach(k => { if (k.textContent.trim() === '6') k.textContent = '7'; });
+    const ab = document.getElementById('btn-eq-auto-best');
+    if (ab && ab.textContent.includes('6')) ab.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Auto-Najlepsze 7';
+  }
+
+  document.getElementById('btn-christmas-event-soon')?.addEventListener('click', () => {
+    if (typeof showBanner === 'function') showBanner('🎄 CHRISTMAS EVENT — COMING SOON! Świąteczna mapa i nagrody już wkrótce! ❄️');
+  });
   document.getElementById('enchant-target-select')?.addEventListener('change', () => {
     if (typeof updateEnchantPityLabel === 'function') updateEnchantPityLabel();
   });
 
-  console.log('%c🛠️ Custom Patcher v2 załadowany (Kolorowe Moce 1-5 FIXED • Christmas Event Coming Soon • Merchant tylko Secrety)', 'color:#38bdf8;font-weight:bold');
+  mountChristmasDecor();
+  mountSettingsUI();
+  applyMenuTheme(currentTheme);
+  setTimeout(() => {
+    syncSlot7Labels();
+    if (typeof buildShop === 'function') buildShop();
+    if (typeof buildIndexGrid === 'function') buildIndexGrid();
+    try { if (typeof inspectedIndexHeroId !== 'undefined' && inspectedIndexHeroId) renderColoredSkills('idx', inspectedIndexHeroId); } catch (e) {}
+    try { if (typeof inspectedEqHeroId !== 'undefined' && inspectedEqHeroId) renderColoredSkills('eq', inspectedEqHeroId); } catch (e) {}
+  }, 350);
+
+
+  // =========================================================================
+  // 6. CONVERT ST COINS -> GEMY ZA KOMPLET SKIBIDI TOILET SUMMON (250 ST = 1 💎)
+  // =========================================================================
+  const ST_SUMMON_HEROES = [
+    'st_cameraman', 'st_speakerman', 'st_tvman',
+    'st_large_cameraman', 'st_large_speakerman', 'st_large_tvman',
+    'st_titan_camera_1', 'st_titan_camera_2'
+  ];
+
+  function mountStGemExchangeBox() {
+    const stBtn = document.getElementById('btn-open-st-summon');
+    if (!stBtn || document.getElementById('st-gem-exchange-box')) return;
+    const col = stBtn.closest('.crate-main-col') || stBtn.closest('.rounded-2xl');
+    if (!col) return;
+
+    const box = document.createElement('div');
+    box.id = 'st-gem-exchange-box';
+    box.className = 'hidden pt-1 border-t border-cyan-400/40 z-10';
+    box.innerHTML = `
+      <div class="flex items-center justify-between text-[10px] text-emerald-300 font-bold mb-1">
+        <span><i class="fa-solid fa-check-double mr-1"></i>Komplet Skibidi Toilet!</span>
+        <span>250 ST = 1 💎</span>
+      </div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button id="btn-exchange-st-gem" type="button" class="py-2 px-2 rounded-xl bg-fuchsia-700 hover:bg-fuchsia-600 text-white font-black text-[10px] uppercase shadow transition active:scale-95">
+          250 ST → +1 💎
+        </button>
+        <button id="btn-exchange-st-gem-all" type="button" class="py-2 px-2 rounded-xl bg-gradient-to-r from-fuchsia-600 to-amber-500 hover:brightness-110 text-white font-black text-[10px] uppercase shadow transition active:scale-95">
+          Convert All 💎
+        </button>
+      </div>
+    `;
+    col.appendChild(box);
+
+    document.getElementById('btn-exchange-st-gem')?.addEventListener('click', () => {
+      if ((multiverseSave.stCoins || 0) < 250) { showBanner('Potrzebujesz 250 ST Coins!'); return; }
+      multiverseSave.stCoins -= 250;
+      multiverseSave.gems = (multiverseSave.gems || 0) + 1;
+      try { sfx.init(); sfx.playUpgrade(); } catch (e) {}
+      saveMultiverseData();
+      showBanner('Wymieniono 250 ST Coins → +1 💎!');
+    });
+
+    document.getElementById('btn-exchange-st-gem-all')?.addEventListener('click', () => {
+      const gemsToGain = Math.floor((multiverseSave.stCoins || 0) / 250);
+      if (gemsToGain < 1) { showBanner('Potrzebujesz minimum 250 ST Coins, aby wymienić na +1 💎!'); return; }
+      const spent = gemsToGain * 250;
+      multiverseSave.stCoins -= spent;
+      multiverseSave.gems = (multiverseSave.gems || 0) + gemsToGain;
+      try { sfx.init(); sfx.playUpgrade(); } catch (e) {}
+      saveMultiverseData();
+      showBanner(`CONVERT ALL: Wymieniono ${spent} ST Coins → +${gemsToGain} 💎 Gemów!`);
+    });
+  }
+
+  function refreshStGemExchangeVisibility() {
+    mountStGemExchangeBox();
+    const box = document.getElementById('st-gem-exchange-box');
+    if (!box || typeof multiverseSave === 'undefined' || !multiverseSave.unlocked) return;
+    const stComplete = ST_SUMMON_HEROES.every(id => !!multiverseSave.unlocked[id]);
+    box.classList.toggle('hidden', !stComplete);
+  }
+
+  if (typeof updateMultiverseUI === 'function') {
+    const _origUpdMvV4 = updateMultiverseUI;
+    updateMultiverseUI = function () {
+      const r = _origUpdMvV4.apply(this, arguments);
+      try { refreshStGemExchangeVisibility(); } catch (e) {}
+      return r;
+    };
+  }
+
+  // =========================================================================
+  // 7. MUZYKA: lobbyevent.mp3 + AUTOMATYCZNA OBSŁUGA NOWYCH UTWORÓW (np. jjk5..jjk10!)
+  // =========================================================================
+  (function upgradeMusicEngineV4() {
+    if (typeof sfx === 'undefined' || !sfx.mapAudio) return;
+
+    // Dodaj lobbyevent.mp3 oraz dodatkowe sloty jjk5-10, fnaf7-10, gd6-10, st6-10
+    const EXTRA_TRACKS = {
+      jjk:  ['jjk5.mp3', 'jjk6.mp3', 'jjk7.mp3', 'jjk8.mp3', 'jjk9.mp3', 'jjk10.mp3'],
+      fnaf: ['fnaf7.mp3', 'fnaf8.mp3', 'fnaf9.mp3', 'fnaf10.mp3'],
+      gd:   ['gd6.mp3', 'gd7.mp3', 'gd8.mp3', 'gd9.mp3', 'gd10.mp3'],
+      st:   ['st6.mp3', 'st7.mp3', 'st8.mp3', 'st9.mp3', 'st10.mp3']
+    };
+    const missingMp3Set = new Set();
+
+    if (typeof MAP_MP3_PLAYLISTS === 'object') {
+      for (const [world, arr] of Object.entries(EXTRA_TRACKS)) {
+        if (Array.isArray(MAP_MP3_PLAYLISTS[world])) {
+          arr.forEach(fn => { if (!MAP_MP3_PLAYLISTS[world].includes(fn)) MAP_MP3_PLAYLISTS[world].push(fn); });
+        }
+      }
+      MAP_MP3_PLAYLISTS.all = [
+        ...(MAP_MP3_PLAYLISTS.fnaf || []),
+        ...(MAP_MP3_PLAYLISTS.gd || []),
+        ...(MAP_MP3_PLAYLISTS.jjk || []),
+        ...(MAP_MP3_PLAYLISTS.st || [])
+      ];
+    }
+    if (typeof ALL_JUKEBOX_TRACKS !== 'undefined' && Array.isArray(ALL_JUKEBOX_TRACKS)) {
+      if (!ALL_JUKEBOX_TRACKS.includes('lobbyevent.mp3')) ALL_JUKEBOX_TRACKS.unshift('lobbyevent.mp3');
+      Object.values(EXTRA_TRACKS).flat().forEach(fn => {
+        if (!ALL_JUKEBOX_TRACKS.includes(fn)) ALL_JUKEBOX_TRACKS.push(fn);
+      });
+    }
+
+    // Dodaj opcję lobbyevent.mp3 + jjk5/jjk6 do obu selektorów muzyki
+    ['bgm-track-select', 'lobby-jukebox-select'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      if (!sel.querySelector('option[value="lobbyevent.mp3"]')) {
+        const opt = document.createElement('option');
+        opt.value = 'lobbyevent.mp3';
+        opt.textContent = '🎄 Lobby Event (lobbyevent.mp3)';
+        sel.insertBefore(opt, sel.firstChild);
+      }
+      for (const [pref, label] of [['jjk', '⛩️ JJK'], ['fnaf', '🐻 FNAF'], ['gd', '🟨 GD'], ['st', '🚽 ST']]) {
+        (EXTRA_TRACKS[pref] || []).forEach(fn => {
+          if (!sel.querySelector(`option[value="${fn}"]`)) {
+            const o = document.createElement('option');
+            o.value = fn;
+            o.textContent = `${label} ${fn.replace(/\D/g, '')} (${fn})`;
+            sel.appendChild(o);
+          }
+        });
+      }
+    });
+
+    // Bezpieczny fallback: jeśli dany plik mp3 (np. jjk7.mp3 albo lobbyevent.mp3) nie istnieje w folderze,
+    // natychmiast zapamiętujemy go jako brakujący i przełączamy na istniejący utwór!
+    sfx.mapAudio.addEventListener('error', () => {
+      const failed = sfx.currentMp3File;
+      if (!failed) return;
+      missingMp3Set.add(failed);
+      if (failed === 'lobbyevent.mp3') {
+        sfx.currentMp3File = 'lobby.mp3';
+        sfx.mapAudio.src = 'lobby.mp3';
+        sfx.updateTrackLabel();
+        if (sfx.enabled) sfx.mapAudio.play().catch(() => {});
+        return;
+      }
+      if (sfx.mapMusicActive && Array.isArray(sfx.activePlaylist)) {
+        const remaining = sfx.activePlaylist.filter(f => !missingMp3Set.has(f));
+        if (remaining.length > 0) {
+          sfx.activePlaylist = remaining;
+          sfx.playRandomFromActivePlaylist(false);
+        }
+      }
+    });
+
+    // Odfiltruj brakujące pliki przy losowaniu z playlisty
+    const _origPlayRand = sfx.playRandomFromActivePlaylist.bind(sfx);
+    sfx.playRandomFromActivePlaylist = function (avoidSame = true) {
+      if (Array.isArray(this.activePlaylist)) {
+        const valid = this.activePlaylist.filter(f => !missingMp3Set.has(f));
+        if (valid.length > 0) this.activePlaylist = valid;
+      }
+      return _origPlayRand(avoidSame);
+    };
+
+    // Hook na startLobbyMusic(): w motywie świątecznym odpala lobbyevent.mp3 (z fallbackiem na lobby.mp3)
+    const _origStartLobby = sfx.startLobbyMusic.bind(sfx);
+    sfx.startLobbyMusic = function () {
+      _origStartLobby();
+      if (currentTheme === 'christmas' && !missingMp3Set.has('lobbyevent.mp3')) {
+        this.currentMp3File = 'lobbyevent.mp3';
+        this.mapAudio.loop = true;
+        this.mapAudio.src = 'lobbyevent.mp3';
+        this.applyAudioVolume();
+        this.updateTrackLabel();
+        if (this.enabled) {
+          this.mapAudio.play().catch((err) => {
+            if (err && (err.name === 'NotAllowedError' || (err.message && err.message.includes('interact')))) {
+              this.pendingAutoplay = true;
+            }
+          });
+        }
+      }
+    };
+
+    // Jeśli gracz właśnie uruchomił grę w Lobby z motywem świątecznym — przełącz od razu na lobbyevent.mp3
+    if (typeof state !== 'undefined' && !state.running && currentTheme === 'christmas') {
+      setTimeout(() => { try { sfx.startLobbyMusic(); } catch (e) {} }, 250);
+    }
+  })();
+
+  setTimeout(refreshStGemExchangeVisibility, 400);
+
+  console.log('%c🎄🛠️ Custom Patcher v6 załadowany (FIX lagów Camera Summonów) (Scientist Cameraman 9650 DPS + Modele 1:1 ze zdjęć) (ST→Gems • Lekki Świąteczny Motyw • lobbyevent.mp3 • Auto-obsługa jjk5-10)!', 'color:#38bdf8;font-weight:bold');
 })();
 </script>
-<!-- CUSTOM_PATCHER_V2_END -->
+<!-- CUSTOM_PATCHER_V6_END -->
 </body>
 </html>
