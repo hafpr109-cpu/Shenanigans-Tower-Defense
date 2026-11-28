@@ -1480,11 +1480,11 @@ aside, #inspector-panel {
  <div class="flex items-center gap-3 z-10">
  <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-600 via-emerald-600 to-cyan-500 border-2 border-amber-200/90 flex items-center justify-center shrink-0 shadow-lg"><i class="fa-solid fa-tree text-amber-200 text-lg"></i></div>
  <div>
- <div class="flex items-center gap-2 flex-wrap"><span class="font-jjk font-black text-sm sm:text-base text-cyan-100 tracking-wider">🎄 CHRISTMAS EVENT — ZIMOWA ARENA ❄️</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black uppercase">COMING SOON</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-rose-600 text-white font-black uppercase">LIMITED EVENT</span></div>
+ <div class="flex items-center gap-2 flex-wrap"><span class="font-jjk font-black text-sm sm:text-base text-cyan-100 tracking-wider">🎄 CHRISTMAS EVENT — ZIMOWA ARENA ❄️</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950 font-black uppercase">40 FAL • 4 BOSSY</span><span class="text-[9px] px-2 py-0.5 rounded-full bg-rose-600 text-white font-black uppercase">LIMITED EVENT</span></div>
  <p class="text-[11px] text-slate-100 mt-0.5">Świąteczna mapa, limitowane zimowe postacie i specjalne prezenty! <strong>Już wkrótce (Coming Soon)...</strong></p>
  </div>
  </div>
- <div class="flex items-center gap-2 shrink-0 z-10"><span class="px-4 py-2 rounded-xl bg-slate-950/90 border-2 border-cyan-300/80 text-cyan-200 font-black text-xs uppercase tracking-wider shadow"><i class="fa-solid fa-snowflake mr-1"></i>COMING SOON</span></div>
+ <div class="flex items-center gap-2 shrink-0 z-10"><span class="px-4 py-2 rounded-xl bg-slate-950/90 border-2 border-cyan-300/80 text-cyan-200 font-black text-xs uppercase tracking-wider shadow"><i class="fa-solid fa-sleigh mr-1"></i>GRAJ EVENT (+5600 🎄)</span></div>
  </button>
  </div>
                     </div>
@@ -27944,7 +27944,7 @@ aside, #inspector-panel {
      if (typeof openCrate === 'function') {
        const _origOpenF3 = openCrate;
        openCrate = function(crateKind, count) {
-         if (crateKind === 'fnaf1_crate' && fnafVar === 'fnaf3_phantom_crate') {
+         if ((crateKind === 'fnaf1' || crateKind === 'fnaf1_crate') && fnafVar === 'fnaf3_phantom_crate') {
            return _origOpenF3('fnaf3_phantom_crate', count);
          }
          return _origOpenF3(crateKind, count);
@@ -28077,9 +28077,9 @@ aside, #inspector-panel {
         ctx.beginPath(); ctx.arc(_wfSrc.x, _wfSrc.y, _wfR * 0.92, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
       }
-      if (state.shadowRealmTimer > 0) {
+      if (false && state.shadowRealmTimer > 0) {
         ctx.save();
-        // Delikatna fioletowo-mroczna winieta po bokach zamiast pełnego czarnego ekranu!
+        // Zastąpione przez Shadow Realm v5 (cały ekran czarny, widać tylko enemies + Jeffrey koło bazy!)
         const srVig2 = ctx.createRadialGradient(MAP_W / 2, MAP_H / 2, MAP_H * 0.34, MAP_W / 2, MAP_H / 2, MAP_W * 0.62);
         srVig2.addColorStop(0, 'rgba(10, 4, 24, 0.08)');
         srVig2.addColorStop(0.65, 'rgba(15, 6, 32, 0.24)');
@@ -31419,5 +31419,2059 @@ aside, #inspector-panel {
 })();
 </script>
 <!-- CUSTOM_PATCHER_V6_END -->
+
+<!-- CHRISTMAS_EVENT_V7_START -->
+<script id="christmas-event-v7">
+(function () {
+  // =========================================================================
+  // 1. WALUTA CHRISTMAS COINS (🎄) + ZAPIS + HUD
+  // =========================================================================
+  const XMAS_SAVE_KEY = 'jjk_fnaf_xmas_v1';
+  const XMAS_IDS = [
+    'xmas_gd_diff', 'xmas_santa_freddy', 'xmas_yuji', 'xmas_large_cam',
+    'xmas_withered_bonnie', 'xmas_tv_man', 'xmas_gd_icon',
+    'xmas_santa_jogo', 'xmas_cherno_alpha'
+  ];
+  const XMAS_ID_SET = new Set(XMAS_IDS);
+
+  if (typeof multiverseSave === 'object') {
+    if (typeof multiverseSave.christmasCoins !== 'number') {
+      let savedC = 0;
+      try { savedC = JSON.parse(localStorage.getItem(XMAS_SAVE_KEY) || '{}').christmasCoins || 0; } catch (e) {}
+      multiverseSave.christmasCoins = savedC;
+    }
+    XMAS_IDS.forEach(id => {
+      if (multiverseSave.unlocked && multiverseSave.unlocked[id] === undefined) {
+        multiverseSave.unlocked[id] = false;
+      }
+    });
+    const _origSaveX = saveMultiverseData;
+    saveMultiverseData = function () {
+      try { localStorage.setItem(XMAS_SAVE_KEY, JSON.stringify({ christmasCoins: multiverseSave.christmasCoins || 0 })); } catch (e) {}
+      return _origSaveX.apply(this, arguments);
+    };
+  }
+
+  function mountChristmasHud() {
+    const stBtn = document.getElementById('btn-open-st-coins');
+    if (stBtn && !document.getElementById('btn-open-xmas-coins')) {
+      const b = document.createElement('button');
+      b.id = 'btn-open-xmas-coins';
+      b.title = 'Christmas Event Shop & Crate (🎄 Christmas Coins)';
+      b.className = 'flex items-center gap-1.5 bg-gradient-to-r from-rose-950 via-emerald-950 to-cyan-950 hover:brightness-115 border-2 border-amber-300/80 px-2 py-1 rounded-xl shadow transition active:scale-95';
+      b.innerHTML = '<span class="text-sm">🎄</span><div class="text-left"><div class="text-[8px] uppercase tracking-wider text-amber-200 leading-none">Xmas</div><div id="hud-xmas-coins" class="text-xs font-black text-emerald-200 leading-tight">0</div></div>';
+      stBtn.after(b);
+      b.addEventListener('click', () => {
+        if (typeof window.openChristmasShopModal === 'function') window.openChristmasShopModal();
+      });
+    }
+    const stBal = document.getElementById('modal-st-balance');
+    if (stBal && !document.getElementById('modal-xmas-balance')) {
+      const div = document.createElement('div');
+      div.innerHTML = '<span class="text-[10px] text-emerald-300 uppercase block">Xmas 🎄</span><span id="modal-xmas-balance" class="text-base font-black text-amber-300">0</span>';
+      stBal.parentElement.after(div);
+    }
+  }
+
+  function syncChristmasCoinsUI() {
+    const val = Math.floor((multiverseSave && multiverseSave.christmasCoins) || 0);
+    const h = document.getElementById('hud-xmas-coins'); if (h) h.textContent = val.toLocaleString('pl-PL');
+    const m = document.getElementById('modal-xmas-balance'); if (m) m.textContent = val.toLocaleString('pl-PL');
+    const sm = document.getElementById('xmas-shop-balance'); if (sm) sm.textContent = val.toLocaleString('pl-PL') + ' 🎄';
+    const lb = document.getElementById('lobby-xmas-coins'); if (lb) lb.textContent = val.toLocaleString('pl-PL') + ' 🎄';
+    const bJogo = document.getElementById('btn-buy-xmas-jogo');
+    if (bJogo) {
+      const own = !!multiverseSave.unlocked.xmas_santa_jogo;
+      bJogo.disabled = own || val < 25000;
+      bJogo.textContent = own ? '✔ POSIADASZ: SANTA JOGO' : '🎄 KUP SANTA JOGO (25 000 🎄)';
+    }
+    const bCherno = document.getElementById('btn-buy-xmas-cherno');
+    if (bCherno) {
+      const own = !!multiverseSave.unlocked.xmas_cherno_alpha;
+      bCherno.disabled = own || val < 250000;
+      bCherno.textContent = own ? '✔ POSIADASZ: CHERNO ALPHA' : '🎄 KUP CHERNO ALPHA (250 000 🎄)';
+    }
+  }
+
+  if (typeof updateMultiverseUI === 'function') {
+    const _origUpdX = updateMultiverseUI;
+    updateMultiverseUI = function () {
+      const r = _origUpdX.apply(this, arguments);
+      try { mountChristmasHud(); syncChristmasCoinsUI(); } catch (e) {}
+      return r;
+    };
+  }
+
+  // =========================================================================
+  // 2. EVENT MUSIC: jjkevent.mp3, fnafevent.mp3, gdevent.mp3, stevnt.mp3
+  // =========================================================================
+  const EVENT_TRACKS = { jjk: 'jjkevent.mp3', fnaf: 'fnafevent.mp3', gd: 'gdevent.mp3', st: 'stevnt.mp3' };
+  (function setupEventMusic() {
+    if (typeof MAP_MP3_PLAYLISTS === 'object') {
+      if (Array.isArray(MAP_MP3_PLAYLISTS.jjk) && !MAP_MP3_PLAYLISTS.jjk.includes('jjkevent.mp3')) MAP_MP3_PLAYLISTS.jjk.unshift('jjkevent.mp3');
+      if (Array.isArray(MAP_MP3_PLAYLISTS.fnaf) && !MAP_MP3_PLAYLISTS.fnaf.includes('fnafevent.mp3')) MAP_MP3_PLAYLISTS.fnaf.unshift('fnafevent.mp3');
+      if (Array.isArray(MAP_MP3_PLAYLISTS.gd) && !MAP_MP3_PLAYLISTS.gd.includes('gdevent.mp3')) MAP_MP3_PLAYLISTS.gd.unshift('gdevent.mp3');
+      if (Array.isArray(MAP_MP3_PLAYLISTS.st) && !MAP_MP3_PLAYLISTS.st.includes('stevnt.mp3')) MAP_MP3_PLAYLISTS.st.unshift('stevnt.mp3');
+    }
+    ['bgm-track-select', 'lobby-jukebox-select'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      [
+        ['jjkevent.mp3', '🎄 JJK Event (jjkevent.mp3)'],
+        ['fnafevent.mp3', '🎄 FNAF Event (fnafevent.mp3)'],
+        ['gdevent.mp3', '🎄 GD Event (gdevent.mp3)'],
+        ['stevnt.mp3', '🎄 ST Event (stevnt.mp3)']
+      ].forEach(([val, txt]) => {
+        if (!sel.querySelector(`option[value="${val}"]`)) {
+          const o = document.createElement('option');
+          o.value = val; o.textContent = txt;
+          sel.appendChild(o);
+        }
+      });
+    });
+  })();
+
+  // =========================================================================
+  // 3. 9 LIMITOWANYCH POSTACI ŚWIĄTECZNYCH
+  // =========================================================================
+  const XMAS_HEROES = {
+    xmas_gd_diff: {
+      id: 'xmas_gd_diff', universe: 'gd', limited: true, rarity: 'Common', name: 'Christmas Difficulty', cost: 110, maxLevel: 5, maxPlace: 5,
+      color: '#22c55e', accent: '#dc2626', damage: 22, cooldown: 0.60, range: 165, armorPierce: 0.5,
+      technique: 'LIMITED CHRISTMAS • Świąteczna Buźka GD',
+      desc: 'LIMITED (Christmas Crate): Pół zielona, pół czerwona buźka Geometry Dash w czapce Mikołaja!',
+      skill1: { name: 'Snowball Bounce', cd: 10, unlockLvl: 1, desc: 'Rzuca odbijającą się świąteczną śnieżkę (220% DMG AoE)!' },
+      skill2: { name: 'Festive Dash', cd: 18, unlockLvl: 3, desc: 'Przyspiesza ataki o 2x przez 6s!' },
+      upgrades: [
+        { cost: 140, dmg: 38, cd: 0.52, rng: 180, text: 'LVL 2: 38 DMG / 0.52s' },
+        { cost: 240, dmg: 65, cd: 0.44, rng: 195, text: 'LVL 3: 65 DMG / 0.44s — Odblokowuje Festive Dash!' },
+        { cost: 390, dmg: 110, cd: 0.36, rng: 210, text: 'LVL 4: 110 DMG / 0.36s' },
+        { cost: 600, dmg: 185, cd: 0.28, rng: 230, text: 'LVL 5 MAX: 185 DMG / 0.28s (660 DPS)!' }
+      ]
+    },
+    xmas_santa_freddy: {
+      id: 'xmas_santa_freddy', universe: 'fnaf', limited: true, rarity: 'Uncommon', name: 'Santa Freddy', cost: 185, maxLevel: 5, maxPlace: 4,
+      color: '#dc2626', accent: '#facc15', damage: 36, cooldown: 0.62, range: 185, armorPierce: 0.7,
+      technique: 'LIMITED CHRISTMAS • Prezenty & Toreador Carol',
+      desc: 'LIMITED (Christmas Crate): Freddy w pełnym czerwonym stroju Mikołaja z czarnym pasem i złotą klamrą!',
+      skill1: { name: 'Gift Bomb', cd: 11, unlockLvl: 1, desc: 'Rzuca wybuchowym prezentem (280% DMG AoE + slow)!' },
+      skill2: { name: 'Jingle Toreador', cd: 20, unlockLvl: 3, desc: 'Hipnotyzuje i spowalnia wrogów świąteczną melodią!' },
+      upgrades: [
+        { cost: 210, dmg: 60, cd: 0.54, rng: 200, text: 'LVL 2: 60 DMG / 0.54s' },
+        { cost: 340, dmg: 102, cd: 0.46, rng: 215, text: 'LVL 3: 102 DMG / 0.46s — Odblokowuje Jingle Toreador!' },
+        { cost: 520, dmg: 170, cd: 0.38, rng: 230, text: 'LVL 4: 170 DMG / 0.38s' },
+        { cost: 780, dmg: 280, cd: 0.30, rng: 250, text: 'LVL 5 MAX: 280 DMG / 0.30s (933 DPS)!' }
+      ]
+    },
+    xmas_yuji: {
+      id: 'xmas_yuji', universe: 'jjk', limited: true, rarity: 'Rare', name: 'Christmas Yuji', cost: 240, maxLevel: 5, maxPlace: 4,
+      color: '#fb7185', accent: '#ef4444', damage: 55, cooldown: 0.52, range: 145, armorPierce: 0.85,
+      technique: 'LIMITED CHRISTMAS • Świąteczny Czarny Błysk',
+      desc: 'LIMITED (Christmas Crate): Yuji Itadori w czapce Świętego Mikołaja — bije zimowym Czarnym Błyskiem!',
+      skill1: { name: 'Frost Divergent Fist', cd: 9, unlockLvl: 1, desc: 'Mroźna Rozbieżna Pięść (320% DMG + krótki stun)!' },
+      skill2: { name: 'Christmas Black Flash', cd: 18, unlockLvl: 3, desc: 'Przez 6s podwaja szybkość i gwarantuje Czarny Błysk!' },
+      upgrades: [
+        { cost: 260, dmg: 92, cd: 0.45, rng: 155, text: 'LVL 2: 92 DMG / 0.45s' },
+        { cost: 420, dmg: 155, cd: 0.38, rng: 168, text: 'LVL 3: 155 DMG / 0.38s — Odblokowuje Christmas Black Flash!' },
+        { cost: 640, dmg: 255, cd: 0.31, rng: 182, text: 'LVL 4: 255 DMG / 0.31s' },
+        { cost: 960, dmg: 410, cd: 0.24, rng: 200, text: 'LVL 5 MAX: 410 DMG / 0.24s (1708 DPS)!' }
+      ]
+    },
+    xmas_large_cam: {
+      id: 'xmas_large_cam', universe: 'st', limited: true, rarity: 'Epic', name: 'Christmas Large Camera', cost: 340, maxLevel: 5, maxPlace: 2,
+      color: '#38bdf8', accent: '#dc2626', damage: 115, cooldown: 0.50, range: 215, armorPierce: 0.95,
+      technique: 'LIMITED CHRISTMAS • Plazmowe Działko & Piła',
+      desc: 'LIMITED (Christmas Crate): Opancerzony Large Cameraman w czapce Mikołaja z niebieskim działkiem plazmowym i piłą łańcuchową!',
+      skill1: { name: 'Frost Plasma Cannon', cd: 10, unlockLvl: 1, desc: 'Wystrzeliwuje mroźną wiązkę plazmy (360% DMG AoE)!' },
+      skill2: { name: 'Chainsaw Rampage', cd: 19, unlockLvl: 3, desc: 'Tnie wszystkich wrogów w zasięgu piłą łańcuchową (480% DMG)!' },
+      upgrades: [
+        { cost: 340, dmg: 190, cd: 0.43, rng: 230, text: 'LVL 2: 190 DMG / 0.43s' },
+        { cost: 540, dmg: 310, cd: 0.36, rng: 245, text: 'LVL 3: 310 DMG / 0.36s — Odblokowuje Chainsaw Rampage!' },
+        { cost: 820, dmg: 495, cd: 0.29, rng: 265, text: 'LVL 4: 495 DMG / 0.29s' },
+        { cost: 1200, dmg: 780, cd: 0.22, rng: 285, text: 'LVL 5 MAX: 780 DMG / 0.22s (3545 DPS)!' }
+      ]
+    },
+    xmas_withered_bonnie: {
+      id: 'xmas_withered_bonnie', universe: 'fnaf', limited: true, rarity: 'Legendary', name: 'Christmas Withered Bonnie', cost: 440, maxLevel: 5, maxPlace: 3,
+      color: '#ef4444', accent: '#f8fafc', damage: 210, cooldown: 0.42, range: 220, armorPierce: 1.0,
+      technique: 'LIMITED CHRISTMAS • Czerwono-Biały Beztwarzowy Koszmar',
+      desc: 'LIMITED (Christmas Crate): Withered Bonnie w świątecznych, czerwono-białych barwach!',
+      skill1: { name: 'Candy Cane Shock', cd: 11, unlockLvl: 1, desc: 'Poraża wrogów czerwono-białą falą prądu (420% DMG + stun)!' },
+      skill2: { name: 'Silent Night Overdrive', cd: 20, unlockLvl: 3, desc: 'Podwaja szybkość ataku i zadaje potężne obrażenia AoE!' },
+      upgrades: [
+        { cost: 440, dmg: 350, cd: 0.36, rng: 235, text: 'LVL 2: 350 DMG / 0.36s' },
+        { cost: 680, dmg: 560, cd: 0.30, rng: 250, text: 'LVL 3: 560 DMG / 0.30s — Odblokowuje Silent Night Overdrive!' },
+        { cost: 1020, dmg: 890, cd: 0.24, rng: 270, text: 'LVL 4: 890 DMG / 0.24s' },
+        { cost: 1480, dmg: 1380, cd: 0.19, rng: 290, text: 'LVL 5 MAX: 1380 DMG / 0.19s (7263 DPS)!' }
+      ]
+    },
+    xmas_tv_man: {
+      id: 'xmas_tv_man', universe: 'st', limited: true, rarity: 'Mythic', name: 'Christmas TV Man', cost: 620, maxLevel: 5, maxPlace: 2,
+      color: '#a855f7', accent: '#ef4444', damage: 460, cooldown: 0.36, range: 250, armorPierce: 1.0,
+      technique: 'LIMITED CHRISTMAS • Festive Screen & Snow Teleport',
+      desc: 'LIMITED (Christmas Crate): TV Man w czapce Mikołaja z eleganckim płaszczem i świątecznym ekranem!',
+      skill1: { name: 'Festive White Flash', cd: 12, unlockLvl: 1, desc: 'Oślepia wszystkich wrogów w zasięgu (stun 4s + 450% DMG)!' },
+      skill2: { name: 'Blizzard Purple Screen', cd: 22, unlockLvl: 3, desc: 'Fioletowa zamieć kontroluje i topi wrogów przez 6s!' },
+      upgrades: [
+        { cost: 620, dmg: 760, cd: 0.31, rng: 265, text: 'LVL 2: 760 DMG / 0.31s' },
+        { cost: 960, dmg: 1220, cd: 0.26, rng: 280, text: 'LVL 3: 1220 DMG / 0.26s — Odblokowuje Blizzard Purple Screen!' },
+        { cost: 1440, dmg: 1920, cd: 0.21, rng: 300, text: 'LVL 4: 1920 DMG / 0.21s' },
+        { cost: 2100, dmg: 2950, cd: 0.17, rng: 325, text: 'LVL 5 MAX: 2950 DMG / 0.17s (17 352 DPS)!' }
+      ]
+    },
+    xmas_gd_icon: {
+      id: 'xmas_gd_icon', universe: 'gd', limited: true, secret: true, rarity: 'Secret', name: 'GD Icon Christmas', cost: 850, maxLevel: 5, maxPlace: 1,
+      color: '#facc15', accent: '#22d3ee', damage: 820, cooldown: 0.30, range: 270, armorPierce: 1.0,
+      technique: 'LIMITED CHRISTMAS SECRET • Świąteczna Kostka GD (22 000 DPS MAX)',
+      desc: 'LIMITED SECRET (Christmas Crate): Kultowa żółta kostka Geometry Dash z błękitnymi oczami i czapką Mikołaja!',
+      skill1: { name: 'Hyper Snow Dash', cd: 10, unlockLvl: 1, desc: 'Błyskawiczny świąteczny dash przez wrogów (520% DMG + stun)!' },
+      skill2: { name: 'Christmas Portal Storm', cd: 20, unlockLvl: 3, desc: 'Deszcz świątecznych portali GD (780% DMG AoE)!' },
+      upgrades: [
+        { cost: 900, dmg: 1350, cd: 0.26, rng: 285, text: 'LVL 2: 1350 DMG / 0.26s' },
+        { cost: 1450, dmg: 2100, cd: 0.22, rng: 305, text: 'LVL 3: 2100 DMG / 0.22s — Odblokowuje Portal Storm!' },
+        { cost: 2200, dmg: 3150, cd: 0.18, rng: 325, text: 'LVL 4: 3150 DMG / 0.18s' },
+        { cost: 3400, dmg: 4400, cd: 0.20, rng: 350, text: 'LVL 5 MAX: 4400 DMG / 0.20s (22 000 DPS)!' }
+      ]
+    },
+    xmas_santa_jogo: {
+      id: 'xmas_santa_jogo', universe: 'jjk', limited: true, exclusive: true, rarity: 'Exclusive', name: 'Santa Jogo', cost: 700, maxLevel: 5, maxPlace: 2,
+      color: '#dc2626', accent: '#f97316', damage: 640, cooldown: 0.34, range: 260, armorPierce: 1.0,
+      technique: 'LIMITED EXCLUSIVE (25k 🎄) • Kominek Mikołaja & Maximum: Meteor Prezentów',
+      desc: 'LIMITED EXCLUSIVE (25 000 🎄): Jogo w czapce Świętego Mikołaja, z długą białą brodą i czerwonym płaszczem!',
+      skill1: { name: 'Chimney Ember Bugs', cd: 11, unlockLvl: 1, desc: 'Wypuszcza wybuchowe iskry z kominka (450% DMG + podpalenie)!' },
+      skill2: { name: 'Maximum: Gift Meteor', cd: 22, unlockLvl: 3, desc: 'Zrzuca gigantyczny płonący prezent-meteor (850% DMG AoE)!' },
+      upgrades: [
+        { cost: 720, dmg: 1050, cd: 0.29, rng: 275, text: 'LVL 2: 1050 DMG / 0.29s' },
+        { cost: 1150, dmg: 1680, cd: 0.25, rng: 295, text: 'LVL 3: 1680 DMG / 0.25s — Odblokowuje Gift Meteor!' },
+        { cost: 1750, dmg: 2550, cd: 0.21, rng: 315, text: 'LVL 4: 2550 DMG / 0.21s' },
+        { cost: 2600, dmg: 3800, cd: 0.20, rng: 340, text: 'LVL 5 MAX: 3800 DMG / 0.20s (19 000 DPS)!' }
+      ]
+    },
+    xmas_cherno_alpha: {
+      id: 'xmas_cherno_alpha', universe: 'st', limited: true, rarity: 'Mysterious', name: 'Cherno Alpha (Christmas)', cost: 2500, maxLevel: 5, maxPlace: 1,
+      color: '#4d7c0f', accent: '#dc2626', damage: 2400, cooldown: 0.50, range: 265, armorPierce: 1.0,
+      technique: 'LIMITED MYSTERIOUS (250k 🎄 • 28 000 DPS MAX) • Passive co 25 fal: Shockwave Stun 5s • 5 Mocy → Crimson Typhoon!',
+      desc: 'LIMITED MYSTERIOUS (250 000 🎄 • 28 000 DPS MAX): Potężny Jaeger Cherno Alpha w czapce Mikołaja! Co 25 fal uderza rękami (Stun 5s całej mapy). Moc 5 (1-razowa) wysadza mecha (400% DMG), po 10s na helikopterach przylatuje na stałe CRIMSON TYPHOON z 4 nowymi mocami!',
+      skill1: { name: '1. Charge (+50% DMG)', cd: 10, unlockLvl: 1, desc: 'Ładuje potężny cios i bije +50% dodatkowego DMG! (Zablokowane bez ręki)' },
+      skill2: { name: '2. Flamethrower (Burn 10s)', cd: 16, unlockLvl: 1, desc: 'Palniki podpalają wrogów w zasięgu na 10s!' },
+      skill3: { name: '3. Shockwave (200% DMG AoE)', cd: 20, unlockLvl: 2, desc: 'Uderza rękami w ziemię tworząc falę dookoła za 200% DMG! (Zablokowane bez ręki)' },
+      skill4: { name: '4. Arm Detach Explosion (CD 200s)', cd: 200, unlockLvl: 3, desc: 'Odczepia rękę i rzuca ją (ogromny wybuch)! Ręka odrasta po 20s — przez ten czas nie może użyć Mocy 1 i 3!' },
+      skill5: { name: '5. Self-Destruct → Crimson Typhoon (1-razowy!)', cd: 9999, unlockLvl: 4, desc: '1-razowy użytek: Mech wybucha (400% DMG), znika na 10s (czerwone kółko), a po 10s na helikopterach przylatuje NA STAŁE Crimson Typhoon (4 nowe moce: 3 Fist Punch, 3 Piły 20s, Arm Toss, Fury 30s)!' },
+      upgrades: [
+        { cost: 1400, dmg: 3800, cd: 0.42, rng: 280, text: 'LVL 2: 3800 DMG / 0.42s (9047 DPS) — Odblokowuje Shockwave!' },
+        { cost: 2800, dmg: 5400, cd: 0.35, rng: 300, text: 'LVL 3: 5400 DMG / 0.35s (15 428 DPS) — Odblokowuje Arm Detach Explosion!' },
+        { cost: 5000, dmg: 7000, cd: 0.30, rng: 320, text: 'LVL 4: 7000 DMG / 0.30s (23 333 DPS) — Odblokowuje Self-Destruct → Crimson Typhoon!' },
+        { cost: 8500, dmg: 8400, cd: 0.30, rng: 345, text: 'LVL 5 MAX: 8400 DMG / 0.30s (28 000 DPS!) — ABSOLUTNY JAEGER!' }
+      ]
+    }
+  };
+  if (typeof HEROES === 'object') Object.assign(HEROES, XMAS_HEROES);
+
+  // Kolory kończyn (rąk, nóg, butów) dla wszystkich 9 postaci świątecznych
+  if (typeof getHeroLimbColors === 'function') {
+    const _origLimbsX = getHeroLimbColors;
+    getHeroLimbColors = function (type) {
+      const custom = {
+        xmas_gd_diff:         { arm: '#16a34a', leg: '#dc2626', shoe: '#09090b' },
+        xmas_santa_freddy:    { arm: '#dc2626', leg: '#b91c1c', shoe: '#09090b' },
+        xmas_yuji:            { arm: '#1e293b', leg: '#0f172a', shoe: '#dc2626' },
+        xmas_large_cam:       { arm: '#18181b', leg: '#09090b', shoe: '#050507' },
+        xmas_withered_bonnie: { arm: '#dc2626', leg: '#f8fafc', shoe: '#991b1b' },
+        xmas_tv_man:          { arm: '#18181b', leg: '#0f172a', shoe: '#09090b' },
+        xmas_gd_icon:         { arm: '#facc15', leg: '#eab308', shoe: '#22d3ee' },
+        xmas_santa_jogo:      { arm: '#dc2626', leg: '#991b1b', shoe: '#09090b' },
+        xmas_cherno_alpha:    { arm: '#3f4f26', leg: '#2d3a1a', shoe: '#18181b' }
+      };
+      if (custom[type]) return custom[type];
+      return _origLimbsX.apply(this, arguments);
+    };
+  }
+
+  // =========================================================================
+  // 4. MECHANIKA CHERNO ALPHA + CRIMSON TYPHOON
+  // =========================================================================
+  const xmasFxList = () => (state.xmasFx || (state.xmasFx = []));
+
+  const _origGedX = getEffectiveDamage;
+  getEffectiveDamage = function (t) {
+    let v = _origGedX.apply(this, arguments);
+    if (t && t._ctFury > 0) v = Math.round(v * 1.65);
+    if (t && t._chernoMissing > 0) return 0;
+    return v;
+  };
+  const _origGecX = getEffectiveCooldown;
+  getEffectiveCooldown = function (t) {
+    let v = _origGecX.apply(this, arguments);
+    if (t && t._ctFury > 0) v *= 0.45;
+    if (t && t._chernoMissing > 0) return 99;
+    return v;
+  };
+
+  function drawCrimsonTyphoonPortrait(c) {
+    c.save();
+    const bg = c.createRadialGradient(-3, -4, 2, 0, 0, 21);
+    bg.addColorStop(0, '#7f1d1d'); bg.addColorStop(1, '#180404');
+    c.fillStyle = bg; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#ef4444'; c.lineWidth = 2.4; c.stroke();
+    // Karmazynowe masywne ramiona-naramienniki
+    c.fillStyle = '#991b1b'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.3;
+    c.beginPath(); c.roundRect(-14, 3, 28, 11, 4); c.fill(); c.stroke();
+    c.fillStyle = '#facc15'; c.beginPath(); c.arc(-10, 7, 2.2, 0, Math.PI * 2); c.arc(10, 7, 2.2, 0, Math.PI * 2); c.fill();
+    // Głowa cyklopa Crimson Typhoona (hełm + czarny pierścień + wielkie świecące pomarańczowo-żółte oko!)
+    c.fillStyle = '#b91c1c'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.5;
+    c.beginPath(); c.arc(0, -3.5, 10.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, -3.5, 7.2, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#f97316'; c.beginPath(); c.arc(0, -3.5, 5.2, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#fef08a'; c.beginPath(); c.arc(0, -3.5, 2.8, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffffff'; c.beginPath(); c.arc(-1.2, -4.8, 1.1, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+
+  const _origUpdInspX = updateInspector;
+  updateInspector = function () {
+    const r = _origUpdInspX.apply(this, arguments);
+    const t = state.selectedTower;
+    if (t && t.type === 'xmas_cherno_alpha' && t._isCrimson) {
+      const nEl = document.getElementById('insp-name'); if (nEl) nEl.textContent = 'Crimson Typhoon (Jaeger)';
+      const tEl = document.getElementById('insp-tech'); if (tEl) tEl.textContent = '3-Ręki Jaeger • 3 Fist Punch • 3 Piły (20s) • Arm Toss • Fury (30s)';
+      const s1 = document.getElementById('skill1-name'); if (s1) s1.textContent = '1. 3 Fist Punch (+50% DMG)';
+      const s2 = document.getElementById('skill2-name'); if (s2) s2.textContent = '2. 3-Hand Saw Blades (20s)';
+      const s3 = document.getElementById('skill3-name'); if (s3) s3.textContent = '3. Arm Toss (Wybuch • 2 ręce 20s)';
+      const s4 = document.getElementById('skill4-name'); if (s4) s4.textContent = '4. Fury (Krótki CD + DMG • 30s)';
+      const b5 = document.getElementById('btn-skill-5'); if (b5) b5.classList.add('hidden');
+      // Zmień portret w Inspektorze z Cherno Alpha na Crimson Typhoon!
+      const inspCanvas = document.getElementById('inspector-portrait');
+      if (inspCanvas) {
+        const ictx = inspCanvas.getContext('2d');
+        ictx.clearRect(0, 0, inspCanvas.width, inspCanvas.height);
+        ictx.save();
+        ictx.translate(26, 26);
+        ictx.scale(1.22, 1.22);
+        drawCrimsonTyphoonPortrait(ictx);
+        ictx.restore();
+      }
+    }
+    return r;
+  };
+
+  const _origActSkillX = activateHeroSkill;
+  activateHeroSkill = function (tower, slot) {
+    if (tower && tower.type === 'xmas_cherno_alpha') {
+      if (tower._chernoMissing > 0) { showBanner('🚁 Crimson Typhoon właśnie leci na helikopterach...'); return; }
+      const cdKey = 'skill' + slot + 'Cd';
+      if ((tower[cdKey] || 0) > 0) return;
+      const dmg = getEffectiveDamage(tower);
+      const aliveE = (e) => e && e.hp > 0;
+
+      if (!tower._isCrimson) {
+        const sk = HEROES.xmas_cherno_alpha['skill' + slot];
+        if (!sk || (tower.level || 1) < (sk.unlockLvl || 1)) return;
+        if ((slot === 1 || slot === 3) && (tower._noArmTimer || 0) > 0) {
+          showBanner(`🦾 Brak ręki! Odrasta za ${Math.ceil(tower._noArmTimer)}s — Moc ${slot} zablokowana!`);
+          return;
+        }
+        if (slot === 1) {
+          const tgt = state.enemies.find(e => aliveE(e) && Math.hypot(e.x - tower.x, e.y - tower.y) <= getEffectiveRange(tower) + 60) || state.enemies.find(aliveE);
+          if (!tgt) return;
+          damageEnemy(tgt, Math.round(dmg * 1.5), tower, { pierce: 1, critText: '⚡ CHARGE +50%!', critColor: '#a3e635' });
+          xmasFxList().push({ kind: 'shock', x: tgt.x, y: tgt.y, r: 55, col: '#a3e635', t: 0, dur: 0.35 });
+          tower[cdKey] = sk.cd;
+        } else if (slot === 2) {
+          const rng = getEffectiveRange(tower);
+          let hits = 0;
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - tower.x, e.y - tower.y) <= rng + 40) {
+              e._xmasBurn = 10.0; e._xmasBurnDps = Math.max(400, Math.round(dmg * 0.35)); e._xmasBurnSrc = tower;
+              hits++;
+            }
+          }
+          xmasFxList().push({ kind: 'shock', x: tower.x, y: tower.y, r: rng, col: '#f97316', t: 0, dur: 0.55 });
+          spawnFloatingText(tower.x, tower.y - 48, `🔥 FLAMETHROWER (10s BURN • ${hits})!`, '#fb923c', 1.3);
+          tower[cdKey] = sk.cd;
+        } else if (slot === 3) {
+          const rng = getEffectiveRange(tower) + 40;
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - tower.x, e.y - tower.y) <= rng) damageEnemy(e, Math.round(dmg * 2.0), tower, { pierce: 1 });
+          }
+          xmasFxList().push({ kind: 'shock', x: tower.x, y: tower.y, r: rng, col: '#84cc16', t: 0, dur: 0.55 });
+          spawnFloatingText(tower.x, tower.y - 48, '💥 SHOCKWAVE (200% DMG)!', '#bef264', 1.35);
+          tower[cdKey] = sk.cd;
+        } else if (slot === 4) {
+          const tgt = state.enemies.find(aliveE);
+          if (!tgt) return;
+          tower._noArmTimer = 20.0;
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - tgt.x, e.y - tgt.y) <= 130) damageEnemy(e, Math.round(dmg * 3.5), tower, { pierce: 1, critText: '🦾 ARM BOOM!', critColor: '#f97316' });
+          }
+          xmasFxList().push({ kind: 'shock', x: tgt.x, y: tgt.y, r: 130, col: '#ef4444', t: 0, dur: 0.65 });
+          spawnFloatingText(tower.x, tower.y - 48, '🦾 ARM DETACH! Ręka odrasta za 20s!', '#fca5a5', 1.35);
+          tower[cdKey] = 200;
+        } else if (slot === 5) {
+          if (tower._usedSelfDestruct) return;
+          tower._usedSelfDestruct = true;
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - tower.x, e.y - tower.y) <= 280) damageEnemy(e, Math.round(dmg * 4.0), tower, { pierce: 1, critText: '☢ 400%!', critColor: '#ef4444' });
+          }
+          state.shake = Math.max(state.shake || 0, 16);
+          tower._chernoMissing = 10.0;
+          xmasFxList().push({ kind: 'shock', x: tower.x, y: tower.y, r: 280, col: '#dc2626', t: 0, dur: 0.9 });
+          xmasFxList().push({ kind: 'heli_drop', tower, x: tower.x, y: tower.y, t: 0, dur: 10.0 });
+          spawnFloatingText(tower.x, tower.y - 52, '💥 SELF-DESTRUCT (400% DMG)! CRIMSON TYPHOON ZA 10s!', '#f87171', 1.45);
+          showBanner('💥 CHERNO ALPHA WYBUCHŁ (400% DMG)! Za 10s na helikopterach przyleci CRIMSON TYPHOON!');
+          tower[cdKey] = 9999;
+        }
+      } else {
+        if (slot === 1) {
+          const tgt = state.enemies.find(e => aliveE(e) && Math.hypot(e.x - tower.x, e.y - tower.y) <= getEffectiveRange(tower) + 60) || state.enemies.find(aliveE);
+          if (!tgt) return;
+          const mult = (tower._ctTwoArms > 0) ? 1.0 : 1.5;
+          damageEnemy(tgt, Math.round(dmg * mult), tower, { pierce: 1, critText: '🥊 3 FIST PUNCH!', critColor: '#fb7185' });
+          xmasFxList().push({ kind: 'shock', x: tgt.x, y: tgt.y, r: 65, col: '#e11d48', t: 0, dur: 0.35 });
+          tower[cdKey] = 10;
+        } else if (slot === 2) {
+          tower._ctSawTimer = 20.0;
+          spawnFloatingText(tower.x, tower.y - 48, '⚙️ 3 PIŁY RĘCZNE (20s)!', '#fda4af', 1.35);
+          tower[cdKey] = 32;
+        } else if (slot === 3) {
+          const tgt = state.enemies.find(aliveE);
+          if (!tgt) return;
+          tower._ctTwoArms = 20.0;
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - tgt.x, e.y - tgt.y) <= 135) damageEnemy(e, Math.round(dmg * 3.0), tower, { pierce: 1, critText: '💥 ARM TOSS!', critColor: '#f43f5e' });
+          }
+          xmasFxList().push({ kind: 'shock', x: tgt.x, y: tgt.y, r: 135, col: '#f43f5e', t: 0, dur: 0.55 });
+          spawnFloatingText(tower.x, tower.y - 48, '🦾 ARM TOSS! (2 ręce przez 20s)', '#fb7185', 1.3);
+          tower[cdKey] = 45;
+        } else if (slot === 4) {
+          tower._ctFury = 30.0;
+          spawnFloatingText(tower.x, tower.y - 52, '🔥 CRIMSON FURY (30s • MAX SPEED & DMG)!', '#facc15', 1.45);
+          tower[cdKey] = 300;
+        }
+      }
+      try { sfx.playDomain(); } catch (e) {}
+      if (typeof updateInspectorCooldowns === 'function') updateInspectorCooldowns();
+      if (typeof updateUI === 'function') updateUI();
+      return;
+    }
+    return _origActSkillX.apply(this, arguments);
+  };
+
+  // =========================================================================
+  // 5. MAPA CHRISTMAS EVENT (PRAWDZIWY HOOK NA drawFnafBackground & drawMapAmbience!)
+  // =========================================================================
+  if (typeof DIFFICULTIES === 'object') {
+    DIFFICULTIES.christmas_event = {
+      id: 'christmas_event', label: '🎄 CHRISTMAS EVENT', waves: 40, startCe: 1200, hp: 15,
+      enemyHpMult: 2.35, enemySpdMult: 1.18, rewardMult: 1.0,
+      mpReward: 0, gemReward: 5, soulReward: 5, goldGemReward: 0,
+      badgeClass: 'text-cyan-200 border-amber-300/80 bg-emerald-950'
+    };
+  }
+  if (typeof WORLD_STAGE_MAPS === 'object') {
+    WORLD_STAGE_MAPS.christmas_event = {
+      id: 'christmas_event', world: 'christmas', name: '🎄 Christmas Event — Polana Światów',
+      theme: 'christmas',
+      waypoints: [
+        { x: 0, y: 120 }, { x: 240, y: 120 }, { x: 240, y: 390 },
+        { x: 520, y: 390 }, { x: 520, y: 150 }, { x: 780, y: 150 },
+        { x: 780, y: 350 }, { x: 960, y: 350 }
+      ]
+    };
+  }
+
+  function getXmasPhase(waveNum) {
+    if (waveNum <= 10) return 'jjk';
+    if (waveNum <= 20) return 'fnaf';
+    if (waveNum <= 30) return 'gd';
+    return 'st';
+  }
+
+  function drawChristmasMeadowMap() {
+    const phase = getXmasPhase(state.wave || 1);
+    const t = state.time || 0;
+    ctx.save();
+    // 1. Śnieżna polana (zimowy gradient: głęboki błękit nocnego śniegu + białe polany)
+    const bg = ctx.createLinearGradient(0, 0, MAP_W, MAP_H);
+    bg.addColorStop(0, '#0f2942');
+    bg.addColorStop(0.45, '#1e3a5f');
+    bg.addColorStop(1, '#16384d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, MAP_W, MAP_H);
+
+    // Miękkie zaspy śnieżne na całej polanie
+    ctx.fillStyle = 'rgba(224, 242, 254, 0.22)';
+    for (const [sx, sy, rx, ry] of [[350, 90, 180, 75], [680, 80, 170, 65], [140, 340, 150, 85], [440, 480, 210, 70], [830, 450, 170, 75], [650, 280, 130, 60]]) {
+      ctx.beginPath(); ctx.ellipse(sx, sy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Zamarznięty świąteczny staw z połyskiem
+    ctx.fillStyle = 'rgba(125, 211, 252, 0.32)'; ctx.strokeStyle = 'rgba(224, 242, 254, 0.65)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(380, 255, 68, 38, -0.15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+    // 2. Świąteczne choinki ze śniegiem i świecącymi bombkami
+    const trees = [
+      [110, 250, 1.05], [145, 455, 0.95], [375, 85, 1.1],
+      [645, 275, 1.0], [650, 465, 1.1], [875, 115, 1.05], [885, 455, 0.9]
+    ];
+    for (const [tx, ty, sc] of trees) {
+      ctx.save(); ctx.translate(tx, ty); ctx.scale(sc, sc);
+      ctx.fillStyle = 'rgba(0,0,0,0.32)'; ctx.beginPath(); ctx.ellipse(0, 24, 20, 6, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#5c2d16'; ctx.fillRect(-4.5, 13, 9, 12);
+      // 3 warstwy gałęzi
+      for (let tier = 0; tier < 3; tier++) {
+        const w = 24 - tier * 5, y0 = 15 - tier * 12;
+        ctx.fillStyle = tier === 0 ? '#064e3b' : tier === 1 ? '#047857' : '#059669';
+        ctx.beginPath(); ctx.moveTo(0, y0 - 18); ctx.lineTo(-w, y0); ctx.lineTo(w, y0); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#e0f2fe';
+        ctx.beginPath(); ctx.moveTo(0, y0 - 18); ctx.lineTo(-w * 0.42, y0 - 10); ctx.lineTo(w * 0.42, y0 - 10); ctx.closePath(); ctx.fill();
+      }
+      // Złota gwiazda na czubku + bombki
+      ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(0, -29, 3.6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(-8, 6, 2.7, 0, Math.PI * 2); ctx.arc(6, -6, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(8, 8, 2.6, 0, Math.PI * 2); ctx.arc(-5, -10, 2.3, 0, Math.PI * 2); ctx.fill();
+      // Prezenty pod choinką
+      ctx.fillStyle = '#dc2626'; ctx.fillRect(11, 14, 10, 9);
+      ctx.fillStyle = '#facc15'; ctx.fillRect(15, 14, 2, 9); ctx.fillRect(11, 17.5, 10, 2);
+      ctx.restore();
+    }
+
+    // 3. TEMATYCZNA SZCZELINA ŚWIATÓW PRZY WEJŚCIU WROGÓW (ZMIENIA SIĘ CO 10 FAL: JJK / FNAF / GD / ST!)
+    const riftCfg = {
+      jjk:  { c1: '#1e082e', c2: '#dc2626', accent: '#f43f5e', label: '⛩️ JJK SHIBUYA RIFT (FALE 1–10)' },
+      fnaf: { c1: '#1c1008', c2: '#b91c1c', accent: '#facc15', label: '🐻 FNAF PIZZERIA RIFT (FALE 11–20)' },
+      gd:   { c1: '#071b3b', c2: '#06b6d4', accent: '#38bdf8', label: '🟨 GEOMETRY DASH RIFT (FALE 21–30)' },
+      st:   { c1: '#1c0a0a', c2: '#ea580c', accent: '#fb923c', label: '🚽 SKIBIDI ASTRO RIFT (FALE 31–40)' }
+    }[phase];
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(215, 0); ctx.lineTo(175, 62); ctx.lineTo(228, 124);
+    ctx.lineTo(168, 186); ctx.lineTo(195, 250); ctx.lineTo(0, 250); ctx.closePath();
+    ctx.fillStyle = riftCfg.c1; ctx.fill();
+    ctx.clip();
+
+    if (phase === 'jjk') {
+      // JJK: Karmazynowa poświata Shibuya + Brama Torii + latające talizmany i przeklęta energia!
+      const jg = ctx.createRadialGradient(45, 120, 10, 45, 120, 175);
+      jg.addColorStop(0, 'rgba(220,38,38,0.55)'); jg.addColorStop(0.6, 'rgba(88,28,135,0.42)'); jg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = jg; ctx.fillRect(0, 0, 230, 255);
+      // Czerwona Brama Torii w tle
+      ctx.fillStyle = '#991b1b';
+      ctx.fillRect(42, 46, 9, 86); ctx.fillRect(108, 46, 9, 86);
+      ctx.fillRect(28, 42, 104, 10); ctx.fillRect(36, 62, 88, 7);
+      // Pulsujące kręgi Przeklętej Energii + żółte talizmany
+      ctx.strokeStyle = 'rgba(244,63,94,0.65)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(80, 120, 52 + Math.sin(t * 4) * 6, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#fde68a';
+      for (let k = 0; k < 4; k++) {
+        const tx = 28 + k * 42, ty = 158 + Math.sin(t * 3 + k) * 9;
+        ctx.fillRect(tx, ty, 8, 16);
+        ctx.fillStyle = '#dc2626'; ctx.fillRect(tx + 2.5, ty + 3, 3, 10); ctx.fillStyle = '#fde68a';
+      }
+    } else if (phase === 'fnaf') {
+      // FNAF: Klasyczna biało-czarna szachownica pizzerii + czerwona kurtyna sceny + proporczyki urodzinowe!
+      for (let gx = 0; gx < 230; gx += 22) for (let gy = 0; gy < 255; gy += 22) {
+        ctx.fillStyle = ((gx / 22 + gy / 22) % 2 === 0) ? '#e2e8f0' : '#0f172a';
+        ctx.globalAlpha = 0.28; ctx.fillRect(gx, gy, 22, 22);
+      }
+      ctx.globalAlpha = 1;
+      // Czerwone kurtyny Pirate Cove / Sceny na górze i z lewej
+      ctx.fillStyle = '#7f1d1d';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(140, 0); ctx.quadraticCurveTo(75, 55, 0, 88); ctx.closePath(); ctx.fill();
+      // Kolorowe chorągiewki imprezowe (Party Bunting)
+      const pCols = ['#ef4444', '#facc15', '#38bdf8', '#a855f7', '#22c55e'];
+      for (let i = 0; i < 6; i++) {
+        ctx.fillStyle = pCols[i % pCols.length];
+        ctx.beginPath(); ctx.moveTo(15 + i * 28, 36); ctx.lineTo(39 + i * 28, 36); ctx.lineTo(27 + i * 28, 54); ctx.closePath(); ctx.fill();
+      }
+      // Żółty reflektor sceniczny
+      ctx.fillStyle = 'rgba(250,204,21,0.18)';
+      ctx.beginPath(); ctx.moveTo(20, 0); ctx.lineTo(170, 230); ctx.lineTo(60, 230); ctx.closePath(); ctx.fill();
+    } else if (phase === 'gd') {
+      // GD: Neonowa niebieska siatka + czarne kolce z białą obwódką + wirująca piła + portal!
+      ctx.strokeStyle = 'rgba(56,189,248,0.45)'; ctx.lineWidth = 1.5;
+      for (let gx = 0; gx < 230; gx += 28) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, 255); ctx.stroke(); }
+      for (let gy = 0; gy < 255; gy += 28) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(230, gy); ctx.stroke(); }
+      // Neonowe kolce Geometry Dash wzdłuż dołu szczeliny
+      ctx.fillStyle = '#09090b'; ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.8;
+      for (let sx = 12; sx < 175; sx += 26) {
+        ctx.beginPath(); ctx.moveTo(sx, 235); ctx.lineTo(sx + 12, 208); ctx.lineTo(sx + 24, 235); ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+      // Wirująca piła GD
+      ctx.save(); ctx.translate(125, 68); ctx.rotate(t * 4);
+      ctx.fillStyle = '#0f172a'; ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      for (let k = 0; k < 8; k++) {
+        const a = k * Math.PI / 4;
+        ctx.beginPath(); ctx.moveTo(Math.cos(a)*16, Math.sin(a)*16); ctx.lineTo(Math.cos(a+0.2)*24, Math.sin(a+0.2)*24); ctx.lineTo(Math.cos(a+0.4)*16, Math.sin(a+0.4)*16); ctx.fill();
+      }
+      ctx.restore();
+      // Portal wejściowy GD
+      ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.ellipse(26, 120, 14, 34, 0, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      // ST: Spalone miasto Astro Toilet — pęknięty asfalt, pomarańczowe pierścienie Astro, płomienie!
+      ctx.fillStyle = '#18181b'; ctx.fillRect(0, 0, 230, 255);
+      const sg = ctx.createRadialGradient(35, 120, 12, 35, 120, 175);
+      sg.addColorStop(0, 'rgba(234,88,12,0.65)'); sg.addColorStop(0.55, 'rgba(185,28,28,0.38)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = sg; ctx.fillRect(0, 0, 230, 255);
+      // Wirujący pomarańczowy pierścień warp Astro Toiletów
+      ctx.strokeStyle = '#fb923c'; ctx.lineWidth = 3.5;
+      ctx.beginPath(); ctx.ellipse(50, 120, 44, 18, -0.25, 0, Math.PI * 2); ctx.stroke();
+      // Żarzące się iskry i pęknięcia
+      ctx.fillStyle = '#facc15';
+      for (let k = 0; k < 7; k++) {
+        const ex = (k * 31 + t * 25) % 190, ey = 230 - ((k * 43 + t * 48) % 210);
+        ctx.beginPath(); ctx.arc(ex, ey, 2.2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    // Podwójne świecące pęknięcia na granicy rozrywania śnieżnej polany
+    ctx.strokeStyle = '#09090b'; ctx.lineWidth = 6.5;
+    ctx.beginPath();
+    ctx.moveTo(215, 0); ctx.lineTo(175, 62); ctx.lineTo(228, 124); ctx.lineTo(168, 186); ctx.lineTo(195, 250); ctx.lineTo(0, 250);
+    ctx.stroke();
+    ctx.strokeStyle = riftCfg.accent; ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Tabliczka aktualnej fazy w lewym górnym rogu
+    ctx.fillStyle = 'rgba(2, 6, 23, 0.82)';
+    ctx.beginPath(); ctx.roundRect(10, 10, 235, 24, 8); ctx.fill();
+    ctx.strokeStyle = riftCfg.accent; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#ffffff'; ctx.font = '900 11px Inter, sans-serif';
+    ctx.fillText(riftCfg.label, 20, 26);
+
+    ctx.restore();
+  }
+
+  // Hook na drawFnafBackground (tam wpada christmas_event z render()!) + drawMapAmbience + drawPathAndBase (dla Perf Mode)
+  if (typeof drawFnafBackground === 'function') {
+    const _origFnafBgX = drawFnafBackground;
+    drawFnafBackground = function () {
+      if (state.map && state.map.id === 'christmas_event') {
+        drawChristmasMeadowMap();
+        return;
+      }
+      return _origFnafBgX.apply(this, arguments);
+    };
+  }
+  if (typeof drawMapAmbience === 'function') {
+    const _origAmbX = drawMapAmbience;
+    drawMapAmbience = function () {
+      if (state.map && state.map.id === 'christmas_event') return;
+      return _origAmbX.apply(this, arguments);
+    };
+  }
+  if (typeof drawPathAndBase === 'function') {
+    const _origPathX = drawPathAndBase;
+    drawPathAndBase = function () {
+      if (state.perfMode && state.map && state.map.id === 'christmas_event') {
+        drawChristmasMeadowMap();
+      }
+      return _origPathX.apply(this, arguments);
+    };
+  }
+
+  // Start mapy Christmas Event po kliknięciu kafelka pod Watchman of Doom
+  document.getElementById('btn-christmas-event-soon')?.addEventListener('click', (ev) => {
+    if (ev.target && ev.target.closest && ev.target.closest('#btn-lobby-open-xmas-shop')) {
+      ev.stopImmediatePropagation();
+      ev.preventDefault();
+      openChristmasShopModal();
+      return;
+    }
+    ev.stopImmediatePropagation();
+    const brBtn = document.getElementById('btn-start-boss-rush');
+    if (brBtn) brBtn.click();
+    setTimeout(() => {
+      if (typeof state === 'undefined') return;
+      state.diff = DIFFICULTIES.christmas_event;
+      state.map = WORLD_STAGE_MAPS.christmas_event;
+      state.selectedMapId = 'christmas';
+      state.ce = 1200;
+      state.ce2 = 1200;
+      state.maxWaves = 40;
+      state.wave = 0;
+      state.waveActive = false;
+      state.enemies = [];
+      state.spawnQueue = [];
+      state.towers = [];
+      state.shikigami = [];
+      state.xmasFx = [];
+      if (typeof sfx !== 'undefined') sfx.playSpecificTrack('jjkevent.mp3');
+      if (typeof updateUI === 'function') updateUI();
+      showBanner('🎄 CHRISTMAS EVENT (40 FAL • TRUDNA MAPA): 1-10 JJK • 11-20 FNAF • 21-30 GD • 31-40 ST! Nagroda: +5 👻, +5 💎, +5 600 🎄!');
+    }, 50);
+  }, true);
+
+  // Rejestracja 4 Bossów Christmas Event w ENEMY_TYPES (żeby spawnEnemy je poprawnie tworzył!)
+  if (typeof ENEMY_TYPES === 'object') {
+    ENEMY_TYPES.xmas_boss_jjk  = { name: '🎅 SANTA SUKUNA (JJK BOSS)',         hp: 34000,  speed: 36, reward: 600,  radius: 28, color: '#ef4444', isBoss: true, armor: 0.20 };
+    ENEMY_TYPES.xmas_boss_fnaf = { name: '🍬 PEPPERMINT FREDDY (FNAF BOSS)',   hp: 62000,  speed: 34, reward: 900,  radius: 30, color: '#f43f5e', isBoss: true, armor: 0.25 };
+    ENEMY_TYPES.xmas_boss_gd   = { name: '💀 SANTA SKULL SLEIGH (GD BOSS)',    hp: 105000, speed: 38, reward: 1200, radius: 32, color: '#38bdf8', isBoss: true, armor: 0.28 };
+    ENEMY_TYPES.xmas_boss_st   = { name: '🚽 SANTA G-TOILET (FINAL ST BOSS)',  hp: 195000, speed: 31, reward: 2200, radius: 36, color: '#dc2626', isBoss: true, armor: 0.32 };
+  }
+
+  // Rysowanie 4 Bossów Christmas Event ze zdjęć 1–4!
+  if (typeof drawCustomEnemy === 'function') {
+    const _origDrawEnX = drawCustomEnemy;
+    drawCustomEnemy = function (c, e) {
+      if (e && (e.type === 'xmas_boss_jjk' || e.type === 'xmas_boss_fnaf' || e.type === 'xmas_boss_gd' || e.type === 'xmas_boss_st')) {
+        c.save(); c.translate(e.x, e.y);
+        const bob = Math.sin((state.time || 0) * 5 + e.id) * 2.5;
+        c.translate(0, bob);
+        if (e.type === 'xmas_boss_jjk') {
+          // ZDJ 2: Santa Sukuna — mundurek JJK z czerwonym kapturem, tatuaże Sukuny + czapka Mikołaja!
+          c.fillStyle = '#1e293b'; c.strokeStyle = '#ef4444'; c.lineWidth = 2.2;
+          c.beginPath(); c.arc(0, 0, 26, 0, Math.PI * 2); c.fill(); c.stroke();
+          c.fillStyle = '#dc2626'; c.beginPath(); c.ellipse(0, 12, 16, 7, 0, 0, Math.PI * 2); c.fill();
+          c.fillStyle = '#fde68a'; c.beginPath(); c.arc(0, -3, 13, 0, Math.PI * 2); c.fill();
+          c.strokeStyle = '#09090b'; c.lineWidth = 1.6;
+          c.beginPath(); c.moveTo(-7, -7); c.lineTo(-3, -4); c.moveTo(7, -7); c.lineTo(3, -4); c.moveTo(-6, 2); c.lineTo(6, 2); c.stroke();
+          c.fillStyle = '#dc2626'; c.beginPath(); c.arc(-4.5, -3, 2, 0, Math.PI * 2); c.arc(4.5, -3, 2, 0, Math.PI * 2); c.fill();
+          drawSantaHat(c, 0, -14, 1.35);
+        } else if (e.type === 'xmas_boss_fnaf') {
+          // ZDJ 1: Peppermint Freddy — czerwono-różowy Freddy z cukierkowymi oczami, muszką w paski i cylindrem!
+          c.fillStyle = '#dc2626'; c.strokeStyle = '#f8fafc'; c.lineWidth = 2.2;
+          c.beginPath(); c.arc(-16, -18, 7, 0, Math.PI * 2); c.arc(16, -18, 7, 0, Math.PI * 2); c.fill(); c.stroke();
+          c.beginPath(); c.arc(0, 0, 24, 0, Math.PI * 2); c.fill(); c.stroke();
+          c.fillStyle = '#fbcfe8'; c.beginPath(); c.ellipse(0, 6, 13, 7, 0, 0, Math.PI * 2); c.fill();
+          c.fillStyle = '#ffffff'; c.beginPath(); c.arc(-7, -5, 4.5, 0, Math.PI * 2); c.arc(7, -5, 4.5, 0, Math.PI * 2); c.fill();
+          c.strokeStyle = '#dc2626'; c.lineWidth = 1.8; c.beginPath(); c.arc(-7, -5, 2.5, 0, Math.PI * 1.5); c.stroke();
+          c.beginPath(); c.arc(7, -5, 2.5, 0, Math.PI * 1.5); c.stroke();
+          c.fillStyle = '#09090b'; c.fillRect(-10, -31, 20, 12); c.fillRect(-14, -20, 28, 4);
+        } else if (e.type === 'xmas_boss_gd') {
+          // ZDJ 3: Santa Skull Sleigh — pikselowa biała czaszka z czerwonymi oczami w czapce Mikołaja ciągnąca sanie!
+          c.fillStyle = '#dc2626'; c.strokeStyle = '#facc15'; c.lineWidth = 2;
+          c.beginPath(); c.roundRect(-28, 6, 30, 14, 4); c.fill(); c.stroke();
+          c.fillStyle = '#f8fafc'; c.strokeStyle = '#09090b'; c.lineWidth = 2.4;
+          c.fillRect(-8, -16, 28, 28); c.strokeRect(-8, -16, 28, 28);
+          c.fillStyle = '#ef4444'; c.fillRect(-2, -8, 6, 6); c.fillRect(10, -8, 6, 6);
+          c.fillStyle = '#09090b'; c.fillRect(0, 2, 14, 5);
+          drawSantaHat(c, 6, -16, 1.3);
+        } else {
+          // ZDJ 4: Santa G-Toilet — płonący czerwony prezent-toaleta ze święcącymi białymi oczami, brodą i czapką Mikołaja!
+          c.fillStyle = '#991b1b'; c.strokeStyle = '#facc15'; c.lineWidth = 2.5;
+          c.fillRect(-24, 0, 48, 24); c.strokeRect(-24, 0, 48, 24);
+          c.fillStyle = '#facc15'; c.fillRect(-3, 0, 6, 24);
+          c.fillStyle = '#e5e7eb'; c.beginPath(); c.arc(0, -10, 16, 0, Math.PI * 2); c.fill();
+          c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(-14, -4); c.lineTo(14, -4); c.lineTo(0, 14); c.closePath(); c.fill();
+          c.fillStyle = '#ffffff'; c.strokeStyle = '#09090b'; c.lineWidth = 1.6;
+          c.beginPath(); c.arc(-6, -12, 3.8, 0, Math.PI * 2); c.arc(6, -12, 3.8, 0, Math.PI * 2); c.fill(); c.stroke();
+          drawSantaHat(c, 0, -24, 1.45);
+        }
+        // Pasek HP Bossa
+        const bw = 64, pct = Math.max(0, Math.min(1, e.hp / Math.max(1, e.maxHp)));
+        c.fillStyle = '#09090b'; c.fillRect(-bw / 2, -40, bw, 6);
+        c.fillStyle = '#ef4444'; c.fillRect(-bw / 2, -40, bw * pct, 6);
+        c.restore();
+        return;
+      }
+      return _origDrawEnX.apply(this, arguments);
+    };
+  }
+
+  if (typeof startNextWave === 'function') {
+    const _origStartWaveX = startNextWave;
+    startNextWave = function () {
+      const r = _origStartWaveX.apply(this, arguments);
+      if (state.wave > 0 && state.wave % 25 === 0) {
+        const chernos = state.towers.filter(t => t.type === 'xmas_cherno_alpha' && !t._isCrimson && !(t._chernoMissing > 0));
+        if (chernos.length) {
+          for (const e of state.enemies) { if (e && e.hp > 0) e.stunTimer = Math.max(e.stunTimer || 0, 5.0); }
+          chernos.forEach(c => xmasFxList().push({ kind: 'shock', x: c.x, y: c.y, r: 420, col: '#a3e635', t: 0, dur: 0.8 }));
+          showBanner('🤖 CHERNO ALPHA PASSIVE (CO 25 FAL): SHOCKWAVE — STUN 5s WSZYSTKICH WROGÓW!');
+        }
+      }
+      if (state.diff && state.diff.id === 'christmas_event') {
+        const w = state.wave;
+        const phase = getXmasPhase(w);
+        if (w === 1 || w === 11 || w === 21 || w === 31) {
+          if (typeof sfx !== 'undefined') sfx.playSpecificTrack(EVENT_TRACKS[phase]);
+        }
+        // Podmień falę wrogów na wrogów z AKTUALNEGO ŚWIATA (1-10 JJK, 11-20 FNAF, 21-30 GD, 31-40 ST)!
+        const PHASE_ENEMIES = {
+          jjk:  ['fly_curse', 'golem', 'transfig', 'skull_fiend'],
+          fnaf: ['f1_endo', 'f1_chica', 'f1_bonnie', 'f1_foxy', 'f2_toy_bonnie', 'f2_toy_chica', 'f2_withered_bon', 'f2_withered_fox'],
+          gd:   ['gd_spike', 'gd_triple_spike', 'gd_sawblade', 'gd_monster'],
+          st:   ['astro_trooper', 'astro_scout', 'astro_specialist', 'astro_strider', 'astro_interceptor', 'astro_impactor', 'astro_destructor', 'astro_obliterator']
+        };
+        const pool = PHASE_ENEMIES[phase] || PHASE_ENEMIES.jjk;
+        const count = 12 + Math.floor(w * 1.4);
+        state.spawnQueue = [];
+        for (let i = 0; i < count; i++) {
+          const eType = pool[(i + w) % pool.length];
+          state.spawnQueue.push({ type: eType, delay: Math.max(0.22, 0.62 - w * 0.008) });
+        }
+        const bossTypeByWave = { 10: 'xmas_boss_jjk', 20: 'xmas_boss_fnaf', 30: 'xmas_boss_gd', 40: 'xmas_boss_st' };
+        if (bossTypeByWave[w]) {
+          const bt = bossTypeByWave[w];
+          state.spawnQueue.push({ type: bt, delay: 1.2 });
+          showBanner(`🎄 FALA ${w}/40 — NADCHODZI BOSS: ${ENEMY_TYPES[bt].name}!`);
+        } else {
+          const pName = { jjk: '⛩️ JJK', fnaf: '🐻 FNAF', gd: '🟨 Geometry Dash', st: '🚽 Skibidi Toilet' }[phase];
+          showBanner(`🎄 CHRISTMAS EVENT FALA ${w}/40 — Wrogowie: ${pName}!`);
+        }
+      }
+      return r;
+    };
+  }
+
+  if (typeof endGame === 'function') {
+    const _origEndX = endGame;
+    endGame = function (isVictory) {
+      if (isVictory && typeof state !== 'undefined' && state.diff && state.diff.id === 'christmas_event') {
+        multiverseSave.souls = (multiverseSave.souls || 0) + 5;
+        multiverseSave.gems = (multiverseSave.gems || 0) + 5;
+        multiverseSave.christmasCoins = (multiverseSave.christmasCoins || 0) + 5600;
+        saveMultiverseData();
+        showBanner('🎄 WYGRANO CHRISTMAS EVENT! NAGRODA: +5 👻 Dusz, +5 💎 Gemów, +5 600 🎄 Christmas Coins!');
+      }
+      return _origEndX.apply(this, arguments);
+    };
+  }
+
+  const _origUpdateX = updateStep;
+  updateStep = function (dt) {
+    _origUpdateX.apply(this, arguments);
+    const aliveE = (e) => e && e.hp > 0;
+    for (const e of (state.enemies || [])) {
+      if (!aliveE(e)) continue;
+      if (e._xmasBurn > 0) {
+        e._xmasBurn -= dt;
+        e._xmasBurnTick = (e._xmasBurnTick || 0) - dt;
+        if (e._xmasBurnTick <= 0) {
+          e._xmasBurnTick = 0.5;
+          damageEnemy(e, Math.round((e._xmasBurnDps || 400) * 0.5), e._xmasBurnSrc, { pierce: 1 });
+        }
+      }
+    }
+    for (const t of (state.towers || [])) {
+      if (t.type !== 'xmas_cherno_alpha') continue;
+      if (t._noArmTimer > 0) t._noArmTimer = Math.max(0, t._noArmTimer - dt);
+      if (t._ctTwoArms > 0) t._ctTwoArms = Math.max(0, t._ctTwoArms - dt);
+      if (t._ctFury > 0) t._ctFury = Math.max(0, t._ctFury - dt);
+      if (t._chernoMissing > 0) {
+        t._chernoMissing -= dt;
+        if (t._chernoMissing <= 0) {
+          t._chernoMissing = 0;
+          t._isCrimson = true;
+          t.skill1Cd = 0; t.skill2Cd = 0; t.skill3Cd = 0; t.skill4Cd = 0;
+          spawnFloatingText(t.x, t.y - 54, '🚁 CRIMSON TYPHOON WYLĄDOWAŁ NA STAŁE!', '#fb7185', 1.5);
+          showBanner('🚁 CRIMSON TYPHOON WYLĄDOWAŁ! Nowe 4 moce gotowe!');
+          if (state.selectedTower === t && typeof updateInspector === 'function') updateInspector();
+        }
+      }
+      if (t._ctSawTimer > 0) {
+        t._ctSawTimer -= dt;
+        t._ctSawTick = (t._ctSawTick || 0) - dt;
+        if (t._ctSawTick <= 0) {
+          t._ctSawTick = 0.35;
+          const rng = getEffectiveRange(t) + 25;
+          const sawDmg = Math.round(getEffectiveDamage(t) * 0.45);
+          for (const e of state.enemies) {
+            if (aliveE(e) && Math.hypot(e.x - t.x, e.y - t.y) <= rng) damageEnemy(e, sawDmg, t, { pierce: 1 });
+          }
+        }
+      }
+    }
+    const list = state.xmasFx;
+    if (!list || !list.length) return;
+    for (let i = list.length - 1; i >= 0; i--) {
+      list[i].t += dt;
+      if (list[i].t >= list[i].dur) list.splice(i, 1);
+    }
+  };
+
+  // =========================================================================
+  // 6. DOPRACOWANE MODELE 2D (CHERNO ALPHA, CRIMSON TYPHOON, TV MAN, WITHERED BONNIE, LARGE CAMERA, YUJI)
+  // =========================================================================
+  function drawSantaHat(c, x, y, sc = 1) {
+    c.save(); c.translate(x, y); c.scale(sc, sc);
+    c.fillStyle = '#dc2626'; c.strokeStyle = '#7f1d1d'; c.lineWidth = 1.1;
+    c.beginPath(); c.moveTo(-10, 0); c.quadraticCurveTo(-2, -15, 10, -5); c.lineTo(10, 1); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#f8fafc'; c.strokeStyle = '#cbd5e1'; c.lineWidth = 0.8;
+    c.beginPath(); c.roundRect(-11, -2.5, 22, 4.6, 2.3); c.fill(); c.stroke();
+    c.beginPath(); c.arc(11, -3.5, 3.2, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.restore();
+  }
+
+  function drawSpinningSaw(c, x, y, r, tSec) {
+    c.save(); c.translate(x, y); c.rotate(tSec * 22);
+    c.fillStyle = '#f8fafc'; c.strokeStyle = '#facc15'; c.lineWidth = 1.6;
+    c.beginPath(); c.arc(0, 0, r * 0.72, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#fde047';
+    for (let k = 0; k < 6; k++) {
+      const a = k * (Math.PI / 3);
+      c.beginPath();
+      c.moveTo(Math.cos(a) * r * 0.65, Math.sin(a) * r * 0.65);
+      c.lineTo(Math.cos(a + 0.25) * r * 1.18, Math.sin(a + 0.25) * r * 1.18);
+      c.lineTo(Math.cos(a + 0.5) * r * 0.65, Math.sin(a + 0.5) * r * 0.65);
+      c.closePath(); c.fill();
+    }
+    c.restore();
+  }
+
+  function drawChernoAlphaFull(c, noArm, timeSec, recoil = 0) {
+    const bob = Math.sin(timeSec * 3.4) * 1.6;
+    const armPiston = Math.sin(timeSec * 3.8) * 1.8;
+    const punch = (recoil || 0) * 6;
+    c.save();
+    // Cień
+    c.fillStyle = 'rgba(0,0,0,0.45)'; c.beginPath(); c.ellipse(0, 25, 17, 4.5, 0, 0, Math.PI * 2); c.fill();
+
+    // MECHANICZNE NOGI ZDJ 2: oliwkowy pancerz, czarne stawy kolanowe, czerwone paski na goleniach i ciężkie stopy!
+    for (const s of [-1, 1]) {
+      c.save(); c.translate(s * 8.5, 8);
+      // Udo + staw biodrowy
+      c.fillStyle = '#18181b'; c.beginPath(); c.arc(0, 0, 3.2, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#3f4f26'; c.strokeStyle = '#141c0b'; c.lineWidth = 1.2;
+      c.beginPath(); c.roundRect(-3.6, 0, 7.2, 8.5, 1.5); c.fill(); c.stroke();
+      // Goleń z czerwonym pionowym paskiem
+      c.fillStyle = '#2d3a1a';
+      c.beginPath(); c.roundRect(-3.8, 7.5, 7.6, 8.5, 1.5); c.fill(); c.stroke();
+      c.fillStyle = '#dc2626'; c.fillRect(s * 1.4 - 0.8, 8.5, 1.6, 6.5);
+      // Ciężka płaska stopa mecha
+      c.fillStyle = '#1f2912'; c.strokeStyle = '#09090b';
+      c.beginPath(); c.roundRect(-5.2, 15.2, 10.4, 3.4, 1.2); c.fill(); c.stroke();
+      c.restore();
+    }
+
+    // GÓRNA CZĘŚĆ CIAŁA (oddycha i pracuje przy ciosach)
+    c.save(); c.translate(0, bob);
+    // Wąska mechaniczna talia i biodra
+    c.fillStyle = '#18181b'; c.fillRect(-7, 3, 14, 6);
+    c.fillStyle = '#3f4f26'; c.strokeStyle = '#141c0b'; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(-6, 2); c.lineTo(6, 2); c.lineTo(4.5, 8.5); c.lineTo(-4.5, 8.5); c.closePath(); c.fill(); c.stroke();
+
+    // Klatka piersiowa z 4 okrągłymi tłokami hydraulicznymi i żółtym wizjerem kokpitu (ZDJ 2!)
+    const tg = c.createLinearGradient(-13, -10, 13, 5);
+    tg.addColorStop(0, '#5a6b38'); tg.addColorStop(0.55, '#3f4f26'); tg.addColorStop(1, '#263016');
+    c.fillStyle = tg; c.strokeStyle = '#141c0b'; c.lineWidth = 1.4;
+    c.beginPath();
+    c.moveTo(-14, -9); c.lineTo(14, -9); c.lineTo(11, 4); c.lineTo(-11, 4);
+    c.closePath(); c.fill(); c.stroke();
+    // Czarny mechaniczny środek + 4 okrągłe tłoki z czerwonymi obwódkami
+    c.fillStyle = '#18181b'; c.fillRect(-8, -7, 16, 10);
+    for (const [px, py] of [[-6, -4.5], [6, -4.5], [-5.5, 0], [5.5, 0]]) {
+      c.fillStyle = '#27272a'; c.strokeStyle = '#b91c1c'; c.lineWidth = 0.9;
+      c.beginPath(); c.arc(px, py, 2.3, 0, Math.PI * 2); c.fill(); c.stroke();
+    }
+    // Żółty wizjer kokpitu na piersi
+    c.fillStyle = '#facc15'; c.fillRect(-2.6, -5.5, 5.2, 3.2);
+
+    // 2 okrągłe turbiny naramienne
+    for (const s of [-1, 1]) {
+      c.fillStyle = '#2d3a1a'; c.strokeStyle = '#09090b'; c.lineWidth = 1.2;
+      c.beginPath(); c.arc(s * 11, -11, 3.8, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(s * 11, -11, 2.0, 0, Math.PI * 2); c.fill();
+    }
+
+    // WYSOKA CYLINDRYCZNA WIEŻA-REAKTOR (GŁOWA ZDJ 2!) + CZERWONA GWIAZDA + CZAPKA MIKOŁAJA
+    const hg = c.createLinearGradient(-8, -26, 8, -9);
+    hg.addColorStop(0, '#5a6b38'); hg.addColorStop(0.55, '#3f4f26'); hg.addColorStop(1, '#263016');
+    c.fillStyle = hg; c.strokeStyle = '#141c0b'; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(-7.5, -25.5); c.lineTo(7.5, -25.5); c.lineTo(9.5, -9); c.lineTo(-9.5, -9); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#09090b'; c.fillRect(-1.3, -25.5, 2.6, 16.5); // pionowa szczelina
+    c.fillStyle = '#dc2626'; c.fillRect(4.8, -24, 1.2, 14); // czerwony pasek
+    c.fillStyle = '#ef4444'; c.beginPath(); c.arc(3.3, -20.5, 1.8, 0, Math.PI * 2); c.fill(); // czerwona gwiazda
+    drawSantaHat(c, 0, -25.5, 0.82);
+
+    // CIĘŻKIE SEGMENTOWANE RAMIONA I TŁOKOWE PIĘŚCI (ZDJ 2!)
+    // Lewe ramię (zawsze obecne)
+    c.save(); c.translate(-15, -6); c.rotate(0.12 + armPiston * 0.04);
+    c.fillStyle = '#18181b'; c.beginPath(); c.arc(0, 0, 3.8, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#3f4f26'; c.strokeStyle = '#141c0b'; c.lineWidth = 1.2;
+    c.beginPath(); c.roundRect(-3.5, 1, 7, 10, 1.5); c.fill(); c.stroke();
+    // Ogromna pięść-tłok
+    c.fillStyle = '#2d3a1a'; c.beginPath(); c.roundRect(-4.8, 10 + punch * 0.35, 9.6, 8.5, 2); c.fill(); c.stroke();
+    c.fillStyle = '#18181b'; c.fillRect(-3.6, 16 + punch * 0.35, 7.2, 3.2);
+    c.restore();
+
+    // Prawe ramię (znika na 20s po Arm Detach Explosion!)
+    if (!noArm) {
+      c.save(); c.translate(15, -6); c.rotate(-0.12 - armPiston * 0.04);
+      c.fillStyle = '#18181b'; c.beginPath(); c.arc(0, 0, 3.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#3f4f26'; c.strokeStyle = '#141c0b'; c.lineWidth = 1.2;
+      c.beginPath(); c.roundRect(-3.5, 1, 7, 10, 1.5); c.fill(); c.stroke();
+      c.fillStyle = '#2d3a1a'; c.beginPath(); c.roundRect(-4.8, 10 + punch * 0.35, 9.6, 8.5, 2); c.fill(); c.stroke();
+      c.fillStyle = '#18181b'; c.fillRect(-3.6, 16 + punch * 0.35, 7.2, 3.2);
+      c.restore();
+    }
+    c.restore();
+    c.restore();
+  }
+
+  function drawCrimsonTyphoonFull(c, twoArms, sawActive, timeSec, recoil = 0, fury = false) {
+    const spd = fury ? 10.5 : 4.6;
+    const bob = Math.sin(timeSec * spd) * 2.2;
+    const lean = Math.sin(timeSec * spd * 0.5) * 0.06;
+    const armSwing = Math.sin(timeSec * (fury ? 13 : 5.2)) * 0.28;
+    const punchShift = (recoil || 0) * 7.5;
+    c.save();
+
+    if (fury) {
+      c.strokeStyle = 'rgba(250,204,21,0.88)'; c.lineWidth = 2.8;
+      c.beginPath(); c.arc(0, 0, 30 + Math.sin(timeSec * 15) * 3, 0, Math.PI * 2); c.stroke();
+    }
+    c.fillStyle = 'rgba(0,0,0,0.44)'; c.beginPath(); c.ellipse(0, 24, 18, 4.8, 0, 0, Math.PI * 2); c.fill();
+
+    // DYNAMICZNE ATLETYCZNE NOGI ZDJ 3 (zakrzywione uda, czarne stawy kolanowe, karmazynowe golenie + 3-palczaste stopy)
+    for (const s of [-1, 1]) {
+      c.save(); c.translate(s * 7.5, 6);
+      c.fillStyle = '#18181b'; c.beginPath(); c.arc(0, 0, 3, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#991b1b'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(-3.5, 0); c.lineTo(3.5, 0); c.lineTo(s * 4 + 3.2, 9); c.lineTo(s * 4 - 3.2, 9); c.closePath(); c.fill(); c.stroke();
+      // Staw kolanowy
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(s * 4, 9, 2.8, 0, Math.PI * 2); c.fill();
+      // Goleń + biały znak na udzie
+      c.fillStyle = '#7f1d1d';
+      c.beginPath(); c.roundRect(s * 4 - 3.4, 9.5, 6.8, 8.5, 1.8); c.fill(); c.stroke();
+      c.fillStyle = '#18181b'; c.fillRect(s * 4 - 5, 16.5, 10, 2.8);
+      c.restore();
+    }
+
+    // GÓRNA CZĘŚĆ CIAŁA (płynne oddychanie + bojowe pochylenie!)
+    c.save(); c.translate(0, bob); c.rotate(lean);
+    // Wąska czarna mechaniczna talia + czerwona osłona brzucha
+    c.fillStyle = '#18181b'; c.fillRect(-7, 0, 14, 7);
+    c.fillStyle = '#991b1b'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.1;
+    c.beginPath(); c.roundRect(-4.5, 1, 9, 7, 2); c.fill(); c.stroke();
+
+    // SZEŚCIOKĄTNA KARMAZYNOWA KLATKA PIERSIOWA ZDJ 3 (panele, złote akcenty, tylne silniki!)
+    c.fillStyle = '#450a0a'; c.fillRect(-7, -14, 5, 6); c.fillRect(2, -14, 5, 6); // 2 silniki na plecach
+    const cg = c.createLinearGradient(-15, -11, 15, 6);
+    cg.addColorStop(0, '#ef4444'); cg.addColorStop(0.45, '#b91c1c'); cg.addColorStop(1, '#5c0a0a');
+    c.fillStyle = cg; c.strokeStyle = '#fca5a5'; c.lineWidth = 1.1;
+    c.beginPath();
+    c.moveTo(-14, -9); c.lineTo(14, -9); c.lineTo(12, 2); c.lineTo(5, 6); c.lineTo(-5, 6); c.lineTo(-12, 2);
+    c.closePath(); c.fill(); c.stroke();
+    // Linie pancerza i złote godło na środku klatki
+    c.strokeStyle = '#450a0a'; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(-10, -4); c.lineTo(10, -4); c.moveTo(0, -9); c.lineTo(0, 5); c.stroke();
+    c.fillStyle = '#facc15'; c.beginPath(); c.arc(0, 0.5, 2.0, 0, Math.PI * 2); c.fill();
+
+    // OGROMNY ZAOKRĄGLONY LEWY NARAMIENNIK + MASYWNE LEWE RAMIĘ (ZDJ 3!)
+    c.save(); c.translate(14, -4); c.rotate(-armSwing - punchShift * 0.06);
+    c.fillStyle = '#991b1b'; c.strokeStyle = '#fecaca'; c.lineWidth = 1.1;
+    c.beginPath(); c.arc(0, -2, 6.2, -Math.PI * 0.6, Math.PI * 0.6); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#b91c1c'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.2;
+    c.beginPath(); c.roundRect(1, -2.5, 13 + punchShift * 0.45, 7.5, 2.5); c.fill(); c.stroke();
+    // 3-palczasty czarny szpon
+    c.fillStyle = '#18181b';
+    c.fillRect(13 + punchShift * 0.45, -4, 6, 2.4);
+    c.fillRect(14 + punchShift * 0.45, -0.5, 6, 2.2);
+    c.fillRect(13 + punchShift * 0.45, 2.5, 6, 2.4);
+    if (sawActive) drawSpinningSaw(c, 16 + punchShift * 0.45, 0, 9.5, timeSec);
+    c.restore();
+
+    // Złoty staw barkowy po prawej
+    c.fillStyle = '#facc15'; c.beginPath(); c.arc(-13, -5, 2.6, 0, Math.PI * 2); c.fill();
+
+    // PRAWA RĘKA #1 (dolna — zwinna, czarny szpon)
+    c.save(); c.translate(-14, -1); c.rotate(armSwing + punchShift * 0.06);
+    c.fillStyle = '#dc2626'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.2;
+    c.beginPath(); c.roundRect(-12 - punchShift * 0.45, -2, 12 + punchShift * 0.45, 6.2, 2); c.fill(); c.stroke();
+    c.fillStyle = '#18181b';
+    c.fillRect(-16 - punchShift * 0.45, -3.5, 5.5, 2.2);
+    c.fillRect(-16 - punchShift * 0.45, 1.5, 5.5, 2.2);
+    if (sawActive) drawSpinningSaw(c, -15 - punchShift * 0.45, 0, 8.8, -timeSec);
+    c.restore();
+
+    // PRAWA RĘKA #2 (3. ręka górna — znika na 20s po Arm Toss!)
+    if (!twoArms) {
+      c.save(); c.translate(-13, -9); c.rotate(-0.48 - armSwing * 1.2);
+      c.fillStyle = '#991b1b'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.2;
+      c.beginPath(); c.roundRect(-13, -2.5, 13.5, 5.8, 2); c.fill(); c.stroke();
+      c.fillStyle = '#18181b';
+      c.fillRect(-17.5, -4, 5.5, 2.2); c.fillRect(-17.5, 1, 5.5, 2.2);
+      if (sawActive) drawSpinningSaw(c, -16, 0, 8.8, timeSec * 1.2);
+      c.restore();
+    }
+
+    // GŁOWA CYKLOPA ZDJ 3 (czarny mechaniczny kołnierz + karmazynowy hełm + pulsujące pomarańczowo-żółte oko!)
+    const eyePulse = 3.6 + Math.sin(timeSec * (fury ? 16 : 8)) * 0.6;
+    c.fillStyle = '#18181b'; c.fillRect(-4.5, -13, 9, 5);
+    c.fillStyle = '#991b1b'; c.strokeStyle = '#450a0a'; c.lineWidth = 1.3;
+    c.beginPath(); c.arc(0, -15.5, 7.6, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, -15.5, 5.2, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#f97316'; c.beginPath(); c.arc(0, -15.5, eyePulse, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#fef08a'; c.beginPath(); c.arc(0, -15.5, eyePulse * 0.55, 0, Math.PI * 2); c.fill();
+    c.restore();
+    c.restore();
+  }
+
+  const _origPortX = drawHeroPortrait;
+  drawHeroPortrait = function (c, type, level, withRing) {
+    const ring = withRing === undefined ? true : withRing;
+    if (type === 'xmas_gd_diff') {
+      c.save();
+      if (ring) { c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#22c55e'; c.lineWidth = 2.2; c.stroke(); }
+      c.beginPath(); c.arc(0, 1, 11, Math.PI / 2, Math.PI * 1.5); c.fillStyle = '#22c55e'; c.fill();
+      c.beginPath(); c.arc(0, 1, 11, -Math.PI / 2, Math.PI / 2); c.fillStyle = '#dc2626'; c.fill();
+      c.strokeStyle = '#09090b'; c.lineWidth = 1.6; c.beginPath(); c.arc(0, 1, 11, 0, Math.PI * 2); c.stroke();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(-4.2, -0.5, 2.5, 0, Math.PI * 2); c.arc(4.2, -0.5, 2.5, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#ffffff'; c.beginPath(); c.arc(-5, -1.3, 0.9, 0, Math.PI * 2); c.arc(3.4, -1.3, 0.9, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#09090b'; c.lineWidth = 1.8; c.beginPath(); c.arc(0, 2.5, 5.5, 0.25, Math.PI - 0.25); c.stroke();
+      drawSantaHat(c, 0, -9, 1.0);
+      c.restore(); return;
+    }
+    if (type === 'xmas_gd_icon') {
+      c.save();
+      if (ring) { c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#facc15'; c.lineWidth = 2.4; c.stroke(); }
+      c.fillStyle = '#facc15'; c.strokeStyle = '#09090b'; c.lineWidth = 1.8;
+      c.fillRect(-10, -8, 20, 18); c.strokeRect(-10, -8, 20, 18);
+      c.fillStyle = '#22d3ee';
+      c.fillRect(-6.5, -4, 4.5, 4.5); c.strokeRect(-6.5, -4, 4.5, 4.5);
+      c.fillRect(2, -4, 4.5, 4.5); c.strokeRect(2, -4, 4.5, 4.5);
+      c.fillRect(-6.5, 3, 13, 3.8); c.strokeRect(-6.5, 3, 13, 3.8);
+      drawSantaHat(c, -1, -8, 1.05);
+      c.restore(); return;
+    }
+    if (type === 'xmas_santa_freddy') { _origPortX(c, 'freddy', level, withRing); drawSantaHat(c, 0, -10, 0.95); return; }
+    if (type === 'xmas_yuji') {
+      _origPortX(c, 'yuji', level, withRing);
+      drawSantaHat(c, 0, -10.5, 0.96);
+      return;
+    }
+    if (type === 'xmas_large_cam') {
+      // ZDJ 7: Mroczny Large Cameraman z jasnoniebieskim świecącym obiektywem + czapka Mikołaja!
+      c.save();
+      if (ring) { c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#38bdf8'; c.lineWidth = 2.2; c.stroke(); }
+      else c.translate(0, 3.5);
+      c.fillStyle = '#18181b'; c.strokeStyle = '#52525b'; c.lineWidth = 1.5;
+      c.beginPath(); c.roundRect(-11.5, -9, 23, 15, 2.5); c.fill(); c.stroke();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, -1.5, 5.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(0, -1.5, 3.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#e0f2fe'; c.beginPath(); c.arc(0, -1.5, 2.0, 0, Math.PI * 2); c.fill();
+      drawSantaHat(c, -1, -9, 1.05);
+      c.restore(); return;
+    }
+    if (type === 'xmas_withered_bonnie') {
+      // Czerwono-biały beztwarzowy Withered Bonnie z odsłoniętym endo i czerwonymi oczami + czapka!
+      c.save();
+      if (ring) { c.fillStyle = '#290505'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#f8fafc'; c.lineWidth = 2.2; c.stroke(); }
+      else c.translate(0, 3.5);
+      // Czerwono-białe uszy królika
+      c.fillStyle = '#dc2626'; c.strokeStyle = '#f8fafc'; c.lineWidth = 1.1;
+      c.beginPath(); c.roundRect(-8.5, -19, 4.5, 11, 2); c.roundRect(4, -19, 4.5, 11, 2); c.fill(); c.stroke();
+      // Czerwono-biała dolna szczęka + boki głowy
+      c.fillStyle = '#dc2626'; c.strokeStyle = '#7f1d1d'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -9.5, 21, 18.5, 4.5); c.fill(); c.stroke();
+      // Czarna dziura zamiast twarzy (odsłonięty endoszkielet!)
+      c.fillStyle = '#09090b'; c.beginPath(); c.roundRect(-8.2, -7.5, 16.4, 10.5, 2.5); c.fill();
+      // 2 świecące czerwone oczy endo
+      c.fillStyle = '#ef4444'; c.beginPath(); c.arc(-4.2, -3.2, 2.0, 0, Math.PI * 2); c.arc(4.2, -3.2, 2.0, 0, Math.PI * 2); c.fill();
+      // Białe zęby na dolnej szczęce + białe paski
+      c.fillStyle = '#f8fafc';
+      for (let i = 0; i < 4; i++) c.fillRect(-6 + i * 3.4, 4.2, 2.4, 3.2);
+      drawSantaHat(c, 0, -9.5, 0.95);
+      c.restore(); return;
+    }
+    if (type === 'xmas_tv_man') {
+      // Elegancki TV Man: ciemny metalowy kineskop + świecący błękitno-biały ekran ze świąteczną buźką ^_^ + czapka!
+      c.save();
+      if (ring) { c.fillStyle = '#1e1b4b'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#c084fc'; c.lineWidth = 2.2; c.stroke(); }
+      else c.translate(0, 3.5);
+      c.fillStyle = '#18181b'; c.strokeStyle = '#64748b'; c.lineWidth = 1.5;
+      c.beginPath(); c.roundRect(-12, -9.5, 24, 16.5, 2.5); c.fill(); c.stroke();
+      const sg = c.createLinearGradient(-9, -7, 9, 5);
+      sg.addColorStop(0, '#e0f2fe'); sg.addColorStop(0.5, '#c084fc'); sg.addColorStop(1, '#a5f3fc');
+      c.fillStyle = sg; c.fillRect(-9.2, -7, 18.4, 11.5);
+      // Świąteczna emotka na ekranie ^_^
+      c.strokeStyle = '#0f172a'; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(-4.2, -1.5, 2.2, Math.PI, 0); c.stroke();
+      c.beginPath(); c.arc(4.2, -1.5, 2.2, Math.PI, 0); c.stroke();
+      c.beginPath(); c.arc(0, 1.5, 2.4, 0, Math.PI); c.stroke();
+      drawSantaHat(c, 0, -9.5, 1.0);
+      c.restore(); return;
+    }
+    if (type === 'xmas_santa_jogo') {
+      _origPortX(c, 'jogo_hero', level, withRing);
+      c.save(); c.fillStyle = '#ffffff'; c.beginPath(); c.ellipse(0, 9.5, 8.5, 5.5, 0, 0, Math.PI); c.fill();
+      drawSantaHat(c, 0, -11, 1.0); c.restore(); return;
+    }
+    if (type === 'xmas_cherno_alpha') {
+      // ZDJ 9: Cherno Alpha — wysoka oliwkowa wieża-reaktor, 2 boczne turbiny, czerwona gwiazda, żółty wizjer + czapka!
+      c.save();
+      if (ring) { c.fillStyle = '#1a2e05'; c.beginPath(); c.arc(0, 0, 21, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#84cc16'; c.lineWidth = 2.4; c.stroke(); }
+      else c.translate(0, 4.0);
+      // Boczne turbiny na ramionach
+      c.fillStyle = '#2d3a1a'; c.strokeStyle = '#0f172a'; c.lineWidth = 1.2;
+      c.beginPath(); c.arc(-11.5, 2.5, 4.2, 0, Math.PI * 2); c.arc(11.5, 2.5, 4.2, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(-11.5, 2.5, 2.2, 0, Math.PI * 2); c.arc(11.5, 2.5, 2.2, 0, Math.PI * 2); c.fill();
+      // Główna wysoka wieża reaktora
+      const rg = c.createLinearGradient(-10, -15, 10, 6);
+      rg.addColorStop(0, '#5a6b38'); rg.addColorStop(0.55, '#3f4f26'); rg.addColorStop(1, '#263016');
+      c.fillStyle = rg; c.strokeStyle = '#141c0b'; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(-8.5, -14.5); c.lineTo(8.5, -14.5); c.lineTo(10.5, 6); c.lineTo(-10.5, 6); c.closePath(); c.fill(); c.stroke();
+      // Pionowa szczelina + czerwony pasek + czerwona gwiazda
+      c.fillStyle = '#09090b'; c.fillRect(-1.5, -14.5, 3, 20.5);
+      c.fillStyle = '#dc2626'; c.fillRect(5.2, -13, 1.3, 17);
+      c.fillStyle = '#ef4444'; c.beginPath(); c.arc(3.8, -9.5, 2.0, 0, Math.PI * 2); c.fill();
+      // Dolny żółty wizjer kokpitu
+      c.fillStyle = '#facc15'; c.fillRect(-3.2, 1.5, 6.4, 3.2);
+      drawSantaHat(c, 0, -14.5, 0.9);
+      c.restore(); return;
+    }
+    return _origPortX.apply(this, arguments);
+  };
+
+  const _origBodyX = drawHeroBodyOutfit;
+  drawHeroBodyOutfit = function (c, type) {
+    if (type === 'xmas_yuji') {
+      _origBodyX(c, 'yuji');
+      // Biały świąteczny kołnierz przy czerwonym kapturze Yujiego
+      c.save(); c.fillStyle = '#f8fafc'; c.beginPath(); c.roundRect(-8, -7.5, 16, 3.5, 1.8); c.fill(); c.restore();
+      return;
+    }
+    if (type === 'xmas_tv_man') {
+      c.fillStyle = 'rgba(0,0,0,0.34)'; c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      // Elegancki czarny płaszcz TV Mana + świąteczny czerwono-biały szalik!
+      c.fillStyle = '#18181b'; c.strokeStyle = '#3f3f46'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -7, 21, 25, 4); c.fill(); c.stroke();
+      c.fillStyle = '#dc2626'; c.fillRect(-9.5, -6.5, 19, 4.5); c.fillRect(3, -3, 4.5, 11);
+      c.fillStyle = '#f8fafc'; c.fillRect(-9.5, -4.5, 19, 1.4); c.fillRect(3, 4, 4.5, 1.8);
+      c.restore(); return;
+    }
+    if (type === 'xmas_large_cam') {
+      // ZDJ 7: Mroczny opancerzony Large Cameraman z czerwonym szalikiem, niebieskim działkiem plazmowym i piłą łańcuchową!
+      c.fillStyle = 'rgba(0,0,0,0.38)'; c.beginPath(); c.ellipse(0, 19.5, 12.5, 3.8, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      c.fillStyle = '#18181b'; c.strokeStyle = '#52525b'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-12, -7, 24, 25, 4); c.fill(); c.stroke();
+      // Czerwony szalik
+      c.fillStyle = '#dc2626'; c.fillRect(-7, -7, 14, 4);
+      // Prawe działo plazmowe ze świecącymi cyjanowymi ogniwami (jak na zdj 7!)
+      c.save(); c.translate(-14, 6); c.rotate(0.45);
+      c.fillStyle = '#27272a'; c.strokeStyle = '#09090b'; c.lineWidth = 1.2;
+      c.beginPath(); c.roundRect(-12, -3.5, 16, 7, 2); c.fill(); c.stroke();
+      c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(-7, 0, 2.2, 0, Math.PI * 2); c.arc(-2, 0, 2.0, 0, Math.PI * 2); c.fill();
+      c.restore();
+      // Lewa piła łańcuchowa z fioletowo-białymi diodami (jak na zdj 7!)
+      c.save(); c.translate(14, 5); c.rotate(-0.4);
+      c.fillStyle = '#3f3f46'; c.strokeStyle = '#09090b'; c.lineWidth = 1.1;
+      c.beginPath(); c.roundRect(-2, -3, 15, 6, 2); c.fill(); c.stroke();
+      c.fillStyle = '#e0f2fe'; c.fillRect(1, -1, 2, 2); c.fillRect(5, -1, 2, 2); c.fillRect(9, -1, 2, 2);
+      c.restore();
+      c.restore(); return;
+    }
+    if (type === 'xmas_withered_bonnie') {
+      // Czerwono-biały zniszczony tors Withered Bonniego + muszka + wystające przewody!
+      c.fillStyle = 'rgba(0,0,0,0.34)'; c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      c.fillStyle = '#dc2626'; c.strokeStyle = '#7f1d1d'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 5); c.fill(); c.stroke();
+      c.fillStyle = '#f8fafc'; c.beginPath(); c.ellipse(0, 5.5, 7, 9, 0, 0, Math.PI * 2); c.fill();
+      // Świąteczna muszka + 2 czarne guziki
+      c.fillStyle = '#dc2626'; c.beginPath(); c.moveTo(0, -4); c.lineTo(-5.5, -6.5); c.lineTo(-5.5, -1.5); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(0, -4); c.lineTo(5.5, -6.5); c.lineTo(5.5, -1.5); c.closePath(); c.fill();
+      c.fillStyle = '#09090b'; c.beginPath(); c.arc(0, 2, 1.3, 0, Math.PI * 2); c.arc(0, 6, 1.3, 0, Math.PI * 2); c.fill();
+      c.restore(); return;
+    }
+    if (type === 'xmas_santa_freddy' || type === 'xmas_santa_jogo') {
+      c.fillStyle = 'rgba(0,0,0,0.34)'; c.beginPath(); c.ellipse(0, 19.5, 11.5, 3.6, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      c.fillStyle = '#dc2626'; c.strokeStyle = '#7f1d1d'; c.lineWidth = 1.4;
+      c.beginPath(); c.roundRect(-10.5, -7, 21, 24, 4.5); c.fill(); c.stroke();
+      c.fillStyle = '#ffffff'; c.fillRect(-2.5, -7, 5, 24); c.fillRect(-10.5, 13, 21, 4);
+      c.fillStyle = '#09090b'; c.fillRect(-10.5, 5, 21, 3.8);
+      c.fillStyle = '#facc15'; c.fillRect(-3.2, 4.5, 6.4, 4.8);
+      c.restore(); return;
+    }
+    if (type === 'xmas_cherno_alpha') {
+      // ZDJ 9: Masywny oliwkowy pancerz Cherno Alphy z tłokami, czerwonymi pasami i wielkimi pięściami!
+      c.fillStyle = 'rgba(0,0,0,0.42)'; c.beginPath(); c.ellipse(0, 20.5, 14, 4, 0, 0, Math.PI * 2); c.fill();
+      c.save();
+      const cg = c.createLinearGradient(-14, -7, 14, 18);
+      cg.addColorStop(0, '#5a6b38'); cg.addColorStop(0.55, '#3f4f26'); cg.addColorStop(1, '#263016');
+      c.fillStyle = cg; c.strokeStyle = '#141c0b'; c.lineWidth = 1.5;
+      c.beginPath(); c.roundRect(-13.5, -7, 27, 25, 4); c.fill(); c.stroke();
+      // Ciemny mechaniczny środek z 4 tłokami i żółtym rdzeniem
+      c.fillStyle = '#18181b'; c.beginPath(); c.roundRect(-7, -3, 14, 16, 2.5); c.fill();
+      c.fillStyle = '#facc15'; c.fillRect(-3, -1, 6, 3.5);
+      c.strokeStyle = '#dc2626'; c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(-10, -5); c.lineTo(-10, 14); c.moveTo(10, -5); c.lineTo(10, 14); c.stroke();
+      // Ciężkie oliwkowe pięści-tłoki po bokach
+      c.fillStyle = '#3f4f26'; c.strokeStyle = '#141c0b'; c.lineWidth = 1.3;
+      c.beginPath(); c.roundRect(-19, 3, 6.5, 11, 2); c.roundRect(12.5, 3, 6.5, 11, 2); c.fill(); c.stroke();
+      c.restore(); return;
+    }
+    return _origBodyX.apply(this, arguments);
+  };
+
+  // Rysowanie Crimson Typhoon BEZ nakładania na Cherno Alphę (ukrywamy Cherno przez machHiddenTimer podczas drawTowers!)
+  const _origDrawTowX = drawTowers;
+  drawTowers = function () {
+    const hiddenBackup = [];
+    for (const t of (state.towers || [])) {
+      if (t.type === 'xmas_cherno_alpha') {
+        hiddenBackup.push([t, t.machHiddenTimer]);
+        t.machHiddenTimer = 1.0;
+      }
+    }
+    _origDrawTowX.apply(this, arguments);
+    for (const [t, prev] of hiddenBackup) t.machHiddenTimer = prev;
+
+    ctx.save();
+    for (const t of (state.towers || [])) {
+      if (t.type !== 'xmas_cherno_alpha') continue;
+      if (t._chernoMissing > 0) {
+        ctx.save(); ctx.translate(t.x, t.y);
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(0, 0, 26, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = 'rgba(239,68,68,0.22)'; ctx.fill();
+        ctx.fillStyle = '#fecaca'; ctx.font = '900 11px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('🚁 ' + Math.ceil(t._chernoMissing) + 's', 0, 4);
+        ctx.restore();
+      } else if (t._isCrimson) {
+        // Rysuj zasięg (range) gdy Crimson Typhoon jest zaznaczony!
+        if (state.selectedTower && state.selectedTower.id === t.id) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, getEffectiveRange(t), 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(251, 113, 133, 0.88)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([7, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+        const ctEnch = (typeof getUnitEnchant === 'function') ? getUnitEnchant(t.type) : null;
+        if (ctEnch) {
+          ctx.save();
+          ctx.strokeStyle = ctEnch.color || '#38bdf8';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(t.x, t.y, 24, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.save(); ctx.translate(t.x, t.y);
+        drawCrimsonTyphoonFull(ctx, t._ctTwoArms > 0, t._ctSawTimer > 0, state.time || 0, t.recoil || 0, t._ctFury > 0);
+        if (t._ctFury > 0) {
+          ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.arc(0, 0, 29, 0, Math.PI * 2); ctx.stroke();
+        }
+        // Badge poziomu
+        ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.roundRect(-14, 19, 28, 11, 4); ctx.fill();
+        ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#fde047'; ctx.font = '900 8px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('L' + (t.level || 1), 0, 27);
+        ctx.restore();
+      } else {
+        // Rysuj mechanicznego Cherno Alphę (1:1 ze zdj 2) + jego zasięg i poziom!
+        if (state.selectedTower && state.selectedTower.id === t.id) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, getEffectiveRange(t), 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(132, 204, 22, 0.12)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(163, 230, 53, 0.88)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([7, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+        const chEnch = (typeof getUnitEnchant === 'function') ? getUnitEnchant(t.type) : null;
+        if (chEnch) {
+          ctx.save();
+          ctx.strokeStyle = chEnch.color || '#38bdf8';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(t.x, t.y, 24, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.save(); ctx.translate(t.x, t.y);
+        drawChernoAlphaFull(ctx, (t._noArmTimer || 0) > 0, state.time || 0, t.recoil || 0);
+        ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.roundRect(-14, 20, 28, 11, 4); ctx.fill();
+        ctx.strokeStyle = '#84cc16'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#fde047'; ctx.font = '900 8px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('L' + (t.level || 1), 0, 28);
+        ctx.restore();
+      }
+    }
+    for (const f of (state.xmasFx || [])) {
+      if (f.kind === 'shock') {
+        const p = f.t / f.dur;
+        ctx.save(); ctx.globalAlpha = 1 - p; ctx.strokeStyle = f.col || '#84cc16'; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.arc(f.x, f.y, 12 + p * f.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      } else if (f.kind === 'heli_drop') {
+        const p = Math.min(1, f.t / f.dur);
+        const hy = f.y - 175 * (1 - p);
+        ctx.save();
+        // 2 śmigłowce opuszczające pełny model Crimson Typhoon na linach!
+        const rotW = 14 + Math.abs(Math.sin((state.time || 0) * 35)) * 16; ctx.fillStyle = '#334155'; ctx.fillRect(f.x - 32, hy - 36, 20, 7); ctx.fillRect(f.x + 12, hy - 36, 20, 7); ctx.fillStyle = '#e2e8f0'; ctx.fillRect(f.x - 22 - rotW/2, hy - 39, rotW, 2); ctx.fillRect(f.x + 22 - rotW/2, hy - 39, rotW, 2);
+        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(f.x - 22, hy - 29); ctx.lineTo(f.x - 10, hy - 6); ctx.moveTo(f.x + 22, hy - 29); ctx.lineTo(f.x + 10, hy - 6); ctx.stroke();
+        ctx.save(); ctx.translate(f.x, hy); ctx.scale(0.85, 0.85);
+        drawCrimsonTyphoonFull(ctx, false, false, state.time || 0);
+        ctx.restore();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  };
+
+  // =========================================================================
+  // 7. OSOBNE EVENT UI: CHRISTMAS SHOP MODAL + PREZENT ANIMACJA + PODGLĄDY 2D
+  // =========================================================================
+  let xmasOpening = false;
+  const XMAS_CRATE_POOL = [
+    { id: 'xmas_gd_diff',         w: 42 },
+    { id: 'xmas_santa_freddy',    w: 28 },
+    { id: 'xmas_yuji',            w: 17 },
+    { id: 'xmas_large_cam',       w: 8.5 },
+    { id: 'xmas_withered_bonnie', w: 3.4 },
+    { id: 'xmas_tv_man',          w: 0.95 },
+    { id: 'xmas_gd_icon',         w: 0.15 }
+  ];
+
+  function drawChristmasPresentAnim(cv, prog, isBurst) {
+    const c = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    c.clearRect(0, 0, W, H);
+    // Zimowe tło
+    const bg = c.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, W * 0.6);
+    bg.addColorStop(0, isBurst ? '#7f1d1d' : '#1e3a5f');
+    bg.addColorStop(1, '#050814');
+    c.fillStyle = bg; c.fillRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H * 0.62;
+    const shake = prog < 0.65 ? Math.sin(prog * 75) * (6 * prog + 2) : 0;
+    const lidLift = prog >= 0.65 ? Math.min(1, (prog - 0.65) / 0.35) : 0;
+
+    // Promienie światła przy otwarciu prezentu!
+    if (lidLift > 0) {
+      c.save(); c.translate(cx, cy - 10);
+      c.globalAlpha = lidLift * 0.85;
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2 + prog * 2;
+        c.fillStyle = i % 2 === 0 ? 'rgba(253,224,71,0.45)' : 'rgba(56,189,248,0.35)';
+        c.beginPath(); c.moveTo(0, 0);
+        c.lineTo(Math.cos(a - 0.12) * 140, Math.sin(a - 0.12) * 140);
+        c.lineTo(Math.cos(a + 0.12) * 140, Math.sin(a + 0.12) * 140);
+        c.closePath(); c.fill();
+      }
+      c.restore();
+    }
+
+    c.save(); c.translate(cx + shake, cy);
+    // Cień
+    c.fillStyle = 'rgba(0,0,0,0.45)'; c.beginPath(); c.ellipse(0, 36, 48, 10, 0, 0, Math.PI * 2); c.fill();
+    // Pudełko prezentu (czerwone ze złotą wstążką)
+    const boxG = c.createLinearGradient(-38, -24, 38, 34);
+    boxG.addColorStop(0, '#ef4444'); boxG.addColorStop(0.55, '#dc2626'); boxG.addColorStop(1, '#991b1b');
+    c.fillStyle = boxG; c.strokeStyle = '#7f1d1d'; c.lineWidth = 2.4;
+    c.beginPath(); c.roundRect(-38, -22, 76, 56, 6); c.fill(); c.stroke();
+    // Złota pionowa i pozioma wstążka
+    c.fillStyle = '#facc15';
+    c.fillRect(-8, -22, 16, 56);
+    c.fillRect(-38, 0, 76, 12);
+
+    // Wieczko prezentu + wielka złota kokarda (odskakuje do góry!)
+    c.save();
+    c.translate(0, -24 - lidLift * 54);
+    c.rotate(lidLift * -0.32);
+    c.fillStyle = '#dc2626'; c.strokeStyle = '#fef08a'; c.lineWidth = 2;
+    c.beginPath(); c.roundRect(-43, -10, 86, 18, 5); c.fill(); c.stroke();
+    c.fillStyle = '#facc15'; c.fillRect(-9, -10, 18, 18);
+    // Kokarda
+    c.fillStyle = '#fde047'; c.strokeStyle = '#b45309'; c.lineWidth = 1.6;
+    c.beginPath(); c.ellipse(-15, -14, 14, 7, -0.35, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.beginPath(); c.ellipse(15, -14, 14, 7, 0.35, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.beginPath(); c.arc(0, -12, 6.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.restore();
+
+    // Iskry i śnieżynki przy wybuchu
+    if (lidLift > 0.05) {
+      const cols = ['#fde047', '#38bdf8', '#4ade80', '#f43f5e', '#ffffff'];
+      for (let k = 0; k < 20; k++) {
+        const ang = (k / 20) * Math.PI * 2 + 0.3;
+        const dist = 25 + lidLift * (75 + (k % 3) * 24);
+        c.fillStyle = cols[k % cols.length];
+        c.beginPath(); c.arc(Math.cos(ang) * dist, -18 + Math.sin(ang) * dist * 0.75, 3.2 * (1 - lidLift * 0.4), 0, Math.PI * 2); c.fill();
+      }
+    }
+    c.restore();
+  }
+
+  function mountChristmasShopModal() {
+    // Usuń stary blok z zakładki Exclusive jeśli istniał
+    document.getElementById('xmas-event-shop-section')?.remove();
+
+    // 1. Dodaj przycisk "🎄 CHRISTMAS SHOP" obok przycisku GRAJ na kafelku mapy Christmas Event!
+    const xmasMapBtn = document.getElementById('btn-christmas-event-soon');
+    if (xmasMapBtn && !document.getElementById('btn-lobby-open-xmas-shop')) {
+      const rightGroup = xmasMapBtn.lastElementChild;
+      if (rightGroup) {
+        const shopPill = document.createElement('span');
+        shopPill.id = 'btn-lobby-open-xmas-shop';
+        shopPill.className = 'px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-600 via-amber-500 to-emerald-500 hover:brightness-115 border-2 border-amber-200 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg cursor-pointer transition active:scale-95 flex items-center gap-1.5';
+        shopPill.innerHTML = '<span>🎄 CHRISTMAS SHOP</span><span id="lobby-xmas-coins" class="px-1.5 py-0.5 rounded bg-slate-950/90 text-amber-300 text-[10px]">0 🎄</span>';
+        rightGroup.insertBefore(shopPill, rightGroup.firstChild);
+        shopPill.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          openChristmasShopModal();
+        }, true);
+      }
+    }
+
+    // 2. Zbuduj osobny modal Event UI: #christmas-shop-modal
+    if (document.getElementById('christmas-shop-modal')) return;
+    const modal = document.createElement('div');
+    modal.id = 'christmas-shop-modal';
+    modal.className = 'hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-start justify-center p-3 sm:p-4 z-50 overflow-y-auto';
+    modal.style.cssText = 'touch-action: pan-y; -webkit-overflow-scrolling: touch;';
+    modal.innerHTML = `
+      <div class="rounded-2xl max-w-4xl w-full p-4 sm:p-5 shadow-2xl space-y-4 mt-2 mb-8 max-h-[92vh] overflow-y-auto border-2 border-amber-300/85 relative" style="background:linear-gradient(155deg,#19080c 0%,#06241b 50%,#07182b 100%);">
+        <!-- Nagłówek -->
+        <div class="flex items-start justify-between border-b border-amber-400/35 pb-3 gap-2">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-600 via-emerald-600 to-cyan-500 border-2 border-amber-200 flex items-center justify-center text-xl shadow-lg shrink-0">🎄</div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="font-jjk text-lg sm:text-xl font-black text-amber-200">CHRISTMAS EVENT SHOP</h3>
+                <span id="xmas-shop-balance" class="px-3 py-0.5 rounded-full bg-slate-950/90 border border-amber-300 text-emerald-300 text-xs font-black">0 🎄</span>
+              </div>
+              <p class="text-[11px] text-slate-300">Zdobywaj <strong>+5 600 🎄 Christmas Coins</strong> za wygranie 40-falowej mapy Christmas Event i odblokuj wszystkie limitowane postacie!</p>
+            </div>
+          </div>
+          <button id="btn-close-xmas-shop" type="button" class="text-slate-300 hover:text-white p-1.5"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+
+        <!-- SCENA OTWIERANIA CHRISTMAS PRESENT (PREZENT + KTO DROPNĄŁ!) -->
+        <div id="xmas-present-anim-box" class="hidden p-4 rounded-2xl bg-slate-950/95 border-2 border-amber-400/80 text-center space-y-3 shadow-2xl">
+          <div id="xmas-present-status" class="font-jjk text-sm font-black uppercase tracking-widest text-amber-300">🎁 OTWIERANIE ŚWIĄTECZNEGO PREZENTU...</div>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <canvas id="xmas-present-canvas" width="260" height="165" class="w-[240px] h-[152px] rounded-xl border border-amber-400/45 bg-[#050814] shadow-inner shrink-0"></canvas>
+            <div id="xmas-drop-reveal" class="hidden flex-col items-center justify-center p-3 rounded-xl bg-slate-900/95 border-2 border-cyan-400 min-w-[200px] gap-1.5 shadow-xl">
+              <canvas id="xmas-drop-hero-canvas" width="96" height="96" class="w-24 h-24 rounded-xl bg-[#050712] border border-white/20"></canvas>
+              <span id="xmas-drop-rarity" class="px-2 py-0.5 rounded text-[10px] font-black uppercase">RARE</span>
+              <div id="xmas-drop-name" class="font-jjk text-sm font-black text-white">...</div>
+              <div id="xmas-drop-sub" class="text-[10px] font-bold text-emerald-300">✨ NOWA POSTAĆ!</div>
+            </div>
+          </div>
+          <div id="xmas-multi-grid" class="hidden grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 text-left"></div>
+        </div>
+
+        <!-- SEKCJA 1: CHRISTMAS CRATE (1000 🎄 / 10x 9000 🎄) + ŻYWY DROP PREVIEW -->
+        <div class="p-3.5 rounded-2xl bg-slate-950/90 border-2 border-cyan-400/70 flex flex-col sm:flex-row gap-3 items-stretch shadow-xl">
+          <div class="flex-1 flex flex-col justify-between space-y-2.5 min-w-0">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <span class="font-jjk text-base font-black text-cyan-200">🎁 CHRISTMAS CRATE (PREZENT • 1 000 🎄)</span>
+              <span class="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-400/50 text-amber-300 text-[10px] font-black">7 Limitowanych Postaci</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 bg-slate-900/85 border border-slate-800 rounded-xl p-2.5 text-[11px]">
+              <div class="flex justify-between text-slate-300"><span>• Christmas Difficulty <span class="text-[9px] px-1 rounded bg-slate-800 font-bold">COMMON</span></span><span class="font-bold">42%</span></div>
+              <div class="flex justify-between text-emerald-300"><span>• Santa Freddy <span class="text-[9px] px-1 rounded bg-emerald-950 font-bold">UNCOMMON</span></span><span class="font-bold">28%</span></div>
+              <div class="flex justify-between text-sky-300"><span>• Christmas Yuji <span class="text-[9px] px-1 rounded bg-sky-950 font-bold">RARE</span></span><span class="font-bold">17%</span></div>
+              <div class="flex justify-between text-violet-300"><span>• Christmas Large Camera <span class="text-[9px] px-1 rounded bg-violet-950 font-bold">EPIC</span></span><span class="font-bold">8.5%</span></div>
+              <div class="flex justify-between text-amber-300"><span>• Christmas Withered Bonnie <span class="text-[9px] px-1 rounded bg-amber-950 font-bold">LEGENDARY</span></span><span class="font-bold">3.4%</span></div>
+              <div class="flex justify-between text-rose-400 font-bold"><span>• Christmas TV Man <span class="text-[9px] px-1 rounded bg-rose-950 font-bold">MYTHIC</span></span><span>0.95%</span></div>
+              <div class="flex justify-between text-cyan-300 font-black sm:col-span-2"><span>• GD Icon Christmas (22 000 DPS) <span class="text-[9px] px-1 rounded bg-cyan-950 border border-cyan-400/50 font-bold">SECRET</span></span><span>0.15%</span></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btn-open-xmas-crate-1" type="button" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:brightness-110 text-slate-950 font-black text-xs uppercase shadow-lg transition active:scale-95">🎁 OTWÓRZ 1x (1 000 🎄)</button>
+              <button id="btn-open-xmas-crate-10" type="button" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-500 to-amber-400 hover:brightness-110 text-slate-950 font-black text-xs uppercase shadow-lg transition active:scale-95">🎁 OTWÓRZ 10x (9 000 🎄)</button>
+            </div>
+          </div>
+          <!-- Żywy Drop Preview tańczących postaci -->
+          <div class="w-full sm:w-[132px] shrink-0 flex flex-col items-center justify-center bg-gradient-to-b from-indigo-950/75 to-slate-900 border border-cyan-400/55 rounded-xl p-2 text-center gap-1">
+            <div class="text-[9px] font-black uppercase text-amber-300 tracking-wider">Drop Preview</div>
+            <canvas id="xmas-crate-dance-canvas" width="102" height="106" class="w-[100px] h-[104px] rounded-lg bg-[#050712] border border-white/15"></canvas>
+            <div id="xmas-crate-dance-name" class="text-[10px] font-black text-white truncate w-full">...</div>
+            <div id="xmas-crate-dance-rar" class="text-[9px] font-extrabold text-cyan-300">...</div>
+          </div>
+        </div>
+
+        <!-- SEKCJA 2: OSOBNE POSTACIE ŚWIĄTECZNE DO KUPIENIA (Z ŻYWYMI PODGLĄDAMI 2D!) -->
+        <div class="space-y-3">
+          <!-- KARTA 1: SANTA JOGO (EXCLUSIVE • 25 000 🎄) -->
+          <div class="p-3.5 rounded-2xl bg-gradient-to-r from-rose-950/85 via-slate-950 to-amber-950/70 border-2 border-rose-400/80 flex flex-col sm:flex-row items-center gap-3.5 shadow-xl">
+            <div class="flex flex-col items-center bg-slate-950 border-2 border-rose-400/65 rounded-xl p-2 shrink-0">
+              <canvas id="xmas-preview-jogo" width="112" height="118" class="w-[108px] h-[114px] rounded-lg bg-[#08050b]"></canvas>
+              <span class="text-[9px] font-black text-rose-300 uppercase mt-1">SANTA JOGO</span>
+            </div>
+            <div class="flex-1 min-w-0 space-y-2 text-left w-full">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-gradient-to-r from-amber-900 to-emerald-900 text-amber-200 border border-amber-300 text-[10px] font-black uppercase">EXCLUSIVE • LIMITED CHRISTMAS</span>
+                <span class="text-sm font-black text-amber-300">25 000 🎄</span>
+              </div>
+              <h5 class="font-jjk text-base font-black text-white">🎅 SANTA JOGO (19 000 DPS MAX • 700 CE)</h5>
+              <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-2 text-[11px] text-slate-200 space-y-0.5">
+                <div>• <strong class="text-amber-300">Wygląd:</strong> Jogo w czapce Świętego Mikołaja, z białą brodą i czerwonym płaszczem!</div>
+                <div>• <strong class="text-sky-300">Moc 1 (Chimney Ember Bugs):</strong> Wybuchowe iskry z kominka (450% DMG + podpalenie).</div>
+                <div>• <strong class="text-rose-300">Moc 2 (Maximum: Gift Meteor):</strong> Gigantyczny płonący prezent-meteor (850% DMG AoE)!</div>
+              </div>
+              <button id="btn-buy-xmas-jogo" type="button" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-500 hover:brightness-110 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-400 text-white font-black text-xs uppercase shadow-lg transition active:scale-95">🎄 KUP SANTA JOGO (25 000 🎄)</button>
+            </div>
+          </div>
+
+          <!-- KARTA 2: CHERNO ALPHA -> CRIMSON TYPHOON (MYSTERIOUS • 250 000 🎄) -->
+          <div class="p-3.5 rounded-2xl bg-gradient-to-r from-lime-950/85 via-slate-950 to-rose-950/80 border-2 border-lime-400/85 flex flex-col sm:flex-row items-center gap-3.5 shadow-xl">
+            <div class="flex items-center gap-2 bg-slate-950 border-2 border-lime-400/65 rounded-xl p-2 shrink-0">
+              <div class="flex flex-col items-center">
+                <canvas id="xmas-preview-cherno" width="96" height="114" class="w-[92px] h-[110px] rounded-lg bg-[#070d05]"></canvas>
+                <span class="text-[8px] font-black text-lime-300 uppercase mt-1">CHERNO ALPHA</span>
+              </div>
+              <span class="text-amber-300 font-black text-sm">→</span>
+              <div class="flex flex-col items-center">
+                <canvas id="xmas-preview-crimson" width="96" height="114" class="w-[92px] h-[110px] rounded-lg bg-[#140507]"></canvas>
+                <span class="text-[8px] font-black text-rose-300 uppercase mt-1">CRIMSON TYPHOON</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0 space-y-2 text-left w-full">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-gradient-to-r from-lime-950 to-emerald-900 text-lime-200 border border-lime-300 text-[10px] font-black uppercase">MYSTERIOUS • LIMITED CHRISTMAS</span>
+                <span class="text-sm font-black text-lime-300">250 000 🎄</span>
+              </div>
+              <h5 class="font-jjk text-base font-black text-white">🤖 CHERNO ALPHA → CRIMSON TYPHOON (28 000 DPS MAX)</h5>
+              <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-2 text-[10.5px] text-slate-200 space-y-0.5">
+                <div>• <strong class="text-lime-300">Passive (co 25 fal):</strong> Shockwave ogłuszający wszystkich wrogów na 5s!</div>
+                <div>• <strong class="text-amber-300">5 Mocy Cherno Alphy:</strong> Charge (+50% DMG) • Flamethrower (10s) • Shockwave (200%) • Arm Detach (200s CD) • Self-Destruct (400% DMG → przylot Crimson Typhoon na helikopterach!).</div>
+                <div>• <strong class="text-rose-300">4 Moce Crimson Typhoon (na stałe):</strong> 3 Fist Punch • 3 Piły (20s) • Arm Toss (2 ręce 20s) • Fury (30s / 300s CD)!</div>
+              </div>
+              <button id="btn-buy-xmas-cherno" type="button" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-lime-500 via-emerald-500 to-cyan-500 hover:brightness-110 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-400 text-slate-950 font-black text-xs uppercase shadow-lg transition active:scale-95">🎄 KUP CHERNO ALPHA (250 000 🎄)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    document.getElementById('btn-close-xmas-shop')?.addEventListener('click', () => modal.classList.add('hidden'));
+
+    // Animowane otwieranie Christmas Present + pokazanie kto dropnął!
+    function openXmasCrateAnimated(cnt) {
+      if (xmasOpening) return;
+      const cost = cnt === 10 ? 9000 : 1000;
+      if ((multiverseSave.christmasCoins || 0) < cost) {
+        showBanner(`Potrzebujesz ${cost.toLocaleString('pl-PL')} 🎄 Christmas Coins!`);
+        return;
+      }
+      xmasOpening = true;
+      multiverseSave.christmasCoins -= cost;
+
+      // Wylosuj postacie
+      const drops = [];
+      for (let i = 0; i < cnt; i++) {
+        let r = Math.random() * 100, picked = XMAS_CRATE_POOL[0].id;
+        for (const p of XMAS_CRATE_POOL) { r -= p.w; if (r <= 0) { picked = p.id; break; } }
+        const wasOwned = !!multiverseSave.unlocked[picked];
+        multiverseSave.unlocked[picked] = true;
+        multiverseSave.stars[picked] = (multiverseSave.stars[picked] || 0) + 1;
+        drops.push({ id: picked, isNew: !wasOwned, rank: (typeof RARITY_RANK === 'object' && HEROES[picked] ? (RARITY_RANK[HEROES[picked].rarity] || 0) : 0) });
+      }
+      saveMultiverseData();
+      if (typeof buildIndexGrid === 'function') buildIndexGrid();
+      if (typeof buildShop === 'function') buildShop();
+      try { sfx.init(); sfx.playDomain(); } catch (e) {}
+
+      // Pokaż box animacji prezentu
+      const animBox = document.getElementById('xmas-present-anim-box');
+      const statusEl = document.getElementById('xmas-present-status');
+      const presentCv = document.getElementById('xmas-present-canvas');
+      const revealCard = document.getElementById('xmas-drop-reveal');
+      const multiGrid = document.getElementById('xmas-multi-grid');
+      if (animBox) animBox.classList.remove('hidden');
+      if (revealCard) { revealCard.classList.add('hidden'); revealCard.classList.remove('flex'); }
+      if (multiGrid) { multiGrid.classList.add('hidden'); multiGrid.innerHTML = ''; }
+      if (statusEl) statusEl.textContent = cnt === 10 ? '🎁 OTWIERANIE 10x CHRISTMAS PRESENT...' : '🎁 OTWIERANIE CHRISTMAS PRESENT...';
+      animBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const startTs = performance.now();
+      const durMs = 1150;
+      function animPresentStep(now) {
+        const prog = Math.min(1, (now - startTs) / durMs);
+        if (presentCv) drawChristmasPresentAnim(presentCv, prog, prog >= 0.65);
+        if (prog < 1) {
+          requestAnimationFrame(animPresentStep);
+          return;
+        }
+        // Pokaż najlepszy drop na głównej karcie!
+        const best = [...drops].sort((a, b) => b.rank - a.rank)[0];
+        const bh = HEROES[best.id];
+        const rs = (typeof RARITY_STYLES === 'object' && RARITY_STYLES[bh.rarity]) || { label: bh.rarity, badge: 'bg-slate-800 text-white', hex: '#fde047' };
+        if (statusEl) statusEl.textContent = `✨ OTWORZONO CHRISTMAS PRESENT (${cnt}x)!`;
+        if (revealCard) {
+          revealCard.classList.remove('hidden');
+          revealCard.classList.add('flex');
+          revealCard.style.borderColor = rs.hex || '#38bdf8';
+          const hCv = document.getElementById('xmas-drop-hero-canvas');
+          if (hCv) {
+            const hc = hCv.getContext('2d');
+            hc.clearRect(0, 0, hCv.width, hCv.height);
+            try {
+              if (typeof drawChoreographedHero === 'function') {
+                drawChoreographedHero(hc, bh, 'toctoc', 0.4, hCv.width / 2, hCv.height * 0.65, 1.05, 0, false);
+              } else {
+                hc.save(); hc.translate(hCv.width / 2, hCv.height / 2); hc.scale(1.8, 1.8);
+                drawHeroPortrait(hc, bh.id, 5, true); hc.restore();
+              }
+            } catch (e) {}
+          }
+          const rEl = document.getElementById('xmas-drop-rarity');
+          if (rEl) { rEl.textContent = rs.label; rEl.className = 'px-2 py-0.5 rounded text-[10px] font-black uppercase border ' + rs.badge; }
+          const nEl = document.getElementById('xmas-drop-name'); if (nEl) nEl.textContent = bh.name;
+          const sEl = document.getElementById('xmas-drop-sub'); if (sEl) sEl.textContent = best.isNew ? '✨ NOWA LIMITOWANA POSTAĆ!' : `★ GWIAZDKA +1 (★${multiverseSave.stars[best.id]})`;
+        }
+        // Jeśli 10x — pokaż siatkę wszystkich 10 dropów z portretami 2D!
+        if (cnt > 1 && multiGrid) {
+          multiGrid.classList.remove('hidden');
+          drops.forEach(d => {
+            const dh = HEROES[d.id];
+            const drs = (typeof RARITY_STYLES === 'object' && RARITY_STYLES[dh.rarity]) || { label: dh.rarity, hex: '#cbd5e1' };
+            const cell = document.createElement('div');
+            cell.className = 'p-2 rounded-xl bg-slate-900/95 border flex flex-col items-center text-center gap-1';
+            cell.style.borderColor = drs.hex || '#475569';
+            cell.innerHTML = `<canvas width="52" height="52" class="w-12 h-12 rounded-lg bg-[#050712]"></canvas><div class="text-[9px] font-black text-white leading-tight truncate w-full">${dh.name}</div><div class="text-[8px] font-extrabold" style="color:${drs.hex}">${drs.label}${d.isNew ? ' • NEW!' : ''}</div>`;
+            const mc = cell.querySelector('canvas').getContext('2d');
+            mc.save(); mc.translate(26, 26); mc.scale(1.1, 1.1);
+            try { drawHeroPortrait(mc, d.id, 5, true); } catch (e) {}
+            mc.restore();
+            multiGrid.appendChild(cell);
+          });
+        }
+        try { sfx.playUpgrade(); } catch (e) {}
+        showBanner(`🎁 CHRISTMAS PRESENT (${cnt}x): Wylosowano ${bh.name}!`);
+        xmasOpening = false;
+      }
+      requestAnimationFrame(animPresentStep);
+    }
+
+    document.getElementById('btn-open-xmas-crate-1')?.addEventListener('click', () => openXmasCrateAnimated(1));
+    document.getElementById('btn-open-xmas-crate-10')?.addEventListener('click', () => openXmasCrateAnimated(10));
+
+    document.getElementById('btn-buy-xmas-jogo')?.addEventListener('click', () => {
+      if (multiverseSave.unlocked.xmas_santa_jogo || (multiverseSave.christmasCoins || 0) < 25000) return;
+      multiverseSave.christmasCoins -= 25000;
+      multiverseSave.unlocked.xmas_santa_jogo = true;
+      multiverseSave.stars.xmas_santa_jogo = 1;
+      saveMultiverseData();
+      if (typeof buildIndexGrid === 'function') buildIndexGrid();
+      try { sfx.playUpgrade(); } catch (e) {}
+      showBanner('🎅 KUPIONO LIMITED EXCLUSIVE: SANTA JOGO!');
+    });
+
+    document.getElementById('btn-buy-xmas-cherno')?.addEventListener('click', () => {
+      if (multiverseSave.unlocked.xmas_cherno_alpha || (multiverseSave.christmasCoins || 0) < 250000) return;
+      multiverseSave.christmasCoins -= 250000;
+      multiverseSave.unlocked.xmas_cherno_alpha = true;
+      multiverseSave.stars.xmas_cherno_alpha = 1;
+      saveMultiverseData();
+      if (typeof buildIndexGrid === 'function') buildIndexGrid();
+      try { sfx.playUpgrade(); } catch (e) {}
+      showBanner('🤖 KUPIONO LIMITED MYSTERIOUS: CHERNO ALPHA (28 000 DPS → CRIMSON TYPHOON)!');
+    });
+
+    // Pętla animacji 2D podglądów wewnątrz otwartego Christmas Shopu!
+    (function animXmasShopPreviews(ts) {
+      const m = document.getElementById('christmas-shop-modal');
+      if (m && !m.classList.contains('hidden')) {
+        const nowSec = ts * 0.001;
+        // 1. Tańczący Drop Preview Christmas Crate
+        const cCv = document.getElementById('xmas-crate-dance-canvas');
+        if (cCv && typeof drawChoreographedHero === 'function') {
+          const idx = Math.floor(nowSec / 1.9) % XMAS_CRATE_POOL.length;
+          const hid = XMAS_CRATE_POOL[idx].id;
+          const h = HEROES[hid];
+          if (h) {
+            const cc = cCv.getContext('2d'); cc.clearRect(0, 0, cCv.width, cCv.height);
+            try { drawChoreographedHero(cc, h, 'toctoc', nowSec, cCv.width / 2, cCv.height * 0.64, 0.96, 0, false); } catch (e) {}
+            const nm = document.getElementById('xmas-crate-dance-name'); if (nm && nm.textContent !== h.name) nm.textContent = h.name;
+            const rs = (typeof RARITY_STYLES === 'object' && RARITY_STYLES[h.rarity]) || { label: h.rarity, hex: '#38bdf8' };
+            const rl = document.getElementById('xmas-crate-dance-rar'); if (rl && rl.textContent !== rs.label) { rl.textContent = rs.label; rl.style.color = rs.hex; }
+          }
+        }
+        // 2. Podgląd 2D Santa Jogo
+        const jCv = document.getElementById('xmas-preview-jogo');
+        if (jCv && typeof drawChoreographedHero === 'function' && HEROES.xmas_santa_jogo) {
+          const jc = jCv.getContext('2d'); jc.clearRect(0, 0, jCv.width, jCv.height);
+          try { drawChoreographedHero(jc, HEROES.xmas_santa_jogo, 'toctoc', nowSec, jCv.width / 2, jCv.height * 0.64, 1.05, 0, false); } catch (e) {}
+        }
+        // 3. Podgląd 2D Cherno Alpha
+        const chCv = document.getElementById('xmas-preview-cherno');
+        if (chCv) {
+          const chc = chCv.getContext('2d'); chc.clearRect(0, 0, chCv.width, chCv.height);
+          chc.save(); chc.translate(chCv.width / 2, chCv.height * 0.56); chc.scale(1.55, 1.55);
+          try { drawChernoAlphaFull(chc, false, nowSec, 0); } catch (e) {}
+          chc.restore();
+        }
+        // 4. Podgląd 2D Crimson Typhoon (animowany!)
+        const crCv = document.getElementById('xmas-preview-crimson');
+        if (crCv) {
+          const crc = crCv.getContext('2d'); crc.clearRect(0, 0, crCv.width, crCv.height);
+          crc.save(); crc.translate(crCv.width / 2, crCv.height * 0.56); crc.scale(1.55, 1.55);
+          try { drawCrimsonTyphoonFull(crc, false, true, nowSec, 0, false); } catch (e) {}
+          crc.restore();
+        }
+      }
+      requestAnimationFrame(animXmasShopPreviews);
+    })(0);
+  }
+
+  function openChristmasShopModal() {
+    mountChristmasShopModal();
+    syncChristmasCoinsUI();
+    document.getElementById('christmas-shop-modal')?.classList.remove('hidden');
+  }
+  window.openChristmasShopModal = openChristmasShopModal;
+
+  function mountChristmasShopSection() {
+    mountChristmasShopModal();
+  }
+
+  // =========================================================================
+  // 8. LIMITED INDEX — UKRYWA POSTACIE ŚWIĄTECZNE W NORMALNYM INDEXIE!
+  // =========================================================================
+  let indexFilterMode = 'all';
+  const LIMITED_INDEX_IDS = new Set(['locust', 'maki_s3', ...XMAS_IDS]);
+
+  function mountLimitedIndexFilter() {
+    const grid = document.getElementById('index-grid');
+    if (!grid || document.getElementById('idx-filter-bar')) return;
+    const bar = document.createElement('div');
+    bar.id = 'idx-filter-bar';
+    bar.className = 'flex items-center gap-2 pb-1';
+    bar.innerHTML = `
+      <button id="idx-tab-all" type="button" class="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-black text-xs uppercase">Normalny Index</button>
+      <button id="idx-tab-limited" type="button" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-cyan-400/60 text-cyan-200 font-black text-xs uppercase">🌟 Limited Index (Christmas / Locust / Maki)</button>
+    `;
+    grid.parentElement.insertBefore(bar, grid);
+    const setMode = (m) => {
+      indexFilterMode = m;
+      document.getElementById('idx-tab-all').className = m === 'all' ? 'px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-black text-xs uppercase' : 'px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 font-black text-xs uppercase';
+      document.getElementById('idx-tab-limited').className = m === 'limited' ? 'px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-black text-xs uppercase shadow' : 'px-3 py-1.5 rounded-lg bg-slate-900 border border-cyan-400/60 text-cyan-200 font-black text-xs uppercase';
+      if (typeof buildIndexGrid === 'function') buildIndexGrid();
+    };
+    document.getElementById('idx-tab-all')?.addEventListener('click', () => setMode('all'));
+    document.getElementById('idx-tab-limited')?.addEventListener('click', () => setMode('limited'));
+  }
+
+  if (typeof buildIndexGrid === 'function') {
+    const _origBuildIdxX = buildIndexGrid;
+    buildIndexGrid = function () {
+      mountLimitedIndexFilter();
+      const r = _origBuildIdxX.apply(this, arguments);
+      const grid = document.getElementById('index-grid');
+      if (grid) {
+        const xmasNames = XMAS_IDS.map(id => HEROES[id] && HEROES[id].name).filter(Boolean);
+        const limNames = Array.from(LIMITED_INDEX_IDS).map(id => HEROES[id] && HEROES[id].name).filter(Boolean);
+        Array.from(grid.children).forEach(btn => {
+          const txt = btn.textContent || '';
+          if (indexFilterMode === 'limited') {
+            btn.style.display = limNames.some(nm => txt.includes(nm)) ? '' : 'none';
+          } else {
+            // W normalnym Indexie UKRYJ wszystkie postacie świąteczne!
+            btn.style.display = xmasNames.some(nm => txt.includes(nm)) ? 'none' : '';
+          }
+        });
+      }
+      return r;
+    };
+  }
+
+  setTimeout(() => {
+    mountChristmasHud();
+    mountChristmasShopSection();
+    mountLimitedIndexFilter();
+    syncChristmasCoinsUI();
+    if (typeof buildIndexGrid === 'function') buildIndexGrid();
+  }, 450);
+
+
+  // =========================================================================
+  // 9. NERF TRICKA (gd_trick) NA RÓWNE 5 000 DPS MAX!
+  // =========================================================================
+  if (typeof HEROES === 'object' && HEROES.gd_trick) {
+    HEROES.gd_trick.maxLevel = 5;
+    HEROES.gd_trick.damage = 120;
+    HEROES.gd_trick.cooldown = 0.34;
+    HEROES.gd_trick.upgrades = [
+      { cost: 450,  dmg: 210, cd: 0.30, rng: 260, text: 'LVL 2: 210 DMG / 0.30s (700 DPS).' },
+      { cost: 720,  dmg: 350, cd: 0.26, rng: 275, text: 'LVL 3: 350 DMG / 0.26s (1346 DPS) — Odblokowuje Firework!' },
+      { cost: 1100, dmg: 560, cd: 0.22, rng: 295, text: 'LVL 4: 560 DMG / 0.22s (2545 DPS).' },
+      { cost: 1640, dmg: 900, cd: 0.18, rng: 320, text: 'LVL 5 MAX: 900 DMG / 0.18s (5 000 DPS!) — Znerfiony Firework!' }
+    ];
+  }
+
+  // =========================================================================
+  // 10. NAPRAWA JEFFREYA (1:1 ZE ZDJ 1) + CIEMNOŚĆ PRZED DROGĄ I POSTACIAMI!
+  //     - Ciemne mgliste tło rysowane PRZED drawPathAndBase -> widać drogę, postacie i wrogów!
+  //     - Jeffrey stoi koło bazy z mackami, fioletowymi szponami i świecącym białym TV!
+  // =========================================================================
+  function drawJeffreyBossHorror(c, jx, jy, t) {
+    c.save();
+    c.translate(jx, jy);
+    // Mroczna mglista poświata
+    const fog = c.createRadialGradient(0, -10, 12, 0, -10, 125 + Math.sin(t * 4) * 8);
+    fog.addColorStop(0, 'rgba(226, 232, 240, 0.28)');
+    fog.addColorStop(0.45, 'rgba(147, 51, 234, 0.22)');
+    fog.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    c.fillStyle = fog; c.beginPath(); c.arc(0, -10, 130, 0, Math.PI * 2); c.fill();
+
+    // Wielkie zakrzywione mechaniczne macki z fioletowymi szponami z tyłu (ZDJ 1!)
+    c.strokeStyle = '#334155'; c.lineWidth = 4.2; c.lineCap = 'round';
+    const sway = Math.sin(t * 2.5) * 6;
+    // Górne łuki macek
+    c.beginPath(); c.moveTo(-8, -14); c.quadraticCurveTo(-55, -62 + sway, -76, -24); c.stroke();
+    c.beginPath(); c.moveTo(8, -14);  c.quadraticCurveTo(55, -62 - sway, 76, -24);  c.stroke();
+    c.beginPath(); c.moveTo(-4, -18); c.quadraticCurveTo(-24, -76, -12, -88); c.stroke();
+    c.beginPath(); c.moveTo(4, -18);  c.quadraticCurveTo(24, -76, 14, -88);  c.stroke();
+    // 2 fioletowe szpony Astro na końcach bocznych macek (jak na zdj 1!)
+    for (const [cx, cy] of [[-76, -24], [76, -24]]) {
+      c.fillStyle = '#1e293b'; c.strokeStyle = '#64748b'; c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(cx, cy - 12); c.lineTo(cx + 12, cy + 8); c.lineTo(cx - 12, cy + 8); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#c084fc'; c.shadowColor = '#a855f7'; c.shadowBlur = 12;
+      c.beginPath(); c.arc(cx, cy, 4.2, 0, Math.PI * 2); c.fill();
+      c.shadowBlur = 0;
+    }
+
+    // Długie segmentowane przednie ramiona wyciągnięte do przodu z niebieskimi paskami (ZDJ 1!)
+    for (const s of [-1, 1]) {
+      c.strokeStyle = '#1e293b'; c.lineWidth = 9;
+      c.beginPath(); c.moveTo(s * 16, -2); c.quadraticCurveTo(s * 54, 14, s * 86, 26 + s * sway * 0.5); c.stroke();
+      c.strokeStyle = '#38bdf8'; c.lineWidth = 2;
+      c.beginPath(); c.moveTo(s * 48, 12); c.lineTo(s * 60, 17); c.stroke();
+      // Długie czarne szpony na dłoniach
+      c.strokeStyle = '#09090b'; c.lineWidth = 2.6;
+      for (let k = -1; k <= 1; k++) {
+        c.beginPath(); c.moveTo(s * 86, 26 + s * sway * 0.5); c.lineTo(s * 102, 22 + k * 7 + s * sway * 0.5); c.stroke();
+      }
+    }
+
+    // Ciemny mechaniczny tors z wystającymi kablami
+    c.fillStyle = '#0f172a'; c.strokeStyle = '#475569'; c.lineWidth = 1.8;
+    c.beginPath(); c.roundRect(-24, -16, 48, 28, 6); c.fill(); c.stroke();
+    c.strokeStyle = '#7e22ce'; c.lineWidth = 1.5;
+    for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(k * 7, 12); c.lineTo(k * 9, 26); c.stroke(); }
+
+    // Oślepiający biało-błękitny ekran TV (ZDJ 1!)
+    c.save(); c.rotate(0.08);
+    c.fillStyle = '#1e293b'; c.strokeStyle = '#475569'; c.lineWidth = 2;
+    c.beginPath(); c.roundRect(-20, -24, 40, 28, 3); c.fill(); c.stroke();
+    c.fillStyle = '#f8fafc'; c.shadowColor = '#e0f2fe'; c.shadowBlur = 24;
+    c.fillRect(-16, -20, 32, 20);
+    c.shadowBlur = 0;
+    c.restore();
+
+    // Napis nad Jeffreyem
+    c.fillStyle = '#facc15'; c.font = '900 11px Inter, sans-serif'; c.textAlign = 'center';
+    c.fillText('🌑 SHADOW REALM — JEFFREY (' + state.shadowRealmTimer.toFixed(1) + 's)', 0, -42);
+    c.restore();
+  }
+
+  // Rysuj ciemną mgłę PRZED drogą, a samego Jeffreya PO drodze (nie jest już zasłaniany przez drogę!)
+  if (typeof drawPathAndBase === 'function') {
+    const _origPathJef = drawPathAndBase;
+    drawPathAndBase = function () {
+      const srOn = (typeof state !== 'undefined' && state.shadowRealmTimer > 0);
+      if (srOn) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(4, 4, 10, 0.86)';
+        ctx.fillRect(0, 0, MAP_W, MAP_H);
+        ctx.restore();
+      }
+      const r = _origPathJef.apply(this, arguments);
+      if (srOn) {
+        ctx.save();
+        const wps = (state.map && state.map.waypoints) || [{ x: MAP_W - 35, y: MAP_H / 2 }];
+        const baseWp = wps[wps.length - 1];
+        const jx = Math.max(95, Math.min(MAP_W - 95, baseWp.x - 82));
+        const jy = Math.max(95, Math.min(MAP_H - 70, baseWp.y));
+        drawJeffreyBossHorror(ctx, jx, jy, state.time || 0);
+        ctx.restore();
+      }
+      return r;
+    };
+  }
+
+
+  // =========================================================================
+  // 11. FIX #1: MECHANICZNY CHERNO ALPHA WIDOCZNY W INDEXIE I EQ!
+  // =========================================================================
+  if (typeof drawChoreographedHero === 'function') {
+    const _origChoreoV7 = drawChoreographedHero;
+    drawChoreographedHero = function (c, hero, dance, timeSec, x, y, scale, phase, flip) {
+      if (hero && hero.id === 'xmas_cherno_alpha') {
+        c.save();
+        c.translate(x, y - 6 * (scale || 1));
+        c.scale((scale || 1) * 1.45, (scale || 1) * 1.45);
+        drawChernoAlphaFull(c, false, timeSec || 0, 0);
+        c.restore();
+        return;
+      }
+      return _origChoreoV7.apply(this, arguments);
+    };
+  }
+
+  // =========================================================================
+  // 12. FIX #3: PRZEGRANA NA FALI 20 (HP <= 0) NIGDY NIE PISZE "ZWYCIĘSTWO"!
+  // =========================================================================
+  if (typeof endGame === 'function') {
+    const _origEndV7 = endGame;
+    endGame = function (isVictory) {
+      let realWin = !!isVictory;
+      if (typeof state !== 'undefined' && (state.hp <= 0 || state.gameOver)) {
+        realWin = false;
+      }
+      return _origEndV7.call(this, realWin);
+    };
+  }
+
+  // =========================================================================
+  // 13. FIX #4: CRAFTING ZAWSZE WIDOCZNY I KLIKALNY PODCZAS ENDLESS!
+  // =========================================================================
+  if (typeof switchShopTab === 'function') {
+    const _origSwitchV7 = switchShopTab;
+    switchShopTab = function (tab) {
+      const r = _origSwitchV7.apply(this, arguments);
+      if (tab === 'craft') {
+        const cntC = document.getElementById('tab-content-craft');
+        if (cntC) {
+          cntC.classList.remove('hidden');
+          cntC.style.display = '';
+          // Jeśli subtab Ewolucje ukrył zwykłe karty, a kontener ewolucji zniknął po dropie w Endless — przywróć widok!
+          const evoBox = document.getElementById('v27-evo-container');
+          if (!evoBox || evoBox.classList.contains('hidden')) {
+            Array.from(cntC.children).forEach(ch => {
+              if (ch.id !== 'v27-evo-container') {
+                ch.classList.remove('hidden');
+                ch.style.display = '';
+              }
+            });
+          }
+        }
+      }
+      return r;
+    };
+  }
+  if (typeof buildCraftTab === 'function') {
+    const _origBuildCraftV7 = buildCraftTab;
+    buildCraftTab = function () {
+      const r = _origBuildCraftV7.apply(this, arguments);
+      // Po przebudowie Craftingu (np. po dropie itemu co 5 fal w Endless) odśwież podzakładki i nie ukrywaj kart!
+      const cntC = document.getElementById('tab-content-craft');
+      if (cntC && !cntC.classList.contains('hidden')) {
+        Array.from(cntC.children).forEach(ch => {
+          if (ch.id !== 'v27-evo-container') {
+            ch.classList.remove('hidden');
+            ch.style.display = '';
+          }
+        });
+      }
+      return r;
+    };
+  }
+
+  console.log('%c🎄 CHRISTMAS EVENT v7 ZAŁADOWANY (FIX Cherno w Indexie • FIX Jeffrey nad drogą • FIX Loss/Win Fala 20 • FIX Crafting w Endless) (Jeffrey 1:1 ze zdj 1 + Widoczna Droga & Postacie • Mechaniczne Cherno Alpha & Crimson Typhoon 1:1 • Tańsze Ulepszenia Cherno) (FIX Crimson Range • Nerf Trick 5000 DPS • FIX Jeffrey przy bazie + czarny ekran • FIX Klikania Christmas Shop) (Osobne Event UI Christmas Shop + Animacja Christmas Present + Podglądy 2D Santa Jogo & Cherno/Crimson) (Animacja & Portret Crimson Typhoon • Tematyczne Rifty • Wrogowie wg Światów 1-40) (Fixed Mapa Świąteczna • Dopracowane Modele Cherno/Crimson/TV/Withered Bonnie/Large Cam/Yuji • Ukryte w Normalnym Indexie)!', 'color:#4ade80;font-weight:bold');
+})();
+</script>
+<!-- CHRISTMAS_EVENT_V7_END -->
 </body>
 </html>
